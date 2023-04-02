@@ -1,4 +1,7 @@
 using System.Reflection;
+using Backend.BL.Extensions;
+using Backend.BL.Services;
+using Backend.DAL.Extensions;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 
+builder.Services.AddDishService();
+
+builder.Services.AddBackendBlServiceDependencies();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddEndpointsApiExplorer();
@@ -26,6 +32,7 @@ builder.Services.AddSwaggerGen(options => {
 
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
