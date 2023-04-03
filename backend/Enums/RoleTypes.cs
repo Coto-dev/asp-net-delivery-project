@@ -17,7 +17,7 @@ namespace Common.Enums {
         [Display(Name = ApplicationRoleNames.Courier)]
         Courier,
         [Display(Name = ApplicationRoleNames.Administrator)]
-        Administartor
+        Administrator
     }
 
     public class ApplicationRoleNames {

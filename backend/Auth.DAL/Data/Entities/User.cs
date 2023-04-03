@@ -15,5 +15,6 @@ namespace Auth.DAL.Data.Entities
         public Genders Gender { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public ICollection<UserRole> Roles { get; set; }
     }
 }

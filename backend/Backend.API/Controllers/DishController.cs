@@ -1,4 +1,4 @@
-﻿using Common.BackendInterfaces;
+﻿using Common.AuthInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

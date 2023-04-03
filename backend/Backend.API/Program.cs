@@ -1,7 +1,6 @@
 using System.Reflection;
 using Backend.BL.Extensions;
 using Backend.BL.Services;
-using Backend.DAL.Extensions;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

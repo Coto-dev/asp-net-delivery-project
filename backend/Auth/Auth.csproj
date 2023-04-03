@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Auth.BL\Auth.BL.csproj" />
-    <ProjectReference Include="..\Auth.DAL\Auth.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

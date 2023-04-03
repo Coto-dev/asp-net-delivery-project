@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Backend.BL.Services;
 using Backend.DAL.Data.Entities;
-using Common.BackendInterfaces;
+using Common.AuthInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 namespace Backend.BL.Extensions {
    

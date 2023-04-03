@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Common.DTO;
 
 namespace Common.AuthInterfaces {
-    public interface IRestarauntService {
-        Task<RestarauntPagedList> GetAllRestaraunts(int Page, string NameFilter);
+    public interface IAccountService {
+        Task Register(RegisterModelDTO model);
     }
 }

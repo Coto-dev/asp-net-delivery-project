@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Backend.DAL.Data;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Backend.DAL.Extensions {
+namespace Backend.BL.Extensions {
     public static class ServiceDependencyExtension {
         public static IServiceCollection AddBackendBlServiceDependencies(this IServiceCollection services) {
             services.AddDbContext<BackendDbContext>();
