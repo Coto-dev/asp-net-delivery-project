@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Backend.Common.Enums;
 using Backend.DAL.Data;
-using Backend.DAL.Extensions;
 using Common.AuthInterfaces;
 using Common.DTO;
 using Common.Enums;

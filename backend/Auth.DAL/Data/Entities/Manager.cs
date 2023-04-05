@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth.DAL.Data.Entities {
+namespace Auth.BL.Data.Entities {
     public class Manager : User {
     }
 }

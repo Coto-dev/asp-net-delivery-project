@@ -1,10 +1,10 @@
-﻿using Auth.DAL.Data.Entities;
+﻿using Auth.BL.Data.Entities;
 using Common.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth {
     public static class IdentityConfigure {
-        public static async Task ConfigureIdentityAsync(this WebApplication app) {
+         public static async Task ConfigureIdentityAsync(this WebApplication app) {
             using var serviceScope = app.Services.CreateScope();
             var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
             var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<Role>>();
@@ -61,11 +61,17 @@ namespace Auth {
             }
 
             // Try to create Administrator user
-            var adminUser = await userManager.FindByEmailAsync(config["AdminUserName"]);
+            var adminUser = await userManager.FindByNameAsync(config["AdminUserName"]);
             if (adminUser == null) {
                 var userResult = await userManager.CreateAsync(new User {
                     UserName = config["AdminUserName"],
-                }, config["AdminPassword"]);
+                    Email = config["AdminUserName"],
+                    FullName = "smdy",
+                    BirthDate = new DateTime(1990, 1, 1),
+                    Gender = Genders.Male,
+                    Phone = "88005553535"
+
+                }, config["AdminPassword"]) ;
                 if (!userResult.Succeeded) {
                     throw new InvalidOperationException($"Unable to create {config["AdminUserName"]} user");
                 }

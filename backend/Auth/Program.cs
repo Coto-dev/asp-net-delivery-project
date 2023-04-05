@@ -1,21 +1,44 @@
 using Auth;
+using Auth.BL;
+using Auth.BL.Data;
 using Auth.BL.Extensions;
-using Auth.DAL.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthDependencyIdentity();
+builder.Services.AddAuthBlDependency();
+builder.Services.AddAuthBlIdentityDependency();
 builder.Services.AddAccountService();
 builder.Services.AddAutoMapperExt();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
+
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options => {
+        options.TokenValidationParameters = new TokenValidationParameters {
+            ValidateIssuer = true,
+            ValidIssuer = JwtConfiguration.Issuer,
+            ValidateAudience = true,
+            ValidAudience = JwtConfiguration.Audience,
+            ValidateLifetime = true,
+            IssuerSigningKey = JwtConfiguration.GetSymmetricSecurityKey(),
+            ValidateIssuerSigningKey = true,
+        };
+    });
+
 var app = builder.Build();
+
 
 /*using var serviceScope = app.Services.CreateScope();
 var context = serviceScope.ServiceProvider.GetService<AuthDbContext>();*/

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Auth.DAL.Services;
+using Auth.BL.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.BL.Extensions {

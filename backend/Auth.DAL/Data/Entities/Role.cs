@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Common.Enums;
 using Microsoft.AspNetCore.Identity;
 
-namespace Auth.DAL.Data.Entities {
+namespace Auth.BL.Data.Entities {
     public class Role : IdentityRole<Guid> {
         public RoleType Type { get; set; }
         public ICollection<UserRole> Users { get; set; }
