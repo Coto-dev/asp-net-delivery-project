@@ -12,7 +12,7 @@ namespace Auth.BL.Extensions {
     public static class DependencyIdentityExt {
         public static IServiceCollection AddAuthBlIdentityDependency(this IServiceCollection services) {
 
-            services.AddIdentity<User, Role>(options => { options.SignIn.RequireConfirmedEmail = false; })
+            services.AddIdentity<User, Role>(options => { options.SignIn.RequireConfirmedEmail = false && options.User.RequireUniqueEmail; })
                         .AddEntityFrameworkStores<AuthDbContext>()
                         .AddDefaultTokenProviders()
                         .AddSignInManager<SignInManager<User>>()

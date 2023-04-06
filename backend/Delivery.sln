@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "Auth\Auth.csproj", "{71D3BFC3-87F8-4DCE-AB14-48706171C22A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{48C79871-37EE-40F9-86B7-C73576129156} = {48C79871-37EE-40F9-86B7-C73576129156}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend.BL", "backend.BL\Backend.BL.csproj", "{3E3FEDF4-0559-4A66-B25F-26646C785F73}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -52,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthInterfaces", "AuthInter
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common things", "Common things", "{55DC8315-C91C-4A90-A48B-AA47BF1CBE3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jwtConfiguration", "jwtConfiguration\jwtConfiguration.csproj", "{57DC8880-E00F-469D-9C74-E1C21CFF9C51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jwtConfiguration", "jwtConfiguration\jwtConfiguration.csproj", "{57DC8880-E00F-469D-9C74-E1C21CFF9C51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

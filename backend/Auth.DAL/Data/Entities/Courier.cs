@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Auth.BL.Data.Entities {
-    public class Courier : User {
+    public class Courier {
+        public Guid Id { get; set; }
+        public User User { get; set; }
+
     }
 }

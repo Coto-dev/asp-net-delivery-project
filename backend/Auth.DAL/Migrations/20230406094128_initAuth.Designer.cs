@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Auth.BL.Migrations
+namespace Auth.DAL.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20230403053859_initAuth")]
+    [Migration("20230406094128_initAuth")]
     partial class initAuth
     {
         /// <inheritdoc />
@@ -25,7 +25,51 @@ namespace Auth.BL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Auth.DAL.Data.Entities.Role", b =>
+            modelBuilder.Entity("Auth.BL.Data.Entities.Cook", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cooks");
+                });
+
+            modelBuilder.Entity("Auth.BL.Data.Entities.Courier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Couriers");
+                });
+
+            modelBuilder.Entity("Auth.BL.Data.Entities.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Auth.BL.Data.Entities.Manager", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Managers");
+                });
+
+            modelBuilder.Entity("Auth.BL.Data.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,7 +100,7 @@ namespace Auth.BL.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Auth.DAL.Data.Entities.User", b =>
+            modelBuilder.Entity("Auth.BL.Data.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,12 +116,7 @@ namespace Auth.BL.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -108,10 +147,6 @@ namespace Auth.BL.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -139,13 +174,9 @@ namespace Auth.BL.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Auth.DAL.Data.Entities.UserRole", b =>
+            modelBuilder.Entity("Auth.BL.Data.Entities.UserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -248,26 +279,59 @@ namespace Auth.BL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Auth.DAL.Data.Entities.Customer", b =>
+            modelBuilder.Entity("Auth.BL.Data.Entities.Cook", b =>
                 {
-                    b.HasBaseType("Auth.DAL.Data.Entities.User");
+                    b.HasOne("Auth.BL.Data.Entities.User", "User")
+                        .WithOne("Cook")
+                        .HasForeignKey("Auth.BL.Data.Entities.Cook", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Customer");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Auth.DAL.Data.Entities.UserRole", b =>
+            modelBuilder.Entity("Auth.BL.Data.Entities.Courier", b =>
                 {
-                    b.HasOne("Auth.DAL.Data.Entities.Role", "Role")
+                    b.HasOne("Auth.BL.Data.Entities.User", "User")
+                        .WithOne("Courier")
+                        .HasForeignKey("Auth.BL.Data.Entities.Courier", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Auth.BL.Data.Entities.Customer", b =>
+                {
+                    b.HasOne("Auth.BL.Data.Entities.User", "User")
+                        .WithOne("Customer")
+                        .HasForeignKey("Auth.BL.Data.Entities.Customer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Auth.BL.Data.Entities.Manager", b =>
+                {
+                    b.HasOne("Auth.BL.Data.Entities.User", "User")
+                        .WithOne("Manager")
+                        .HasForeignKey("Auth.BL.Data.Entities.Manager", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Auth.BL.Data.Entities.UserRole", b =>
+                {
+                    b.HasOne("Auth.BL.Data.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Auth.DAL.Data.Entities.User", "User")
+                    b.HasOne("Auth.BL.Data.Entities.User", "User")
                         .WithMany("Roles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -280,7 +344,7 @@ namespace Auth.BL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Auth.DAL.Data.Entities.Role", null)
+                    b.HasOne("Auth.BL.Data.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -289,7 +353,7 @@ namespace Auth.BL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Auth.DAL.Data.Entities.User", null)
+                    b.HasOne("Auth.BL.Data.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -298,7 +362,7 @@ namespace Auth.BL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Auth.DAL.Data.Entities.User", null)
+                    b.HasOne("Auth.BL.Data.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -307,20 +371,32 @@ namespace Auth.BL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Auth.DAL.Data.Entities.User", null)
+                    b.HasOne("Auth.BL.Data.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Auth.DAL.Data.Entities.Role", b =>
+            modelBuilder.Entity("Auth.BL.Data.Entities.Role", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Auth.DAL.Data.Entities.User", b =>
+            modelBuilder.Entity("Auth.BL.Data.Entities.User", b =>
                 {
+                    b.Navigation("Cook")
+                        .IsRequired();
+
+                    b.Navigation("Courier")
+                        .IsRequired();
+
+                    b.Navigation("Customer")
+                        .IsRequired();
+
+                    b.Navigation("Manager")
+                        .IsRequired();
+
                     b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618

@@ -15,11 +15,15 @@ namespace Common.DTO {
 
         [Required(ErrorMessage = "Дата рождения обязательна для заполнения")]
         [Display(Name = "Дата рождения")]
+        [Range(typeof(DateTime), "1/1/1900", nameof(DateTime.Now))]
         public DateTime BirthDate { get; set; }
 
         [Required(ErrorMessage = "ФИО обязательно для заполнения")]
         [Display(Name = "ФИО")]
         public string FullName { get; set; }
+        [Required(ErrorMessage = "Адрес обязательно для заполнения")]
+        [Display(Name = "Адрес")]
+        public string Address { get; set; }
         [Required(ErrorMessage = "Пол обязательно для заполнения")]
         [Display(Name = "Пол")]
         public Genders Gender { get; set; }  
@@ -32,11 +36,11 @@ namespace Common.DTO {
         [Display(Name = "Пароль")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Подтверждение пароля обязательно для заполнения")]
+       /* [Required(ErrorMessage = "Подтверждение пароля обязательно для заполнения")]
         [Compare("Password", ErrorMessage = "Пароли не совпадают")]
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердить пароль")]
-        public string PasswordConfirm { get; set; }
+        public string PasswordConfirm { get; set; }*/
 
     }
 }

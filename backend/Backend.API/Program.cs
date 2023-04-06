@@ -15,7 +15,6 @@ builder.Services.AddDishService();
 builder.Services.AddBackendBlServiceDependencies();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => {
     options.SwaggerDoc("v1", new OpenApiInfo {
         Version = "v1",

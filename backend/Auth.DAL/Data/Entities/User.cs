@@ -13,8 +13,10 @@ namespace Auth.BL.Data.Entities
         public string FullName { get; set; }
         public DateTime BirthDate { get; set; }
         public Genders Gender { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
+        public Courier Courier { get; set; }
+        public Manager Manager { get; set; }
+        public Cook Cook { get; set; }
+        public Customer Customer { get; set; }
         public ICollection<UserRole> Roles { get; set; }
     }
 }

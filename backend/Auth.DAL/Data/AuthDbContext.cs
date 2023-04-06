@@ -18,11 +18,34 @@ namespace Auth.BL.Data {
         public override DbSet<Role> Roles { get; set; }
         public override DbSet<UserRole> UserRoles { get; set; }
         public  DbSet<Customer> Customers { get; set; }
+        public DbSet<Cook> Cooks { get; set; }
+        public DbSet<Manager> Managers { get; set; }
+        public DbSet<Courier> Couriers { get; set; }
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
+            builder.Entity<User>()
+                .HasOne(x => x.Cook)
+                .WithOne(x => x.User)
+                .HasForeignKey<Cook>().IsRequired();
+            builder.Entity<User>()
+                .HasOne(x => x.Courier)
+                .WithOne(x => x.User)
+                .HasForeignKey<Courier>().IsRequired();
+            builder.Entity<User>()
+               .HasOne(x => x.Manager)
+               .WithOne(x => x.User)
+               .HasForeignKey<Manager>().IsRequired();
+            builder.Entity<User>()
+               .HasOne(x => x.Customer)
+               .WithOne(x => x.User)
+               .HasForeignKey<Customer>().IsRequired();
+
             builder.Entity<User>(o => {
                 o.ToTable("Users");
             });
+
+
+
             builder.Entity<Role>(o => {
                 o.ToTable("Roles");
             });

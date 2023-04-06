@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Auth.BL.Data.Entities {
-    public class Customer : User {
+    public class Customer {
+        public Guid Id { get; set; }
+        public User User { get; set; }
+
         public string Address { get; set; }
     }
 }

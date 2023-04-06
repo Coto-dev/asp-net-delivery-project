@@ -25,8 +25,8 @@ namespace Auth {
             }
 
             // Try to create Cook Role
-            var composerRole = await roleManager.FindByNameAsync(ApplicationRoleNames.Cook);
-            if (composerRole == null) {
+            var cook = await roleManager.FindByNameAsync(ApplicationRoleNames.Cook);
+            if (cook == null) {
                 var roleResult = await roleManager.CreateAsync(new Role {
                     Name = ApplicationRoleNames.Cook,
                     Type = RoleType.Cook
@@ -37,8 +37,8 @@ namespace Auth {
             }
 
             // Try to create Manager Role
-            var teacherRole = await roleManager.FindByNameAsync(ApplicationRoleNames.Manager);
-            if (teacherRole == null) {
+            var Manager = await roleManager.FindByNameAsync(ApplicationRoleNames.Manager);
+            if (Manager == null) {
                 var roleResult = await roleManager.CreateAsync(new Role {
                     Name = ApplicationRoleNames.Manager,
                     Type = RoleType.Manager
@@ -49,11 +49,21 @@ namespace Auth {
             }
 
             // Try to create Courier Role
-            var studentRole = await roleManager.FindByNameAsync(ApplicationRoleNames.Courier);
-            if (studentRole == null) {
+            var Courier = await roleManager.FindByNameAsync(ApplicationRoleNames.Courier);
+            if (Courier == null) {
                 var roleResult = await roleManager.CreateAsync(new Role {
                     Name = ApplicationRoleNames.Courier,
                     Type = RoleType.Courier
+                });
+                if (!roleResult.Succeeded) {
+                    throw new InvalidOperationException($"Unable to create {ApplicationRoleNames.Courier} role.");
+                }
+            }
+            var Customer = await roleManager.FindByNameAsync(ApplicationRoleNames.Customer);
+            if (Customer == null) {
+                var roleResult = await roleManager.CreateAsync(new Role {
+                    Name = ApplicationRoleNames.Customer,
+                    Type = RoleType.Customer
                 });
                 if (!roleResult.Succeeded) {
                     throw new InvalidOperationException($"Unable to create {ApplicationRoleNames.Courier} role.");
@@ -69,7 +79,6 @@ namespace Auth {
                     FullName = "smdy",
                     BirthDate = new DateTime(1990, 1, 1),
                     Gender = Genders.Male,
-                    Phone = "88005553535"
 
                 }, config["AdminPassword"]) ;
                 if (!userResult.Succeeded) {
