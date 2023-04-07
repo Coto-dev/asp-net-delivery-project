@@ -21,8 +21,13 @@ namespace Auth.Controllers {
         /// </summary>
         [Route("register")]
         [HttpPost]
-        public async Task<ActionResult<TokenResponse>> Register([FromBody] RegisterModelDTO RegisterModel) {
+        public async Task<ActionResult<AuthenticatedResponse>> Register([FromBody] RegisterModelDTO RegisterModel) {
+            if (!ModelState.IsValid) 
+                {
+                throw new Exception(ModelState.Values.ToString());
+                    }
             try {
+
                 return Ok( await _accountService.Register(RegisterModel));
             }
             catch (InvalidOperationException e) {
@@ -52,7 +57,7 @@ namespace Auth.Controllers {
         /// </summary>
         [Route("login")]
         [HttpPost]
-        public async Task<ActionResult<TokenResponse>> Login([FromBody] LoginCredentials Login ) {
+        public async Task<ActionResult<AuthenticatedResponse>> Login([FromBody] LoginCredentials Login ) {
             try {
                 return Ok(await _accountService.Login(Login));
             }
@@ -67,14 +72,8 @@ namespace Auth.Controllers {
                 return Problem(statusCode: 500, title: "Something went wrong");
             }
         }
-        /// <summary>
-        /// log out system user
-        /// </summary>
-        [Route("logout")]
-        [HttpPost]
-        public async Task<ActionResult<Response>> Logout() {
-            return null;
-        }
+        
+        
         /// <summary>
         /// add address to user and make him customer
         /// </summary>
@@ -135,7 +134,7 @@ namespace Auth.Controllers {
         /// <response code = "500" > Internal Server Error</response>
         [Authorize(AuthenticationSchemes = "Bearer")]
         [Route("profile/edit")]
-        [HttpGet]
+        [HttpPut]
         public async Task<ActionResult<ProfileDTO>> EditProfile([FromBody] EditProfileDTO model) {
 
             try {
@@ -144,7 +143,70 @@ namespace Auth.Controllers {
             catch (ArgumentException e) {
                 _logger.LogError(e,
                     $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 400, title: e.Message);
+            }
+            catch (Exception e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
                 return Problem(statusCode: 500, title: "Something went wrong");
+            }
+        }
+        /// <summary>
+        /// update access token 
+        /// </summary>
+        [Route("refresh")]
+        [HttpPost]
+        public async Task<ActionResult<AuthenticatedResponse>> Refresh(TokenApiModel token) {
+
+            try {
+                return Ok(await _accountService.Refresh(token));
+            }
+            catch (KeyNotFoundException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 400, title: e.Message);
+            }
+            catch (ArgumentNullException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 400, title: e.Message);
+            }
+            catch (InvalidOperationException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 401, title: e.Message);
+            }
+            catch (Exception e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 500, title: "Something went wrong");
+            }
+        }
+        /// <summary>
+        /// log out system user
+        /// </summary>
+        [Route("logout")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpPost]
+        public async Task<ActionResult<Response>> Logout() {
+
+            try {
+                return Ok(await _accountService.Logout(User.Identity.Name));
+            }
+            catch (KeyNotFoundException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 400, title: e.Message);
+            }
+            catch (ArgumentNullException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 400, title: e.Message);
+            }
+            catch (InvalidOperationException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 401, title: e.Message);
             }
             catch (Exception e) {
                 _logger.LogError(e,

@@ -18,5 +18,7 @@ namespace Auth.BL.Data.Entities
         public Cook Cook { get; set; }
         public Customer Customer { get; set; }
         public ICollection<UserRole> Roles { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime RefreshTokenExpiryTime { get; set; }
     }
 }

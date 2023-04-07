@@ -4,16 +4,18 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Common.Enums {
     /// <summary>
     /// 0 - male,
     /// 1- female
-    /// </summary>
+    /// </summary> 
+    [Serializable]
     public enum Genders  {
         [Description("male")]
-        Male = 0,
+        Male,
         [Description("female")]
-        Female = 1
+        Female 
     }
 }

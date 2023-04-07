@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Auth.DAL\Auth.DAL.csproj" />
+    <ProjectReference Include="..\AuthInterfaces\AuthInterfaces.csproj" />
     <ProjectReference Include="..\BackendInterfaces\Common.BackendInterfaces.csproj" />
     <ProjectReference Include="..\jwtConfiguration\jwtConfiguration.csproj" />
   </ItemGroup>

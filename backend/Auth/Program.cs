@@ -10,17 +10,22 @@ using Microsoft.OpenApi.Models;
 using Common.Enums;
 using System.Reflection;
 using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddControllers().AddJsonOptions(opts => {
+    var enumConverter = new JsonStringEnumConverter();
+    opts.JsonSerializerOptions.Converters.Add(enumConverter);
+});
 builder.Services.AddControllers();
 
 builder.Services.AddAuthBlDependency();
 builder.Services.AddAuthBlIdentityDependency();
 builder.Services.AddAccountService();
 builder.Services.AddAutoMapperExt();
+builder.Services.AddTokenService();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option => {
