@@ -14,5 +14,6 @@ namespace Common.AuthInterfaces {
         Task<Response> EditProfile(EditProfileDTO model, string userName);
         Task<AuthenticatedResponse> Refresh(TokenApiModel tokenApiModel);
         Task<Response> Logout(string userName);
+        Task<Response> ChangePassword(string userName, ChangePasswordModelDTO model);
     }
 }

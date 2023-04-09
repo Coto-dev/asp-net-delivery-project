@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Common.DTO {
-    public class RestarauntDTO {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+    public class ChangePasswordModelDTO {
 
+        public string Password { get; set; }
+        public string OldPassword { get; set; }
     }
 }

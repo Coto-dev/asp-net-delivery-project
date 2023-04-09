@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Common.DTO {
-    public class RestarauntDTO {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-
+    public class OrderPagedList {
+        public List<OrderDTO> Orders { get; set; }
+        public PageInfoDTO PageInfo { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Common.DTO {
     public class AuthenticatedResponse {
         public string? Token { get; set; }
         public string? RefreshToken { get; set; }
-        [DisplayName("role")] public IList<string>? Role { get; set; }
+        [DisplayName("role")] public List<string>? Role { get; set; }
         [DisplayName("email")] public string? Email { get; set; }
     }
 }

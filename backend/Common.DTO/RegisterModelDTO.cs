@@ -12,9 +12,11 @@ namespace Common.DTO {
     public class RegisterModelDTO {
         [Required(ErrorMessage = "Email обязателен для заполнения")]
         [Display(Name = "Email")]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Дата рождения обязательна для заполнения")]
+        [DataType(DataType.Date)]
         [Display(Name = "Дата рождения")]
         [Range(typeof(DateTime), "1/1/1900", "1/1/2023")]
         public DateTime BirthDate { get; set; }
@@ -27,6 +29,7 @@ namespace Common.DTO {
         public Genders Gender { get; set; }  
 
         [Display(Name = "Телефон")]
+        [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Пароль обязателен для заполнения")]

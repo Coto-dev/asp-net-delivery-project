@@ -9,17 +9,20 @@ using Common.Enums;
 
 namespace Common.DTO {
     public class EditProfileDTO {
-        [MinLength(5)]
+        
+        [MinLength(1)]
+        [MaxLength(64)]
         [DisplayName("ФИО")]
         public string FullName { get; set; }
         [DisplayName("Дата рождения")]
-        public string Birthday { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime BitrhDate { get; set; }
         [DisplayName("Пол")]
         public Genders Gender { get; set; }
         [DisplayName("Адрес")]
-        public string? address { get; set; }
+        public string? Address { get; set; }
         [DataType(DataType.PhoneNumber)]
         [DisplayName("Номер телефона")]
-        public string phoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

@@ -95,7 +95,7 @@ namespace Auth.BL.Services {
             if (loginCredentials == null) {
                 throw new ArgumentNullException(nameof(loginCredentials));
             }
-            var user = await _userManager.FindByEmailAsync(loginCredentials.Email);
+            var user = await _userManager.Users.Include(u => u.Customer).FirstOrDefaultAsync(u => u.UserName == loginCredentials.Email);
             if (user == null) {
                 throw new ArgumentException(nameof(loginCredentials));
             }
@@ -129,56 +129,9 @@ namespace Auth.BL.Services {
                 Role = claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList(),
             });
 
-            /*var identity = await GetIdentity(loginCredentials.Email.ToLower(), loginCredentials.Password);
-            if (identity == null) {
-                throw new ArgumentException("Incorrect username or password");
-            }
-
-            var user = _userManager.Users.Where(x => x.Email == loginCredentials.Email).First();
-
-            var now = DateTime.UtcNow;
-            var jwt = new JwtSecurityToken(
-                issuer: JwtConfiguration.Issuer,
-                audience: JwtConfiguration.Audience,
-                notBefore: now,
-                claims: identity.Claims,
-                expires: now.Add(TimeSpan.FromMinutes(JwtConfiguration.Lifetime)),
-                signingCredentials: new SigningCredentials(JwtConfiguration.GetSymmetricSecurityKey(),
-                    SecurityAlgorithms.HmacSha256));
-
-            _logger.LogInformation("Successful login");
-
-            return new TokenResponse {
-                Token = new JwtSecurityTokenHandler().WriteToken(jwt),
-                Email = identity.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault(""),
-                Role = identity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList(),
-              
-            };*/
+           
         }
-        private async Task<ClaimsIdentity?> GetIdentity(string email, string password) {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) {
-                return null;
-            }
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
-            if (!result.Succeeded) return null;
-
-            var claims = new List<Claim> {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-            };
-
-            foreach (var role in await _userManager.GetRolesAsync(user)) {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-                if (role == ApplicationRoleNames.Customer) {
-                    claims.Add(new Claim(ClaimTypes.StreetAddress, user.Customer.Address.ToString()));
-                }
-            }
-            
-
-            return new ClaimsIdentity(claims, "Token", ClaimTypes.Name, ClaimTypes.Role);
-        }
+        
 
         public async Task<ProfileDTO> GetProfile(string userName) {
             var user = await _userManager.Users.Include(u=>u.Customer).FirstOrDefaultAsync(x=>x.UserName == userName);
@@ -198,11 +151,15 @@ namespace Auth.BL.Services {
         }
 
         public async Task<Response> EditProfile(EditProfileDTO model, string userName) {
-            var user = await _userManager.FindByEmailAsync(userName);
+            var user = await _userManager.Users.Include(u=>u.Customer).FirstOrDefaultAsync(u =>u.UserName == userName);
             if (user == null) throw new KeyNotFoundException("User not found");
 
             user.FullName = Regex.Replace(model.FullName, @"\s+", " ");
-           var result = await _userManager.UpdateAsync(_mapper.Map<User>(model));
+            user.BirthDate = model.BitrhDate;
+            user.Gender = model.Gender;
+            user.PhoneNumber= model.PhoneNumber;
+            if (user.Customer != null && model.Address != null) { user.Customer.Address = model.Address; }
+           var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded) {
                 return new Response {
                     Status = "Ok",
@@ -224,26 +181,24 @@ namespace Auth.BL.Services {
             var principal = _tokenService.GetPrincipalFromExpiredToken(tokenApiModel.AccessToken);
             var userName = principal.Identity.Name;
 
-            var user = await _userManager.FindByEmailAsync(userName);
+            var user = await _userManager.Users.Include(r=>r.Roles).ThenInclude(r=>r.Role).FirstOrDefaultAsync(u=>u.UserName == userName);
             if (user is null)
                 throw new KeyNotFoundException("User with this token does not exist");
             if (user.RefreshToken != tokenApiModel.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
                 throw new InvalidOperationException("Wrong or expired refresh token");
 
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
-            var newRefreshToken = _tokenService.GenerateRefreshToken();
+            /*var newRefreshToken = _tokenService.GenerateRefreshToken();
             user.RefreshToken = newRefreshToken;
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded) {
-              return  new AuthenticatedResponse() {
-                    Token = newAccessToken,
-                    RefreshToken = newRefreshToken
-                };
-            }
-            else {
-                var errors = string.Join(", ", result.Errors.Select(x => x.Description));
-                throw new InvalidOperationException(errors);
-            }
+            var result = await _userManager.UpdateAsync(user);*/
+
+            return new AuthenticatedResponse() {
+                Token = newAccessToken,
+                RefreshToken = tokenApiModel.RefreshToken,
+                Email = user.UserName,
+                Role = user.Roles.IsNullOrEmpty() ? new List<string>() : user.Roles.Select(c => c.Role.ToString()).ToList()
+              };
+            
            
         }
 
@@ -256,6 +211,21 @@ namespace Auth.BL.Services {
                 Status = "200",
                 Message = "Succesfully log out"
             };
+        }
+
+        public async Task<Response> ChangePassword(string userName, ChangePasswordModelDTO model) {
+            var user = await _userManager.FindByEmailAsync(userName);
+            if (user is null) throw new KeyNotFoundException("User not found");
+           var result = await _userManager.ChangePasswordAsync(user, model.OldPassword,model.Password);
+            if (result.Succeeded) {
+                return new Response() {
+                    Status = "200",
+                    Message = "Password succesfully changed"
+                };
+            }
+            var errors = string.Join(", ", result.Errors.Select(x => x.Description));
+            throw new InvalidOperationException(errors);
+            
         }
     }
 }

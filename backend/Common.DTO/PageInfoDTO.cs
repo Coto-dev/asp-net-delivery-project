@@ -12,14 +12,14 @@ namespace Common.DTO {
         /// <summary>
         /// current number of page
         /// </summary>
-        public int Current;
+        public int Current { get; set; }
         /// <summary>
         /// number of max size elements on page
         /// </summary>
-        public int Size = 6;
+        public int Size { get; set; } = 6;
         /// <summary>
         /// total number of pages
         /// </summary>
-        public int Count;
+        public int Count { get; set; }
     }
 }

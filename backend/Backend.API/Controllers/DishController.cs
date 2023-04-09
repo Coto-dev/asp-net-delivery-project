@@ -1,4 +1,5 @@
 ﻿using Common.AuthInterfaces;
+using Common.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,8 +27,8 @@ namespace backend.Controllers {
         /// <response code = "404" >Not Found</response>
         /// <response code = "500" >InternalServerError</response>
         [HttpGet]
-        public async Task GetGishes() {
-           
+        public async Task<ActionResult<DishesPagedListDTO>>GetGishes() {
+            throw new NotImplementedException();
         }
 
 
@@ -37,8 +38,8 @@ namespace backend.Controllers {
         /// <response code = "400" > Bad Request</response>
         [HttpGet]
         [Route("{id}")]
-        public async Task GetGishDetails() {
-
+        public async Task<ActionResult<DishDetailsDTO>> GetGishDetails() {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -49,8 +50,8 @@ namespace backend.Controllers {
         /// <response code = "500" >InternalServerError</response>
         [HttpPost]
         [Route("{id}/rating")]
-        public async Task AddRatingToDish() {
-
+        public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid dishId) {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -62,8 +63,8 @@ namespace backend.Controllers {
         /// <param name="MenuId">if null then saved to hidden menu</param>
         [HttpPost]
         [Route("create/{restarauntId}")]
-        public async Task CreateDish(Guid menuId) {
-
+        public async Task<ActionResult<DishDetailsDTO>> CreateDish(Guid menuId) {
+            throw new NotImplementedException();
         }
     }
 }

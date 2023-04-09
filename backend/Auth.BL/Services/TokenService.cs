@@ -37,7 +37,13 @@ namespace Auth.BL.Services {
 
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token) {
             var tokenValidationParameters = new TokenValidationParameters {
+                ValidateIssuer = true,
+                ValidIssuer = JwtConfiguration.Issuer,
+                ValidateAudience = true,
+                ValidAudience = JwtConfiguration.Audience,
+                ValidateLifetime = true,
                 IssuerSigningKey = JwtConfiguration.GetSymmetricSecurityKey(),
+                ValidateIssuerSigningKey = true,
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

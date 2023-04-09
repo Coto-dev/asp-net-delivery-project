@@ -1,9 +1,18 @@
+
+using Common.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation(); // Включение опции перекомпиляции представления после изменения и сохранения cshtml файла
+builder.Services.AddAuthContext();
+builder.Services.AddBackendContext();
+
+
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) {

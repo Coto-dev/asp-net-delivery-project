@@ -15,12 +15,16 @@ namespace Auth.BL {
                 source => source.MapFrom(source => source.Email))
                 .ForMember(dest => dest.Email,
                 source => source.MapFrom(source => source.Email));
+
             CreateMap<User, ProfileDTO>()
             .ForMember(dest => dest.Roles,
                 source => source.MapFrom(source => source.Roles.Select(x => x.Role).Select(r => r.Name.ToString()).ToList()))
             .ForMember(dest => dest.Address,
-                source => source.MapFrom(source => source.Customer.Address));
-              CreateMap<ProfileDTO, User>();
+                source => source.MapFrom(source => source.Customer.Address))
+            .ForMember(dest => dest.BirthDate,
+                source => source.MapFrom(source => source.BirthDate.Date));
+
+            CreateMap<ProfileDTO, User>();
             CreateMap<User, EditProfileDTO>();
             CreateMap<User, EditProfileDTO>().ReverseMap();
             /*CreateMap<Customer, RegisterModelDTO>();

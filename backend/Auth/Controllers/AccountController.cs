@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Auth.Controllers {
     [Route("api/account")]
+    [ApiController]
     public class AccountController : ControllerBase {
         private readonly ILogger<AccountController> _logger;
         private readonly IAccountService _accountService;
@@ -22,10 +23,6 @@ namespace Auth.Controllers {
         [Route("register")]
         [HttpPost]
         public async Task<ActionResult<AuthenticatedResponse>> Register([FromBody] RegisterModelDTO RegisterModel) {
-            if (!ModelState.IsValid) 
-                {
-                throw new Exception(ModelState.Values.ToString());
-                    }
             try {
 
                 return Ok( await _accountService.Register(RegisterModel));
@@ -64,6 +61,11 @@ namespace Auth.Controllers {
             catch (ArgumentException e) {
                 _logger.LogError(e,
                     $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 400, title: e.Message);
+            }
+            catch (InvalidOperationException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
                 return Problem(statusCode: 401, title: e.Message);
             }
             catch (Exception e) {
@@ -71,9 +73,36 @@ namespace Auth.Controllers {
                     $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
                 return Problem(statusCode: 500, title: "Something went wrong");
             }
+
         }
-        
-        
+        /// <summary>
+        /// Change user's password
+        /// </summary>
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Route("changePassword")]
+        [HttpPut]
+        public async Task<ActionResult<AuthenticatedResponse>> ChangePassword([FromBody] ChangePasswordModelDTO model) {
+            try {
+                return Ok(await _accountService.ChangePassword(User.Identity.Name, model));
+            }
+            catch (KeyNotFoundException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 400, title: e.Message);
+            }
+            catch (InvalidOperationException e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 400, title: e.Message);
+            }
+            catch (Exception e) {
+                _logger.LogError(e,
+                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+                return Problem(statusCode: 500, title: "Something went wrong");
+            }
+        }
+
+
         /// <summary>
         /// add address to user and make him customer
         /// </summary>
@@ -129,6 +158,9 @@ namespace Auth.Controllers {
         /// <summary>
         /// edit ser profile
         /// </summary>
+        /// <remarks>
+        /// if user is not a customer you not need to write address.But if you did it, the address will not be recorded
+        /// </remarks>
         ///<returns></returns>
         /// <response code = "400" > Bad Request</response>
         /// <response code = "500" > Internal Server Error</response>
