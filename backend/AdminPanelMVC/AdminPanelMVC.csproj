@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AdmipPanel.BL\AdmipPanel.BL.csproj" />
+    <ProjectReference Include="..\Common.AdmipPanelInterfaces\Common.AdminPanelInterfaces.csproj" />
+    <ProjectReference Include="..\Common.DTO\Common.DTO.csproj" />
     <ProjectReference Include="..\Common.Extensions\Common.Extensions.csproj" />
   </ItemGroup>
 

@@ -64,9 +64,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common things", "Common thi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jwtConfiguration", "jwtConfiguration\jwtConfiguration.csproj", "{57DC8880-E00F-469D-9C74-E1C21CFF9C51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.AdmipPanelInterfaces", "Common.AdmipPanelInterfaces\Common.AdmipPanelInterfaces.csproj", "{74770D45-6E4F-4F79-A6B3-62D1137475D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.AdminPanelInterfaces", "Common.AdmipPanelInterfaces\Common.AdminPanelInterfaces.csproj", "{74770D45-6E4F-4F79-A6B3-62D1137475D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Extensions", "Common.Extensions\Common.Extensions.csproj", "{76C6BD21-F6F0-4E79-BC3C-9DBF0CB5E2E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Extensions", "Common.Extensions\Common.Extensions.csproj", "{76C6BD21-F6F0-4E79-BC3C-9DBF0CB5E2E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

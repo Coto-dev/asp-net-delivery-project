@@ -1,4 +1,5 @@
 
+using AdmipPanel.BL.Extensions;
 using Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,8 @@ builder.Services.AddRazorPages().AddRazorRuntimeCompilation(); // Включение опци
 builder.Services.AddAuthContext();
 builder.Services.AddBackendContext();
 
-
+builder.Services.AddIdentityManagers();
+builder.Services.AddAccountServiceDependency();
 
 var app = builder.Build();
 

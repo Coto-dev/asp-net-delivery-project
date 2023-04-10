@@ -7,9 +7,8 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Auth.BL;
-using Auth.BL.Data;
-using Auth.BL.Data.Entities;
+using Auth.DAL.Data;
+using Auth.DAL.Data.Entities;
 using AuthInterfaces;
 using AutoMapper;
 using Common.AuthInterfaces;
@@ -38,8 +37,7 @@ namespace Auth.BL.Services {
             _logger = logger;
             _ctx= ctx;
             _tokenService= tokenService;
-
-        }
+          }
         public async Task<AuthenticatedResponse> Register(RegisterModelDTO RegisterModel) {
 
             if (RegisterModel == null) throw new ArgumentNullException(nameof(RegisterModel));

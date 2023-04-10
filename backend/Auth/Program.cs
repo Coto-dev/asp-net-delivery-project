@@ -1,7 +1,7 @@
 using System.Reflection;
 using Auth;
 using Auth.BL;
-using Auth.BL.Data;
+using Auth.DAL.Data;
 using Auth.BL.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

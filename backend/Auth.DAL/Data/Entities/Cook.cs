@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth.BL.Data.Entities {
+namespace Auth.DAL.Data.Entities {
     public class Cook {
         public Guid Id { get; set; }
         public User User { get; set; }

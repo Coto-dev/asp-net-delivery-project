@@ -13,7 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Auth.DAL\Auth.DAL.csproj" />
     <ProjectReference Include="..\Backend.DAL\Backend.DAL.csproj" />
-    <ProjectReference Include="..\Common.AdmipPanelInterfaces\Common.AdmipPanelInterfaces.csproj" />
+    <ProjectReference Include="..\Common.AdmipPanelInterfaces\Common.AdminPanelInterfaces.csproj" />
+    <ProjectReference Include="..\Common.DTO\Common.DTO.csproj" />
   </ItemGroup>
 
 </Project>

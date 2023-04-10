@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth.BL.Data.Entities {
+namespace Auth.DAL.Data.Entities {
     public class Courier {
         public Guid Id { get; set; }
         public User User { get; set; }

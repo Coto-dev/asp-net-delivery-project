@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.DTO {
     public class DishesPagedListDTO {
-        List<DishDetailsDTO> Dishes { get; set; }
+        public  List<DishDetailsDTO> Dishes { get; set; }
         /// <summary>
         /// pagination info
         /// </summary>

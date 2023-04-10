@@ -27,7 +27,7 @@ namespace backend.Controllers {
         /// <response code = "404" >Not Found</response>
         /// <response code = "500" >InternalServerError</response>
         [HttpGet]
-        public async Task<ActionResult<DishesPagedListDTO>>GetGishes() {
+        public async Task<ActionResult<DishesPagedListDTO>> GetGishes([FromQuery] DishFilterModelDTO model) {
             throw new NotImplementedException();
         }
 

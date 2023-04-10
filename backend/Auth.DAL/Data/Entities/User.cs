@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Common.Enums;
 using Microsoft.AspNetCore.Identity;
 
-namespace Auth.BL.Data.Entities
+namespace Auth.DAL.Data.Entities
 {
     public class User : IdentityUser<Guid>
     {

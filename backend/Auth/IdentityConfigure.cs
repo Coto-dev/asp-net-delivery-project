@@ -1,4 +1,4 @@
-﻿using Auth.BL.Data.Entities;
+﻿using Auth.DAL.Data.Entities;
 using Common.Enums;
 using Microsoft.AspNetCore.Identity;
 
