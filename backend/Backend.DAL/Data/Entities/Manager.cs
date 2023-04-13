@@ -10,9 +10,8 @@ namespace Backend.DAL.Data.Entities {
 
     public class Manager {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        [ForeignKey("Restaraunt")]
-        public Guid RestarauntId { get; set; }
+        public Guid Id { get; set; } 
+
         public Restaraunt Restaraunt { get; set; }
     }
 }

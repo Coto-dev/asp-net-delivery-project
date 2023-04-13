@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.DAL.Data.Entities
 {
-    public class Restaraunt
-    {
+    public class Restaraunt {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
+        public string? PhotoUrl { get; set; }
         public List<Menu> Menus { get; set; } = new List<Menu>();
-        public List<Cook> Cooks { get; set; }
-        public List<Manager> Managers { get; set; } 
+        public List<Cook> Cooks { get; set; } = new List<Cook>();
+        public List<Manager> Managers { get; set; } = new List<Manager>();
         public DateTime? DeletedTime { get; set; }
 
     }

@@ -1,0 +1,16 @@
+﻿@model Common.DTO.RestarauntViewModel
+
+<form asp-action="Create" asp-controller="Restaraunt" method="Post" 
+enctype="multipart/form-data"> 
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input type="text" class="form-control" asp-for="Name">
+        <span class="text-danger" asp-validation-for="Name"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="PhotoUrl"></label>
+        <input type="text" class="form-control" asp-for="PhotoUrl">
+        <span class="text-danger" asp-validation-for="PhotoUrl"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>

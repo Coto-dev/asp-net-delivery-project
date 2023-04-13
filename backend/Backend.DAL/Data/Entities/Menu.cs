@@ -12,8 +12,6 @@ namespace Backend.DAL.Data.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public List<Dish> Dishes { get; set; } = new List<Dish>();
-        [ForeignKey("Restaraunt")]
-        public Guid RestarauntId { get; set; }
         public Restaraunt Restaraunt { get; set; }
         public DateTime? DeletedTime { get; set; }
 

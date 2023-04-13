@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Backend.DAL.Data.Entities {
     public class Courier {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; }
         public List<Order> Orders { get; set; } = new List<Order>();
     }
 }

@@ -32,9 +32,12 @@ namespace Backend.DAL.Data {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<Restaraunt>()
-                .HasKey(x => x.Id);
             
+            
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BackendDb;Trusted_Connection=True");
+            optionsBuilder.EnableSensitiveDataLogging();
         }
     }
 
