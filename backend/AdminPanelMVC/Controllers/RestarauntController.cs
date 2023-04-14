@@ -3,9 +3,10 @@ using AdminPanelMVC.Models;
 using Common.AdminPanelInterfaces;
 using Common.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AdminPanelMVC.Controllers {
-    public class RestarauntController : Controller {
+	public class RestarauntController : Controller {
         private readonly ILogger<RestarauntController> _logger;
         private readonly ICrudService _crudService;
 
@@ -13,14 +14,15 @@ namespace AdminPanelMVC.Controllers {
             _logger = logger;
             _crudService = crudservice;
         }
-
-        public IActionResult Index() {
+		[Route("")]
+		[Route("Restaraunt")]
+		public IActionResult Index() {
 
             var model = _crudService.GetRestarauntList();
             return View(model);
         }
         [HttpGet]
-        [Route("{id}")]
+        [Route("Details/{id}")]
         public async Task<IActionResult> Details(Guid id) {
             try {
                 var model = await _crudService.GetDetails(id);
@@ -35,9 +37,28 @@ namespace AdminPanelMVC.Controllers {
 		public async Task<IActionResult> AddCook(AddUserViewModel model) {
 			try {
 				await _crudService.AddCook(model.Email , model.restarauntId);
-				return View();
+				return RedirectToAction("Details",new {id = model.restarauntId });
 			}
-            catch(KeyNotFoundException ex) {
+			catch (KeyNotFoundException ex) {
+				ModelState.AddModelError("Email", ex.Message);
+				return RedirectToAction("Details", new { id = model.restarauntId });
+			}
+			catch (InvalidOperationException ex) {
+				ModelState.AddModelError("Email", ex.Message);
+				return RedirectToAction("Details", new { id = model.restarauntId });
+			}
+			catch (Exception ex) {
+				ModelState.AddModelError("Email", ex.Message);
+				return RedirectToAction("Details", new { id = model.restarauntId });
+			}
+		}
+		[HttpPost]
+		public async Task<IActionResult> AddManager(AddUserViewModel model) {
+			try {
+				await _crudService.AddManager(model.Email, model.restarauntId);
+				return RedirectToAction("Details");
+			}
+			catch (KeyNotFoundException ex) {
 				ModelState.AddModelError("", ex.Message);
 				return RedirectToAction("Index");
 			}

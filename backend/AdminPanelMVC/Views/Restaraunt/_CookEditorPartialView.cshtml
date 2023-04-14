@@ -4,7 +4,7 @@
 
 		<input class="form-control" type="hidden" asp-for="restarauntId" value=@Model.restarauntId.ToString()>
 		<input class="form-control" asp-for="Email">
-
+		<span class="text-danger" asp-validation-for="Email"></span>
 		<div class="input-group-append" >
 			<button class="btn btn-outline-secondary" type="submit">Submit</button>
 		</div>
