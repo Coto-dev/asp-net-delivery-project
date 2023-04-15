@@ -97,14 +97,47 @@ namespace AdmipPanel.BL.Services {
 		}
 
 		public async Task CreateRestaraunt(RestarauntViewModel model) {
-          await _contextBackend.AddAsync(new Restaraunt() {
+			var sameRest = await _contextBackend.Restaraunts.FirstOrDefaultAsync(x=>x.Name== model.Name);
+			if (sameRest != null) {
+				if (!sameRest.DeletedTime.HasValue)
+				throw new ArgumentException($"restaraunt with same title - {model.Name} already exists");
+			}
+
+			await _contextBackend.AddAsync(new Restaraunt() {
                 Name = model.Name,
-                PhotoUrl = model.PhotoUrl
+                PhotoUrl = model.PhotoUrl,
+				Address = model.Address,
+				Description = model.Description,
             });
             await _contextBackend.SaveChangesAsync();
         }
 
-        public async Task<RestarauntViewModel> GetDetails(Guid id) {
+		public async Task Delete(Guid id) {
+			var rest = await _contextBackend.Restaraunts.FirstOrDefaultAsync(x=>x.Id == id);
+			rest.DeletedTime = DateTime.UtcNow;
+			await _contextBackend.SaveChangesAsync();
+		}
+
+		public async Task Edit(EditRestarauntVIew model) {
+			var rest = await _contextBackend.Restaraunts.FirstOrDefaultAsync(x => x.Name == model.Name);
+			rest.Address = model.Address;
+			rest.Description = model.Description;
+			rest.PhotoUrl = model.PhotoUrl;
+			rest.Name = model.Name;
+			await _contextBackend.SaveChangesAsync();
+		}
+
+		public async Task<EditRestarauntVIew> GetForEdit(Guid id) {
+			var rest = await _contextBackend.Restaraunts.FirstOrDefaultAsync(x => x.Id == id);
+			return new EditRestarauntVIew {
+				Address = rest.Address,
+				Description = rest.Description,
+				Name = rest.Name,
+				PhotoUrl = rest.PhotoUrl
+			};
+		}
+
+		public async Task<RestarauntViewModel> GetDetails(Guid id) {
             var viewModel =  _mapper.Map<RestarauntViewModel>(await _contextBackend.Restaraunts.Include(x=>x.Cooks).Include(x=>x.Managers).FirstOrDefaultAsync(x=>x.Id == id));
 			var cookEmails = viewModel.CookEmails.Select(x=> _userManager.Users.FirstOrDefault(u=>u.Id.ToString() == x)).Select(u=>u.Email).ToList();
 			var managerEmails = viewModel.ManagerEmails.Select(x => _userManager.Users.FirstOrDefault(u => u.Id.ToString() == x)).Select(u => u.Email).ToList();
@@ -113,9 +146,46 @@ namespace AdmipPanel.BL.Services {
 			return viewModel;
         }
 
-        public List<RestarauntDTO> GetRestarauntList() {
+		public async Task<DeleteViewRestaraunt> GetForDelete(Guid id) {
+			var rest = await _contextBackend.Restaraunts.FirstOrDefaultAsync(x => x.Id == id);
+			if (rest == null) throw new KeyNotFoundException("This restaraunt does not exist");
+			return new DeleteViewRestaraunt {
+				Id = rest.Id,
+				Name = rest.Name
+			};
+		}
+
+		public List<RestarauntDTO> GetRestarauntList() {
             var Restaraunts =  _contextBackend.Restaraunts.Select(x=> _mapper.Map<RestarauntDTO>(x)).ToList();
             return Restaraunts;
         }
-    }
+
+		public async Task DeleteCook(AddUserViewModel model) {
+			var rest = await _contextBackend.Restaraunts.Include(x => x.Cooks).FirstOrDefaultAsync(x => x.Id == model.restarauntId);
+			var user = await _userManager.Users.Include(x=>x.Cook).FirstOrDefaultAsync(x=>x.Email == model.Email);
+			var cookRestaraunt = rest.Cooks.FirstOrDefault(x => x.Id == user.Id);
+			if (cookRestaraunt == null) {
+				throw new ArgumentException("user doesn't work at this restaraunt");
+			}
+			user.Cook = null;
+			var result = await _userManager.RemoveFromRoleAsync(user, ApplicationRoleNames.Cook);
+			await _userManager.UpdateAsync(user);
+			rest.Cooks.Remove(cookRestaraunt);
+			await _contextBackend.SaveChangesAsync();
+		}
+
+		public async Task DeleteManager(AddUserViewModel model) {
+			var rest = await _contextBackend.Restaraunts.Include(x => x.Managers).FirstOrDefaultAsync(x => x.Id == model.restarauntId);
+			var user = await _userManager.Users.Include(x => x.Manager).FirstOrDefaultAsync(x => x.Email == model.Email);
+			var managerRestaraunt = rest.Managers.FirstOrDefault(x => x.Id == user.Id);
+			if (managerRestaraunt == null) {
+				throw new ArgumentException("user doesn't work at this restaraunt");
+			}
+			user.Manager = null;
+			var result = await _userManager.RemoveFromRoleAsync(user, ApplicationRoleNames.Manager);
+				await  _userManager.UpdateAsync(user);
+				rest.Managers.Remove(managerRestaraunt);
+				await _contextBackend.SaveChangesAsync();
+		}
+	}
 }

@@ -2,26 +2,32 @@
 @model List<Common.DTO.RestarauntDTO>
 <div class="row">
 	<div class="col-12">
-		<h1>Каталог ресторанов</h1>
-		@if (User.IsInRole(ApplicationRoleNames.Administrator)) {
-			<div class="mb-2">
-				<a asp-action="Create" asp-controller="Restaraunt" class="btn btn-outline-primary btn-sm">Создать</a>
-			</div>
-		}
-
+		<div class="d-flex flex-row justify-content-between mb-4">
+			<h1>Каталог ресторанов</h1>
+			@if (User.IsInRole(ApplicationRoleNames.Administrator)) {
+				<div class="my-auto">
+					<a asp-action="Create" asp-controller="Restaraunt" class="btn btn-outline-primary btn-lg px-4">Создать</a>
+				</div>
+			}
+		</div>
 		@if (Model.Any()) {
-			<div class="container row">
-				@foreach (var restaraunt in Model) {
-					<a asp-action="Details" asp-controller="Restaraunt" asp-route-id="@restaraunt.Id" class="col-4 text-decoration-none text-black">
-						<div class="card">
-							<div class="card-header">@restaraunt.Name  </div>
-							<div class="card-body">
-								
-								<img src="@restaraunt.PhotoUrl" class="img-fluid">
+			<div class="container">
+				<div class="container-fluid row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4">
+					@foreach (var restaraunt in Model) {
+						<a asp-action="Details" asp-controller="Restaraunt" asp-route-id="@restaraunt.Id" class="col mt-3 text-decoration-none text-black">
+							<div class="card h-100">
+
+								<img src="@restaraunt.PhotoUrl" class="card-img-top h-50">
+								<div class="card-body">
+									<h4 class="card-title">@restaraunt.Name</h4>
+									<div class="">@restaraunt.Description</div>
+								</div>
+								<div class="card-footer">@restaraunt.Address</div>
+
 							</div>
-						</div>
-					</a>
-				}
+						</a>
+					}
+				</div>
 			</div>
 		}
 		else {

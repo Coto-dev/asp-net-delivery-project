@@ -1,41 +1,82 @@
 ﻿@model Common.DTO.RestarauntViewModel
 
-<div class="container row">
-	<div class="card">
-		<div class="card-header">@Model.Name  </div>
-		<div class="card-body">
 
-			<img src="@Model.PhotoUrl" class="img-fluid">
+<div class="container">
+	@if (TempData["Errors"] != null) {
+		<div class="alert alert-danger d-flex align-items-center" role="alert">
+			<svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill" /></svg>
+			<div>
+				@TempData["Errors"].ToString()
+			</div>
+		</div>
+	}
+	<div class="card text-black ">
+		<h5 class="card-title fs-1 mt-2 mx-2 "></h5>
+		<div class="container text-center">
+			<div class=" card-body mb-2">
+				<div class="mb-3">
+					<img src="@Model.PhotoUrl" class="img-fluid rounded col-6 mx-auto d-block" alt="" />
+				</div>
+				<h4 class="card-title">@Model.Name</h4>
+				<div class="mb-2">@Model.Description</div>
+				@if (Model.DeletedTime.Year != 1) {
+					<div>Deleted</div>
+				}
+
+			</div>
+
+		</div>
+		<div class="card-footer">
+			<div class="container-fluid row">
+				<div class="col">@Model.Address</div>
+				<div class="col d-flex justify-content-end">
+					<a class="btn btn-warning me-1" asp-action="Edit" asp-controller="Restaraunt" asp-route-id="@Model.ViewModel.restarauntId">Редактировать</a>
+					<a class="btn btn-danger" asp-action="Delete" asp-controller="Restaraunt" asp-route-id="@Model.ViewModel.restarauntId">Удалить</a>
+				</div>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="container-fluid">
-	<div>Cooks</div>
-	@await Html.PartialAsync("_CookEditorPartialView", @Model.ViewModel)
-	@foreach (var cook in Model.CookEmails) {
-		<form>
-			<div asp-validation-summary="All" class="input-group mb-3">
 
-				<input type="text" class="form-control " id="inlineFormInputName" readonly value="@cook">
+	<div class="container-fluid mt-3">
+		<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Cooks</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Managers</button>
+			</li>
+		</ul>
+		<div class="tab-content" id="pills-tabContent">
+			<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+				@await Html.PartialAsync("_CookEditorPartialView", @Model.ViewModel)
+				@foreach (var cook in Model.CookEmails) {
+					@await Html.PartialAsync("_CookDeletePartialView", new Common.DTO.AddUserViewModel {Email = cook, restarauntId = Model.ViewModel.restarauntId})
+					@*<form>
+						<div asp-validation-summary="All" class="input-group mb-3">
 
-				<div class="input-group-append">
-					<button class="btn btn-outline-danger" type="submit">Delete</button>
-				</div>
+							<input type="text" class="form-control " id="inlineFormInputName" readonly value="@cook">
+
+							<div class="input-group-append">
+								<a class="btn btn-outline-danger" >Удалить</a>
+							</div>
+						</div>
+					</form>*@
+				}
 			</div>
-		</form>
-	}
-	<div>Managers</div>
-	@await Html.PartialAsync("_ManagerEditorPartialView", @Model.ViewModel)
-	@foreach (var manager in Model.ManagerEmails) {
-		<form>
-			<div asp-validation-summary="All" class="input-group mb-3">
+			<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+				@await Html.PartialAsync("_ManagerEditorPartialView", @Model.ViewModel)
+				@foreach (var manager in Model.ManagerEmails) {
+					<form>
+						<div asp-validation-summary="All" class="input-group mb-3">
 
-				<input type="text" class="form-control " id="inlineFormInputName" readonly value="@manager">
+							<input type="text" class="form-control " id="inlineFormInputName" readonly value="@manager">
 
-				<div class="input-group-append">
-					<button class="btn btn-outline-danger" type="submit">Delete</button>
-				</div>
+							<div class="input-group-append">
+								<button class="btn btn-outline-danger" type="submit">Delete</button>
+							</div>
+						</div>
+					</form>
+				}
 			</div>
-		</form>
-	}
-</div>
+		</div>
+	</div>

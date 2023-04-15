@@ -12,6 +12,14 @@ namespace Common.AdminPanelInterfaces {
         public Task<RestarauntViewModel> GetDetails(Guid id);
         public Task AddCook(string email , Guid restarauntId);
 		public Task AddManager(string email, Guid restarauntId);
+        public Task DeleteCook(AddUserViewModel model);
+		public Task DeleteManager(AddUserViewModel model);
+		public Task Delete(Guid id);
+		Task<DeleteViewRestaraunt> GetForDelete(Guid id);
+
+		Task Edit(EditRestarauntVIew model);
+		Task<EditRestarauntVIew> GetForEdit(Guid id);
+
 
 	}
 }

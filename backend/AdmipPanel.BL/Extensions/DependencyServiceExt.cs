@@ -13,7 +13,8 @@ namespace AdmipPanel.BL.Extensions {
         public static void AddAccountServiceDependency(this IServiceCollection services) {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ICrudService, CrudService>();
-            services.AddAutoMapper(typeof(MappingProfile));
+			services.AddScoped<UserManagerService, UserManagerService>();
+			services.AddAutoMapper(typeof(MappingProfile));
 
         }
     }

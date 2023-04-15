@@ -14,6 +14,8 @@ namespace Backend.DAL.Data.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public string? PhotoUrl { get; set; }
+        public string? Description { get; set; }
+        public string? Address { get; set; }
         public List<Menu> Menus { get; set; } = new List<Menu>();
         public List<Cook> Cooks { get; set; } = new List<Cook>();
         public List<Manager> Managers { get; set; } = new List<Manager>();
