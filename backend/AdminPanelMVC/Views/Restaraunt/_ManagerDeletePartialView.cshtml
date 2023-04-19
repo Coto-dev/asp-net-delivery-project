@@ -1,6 +1,6 @@
 ﻿@model Common.DTO.AddUserViewModel
 <form asp-action="DeleteManager" asp-controller="Restaraunt" method="post">
-	<div class="input-group mb-3">
+	<div asp-validation-summary="All" class="input-group mb-3">
 
 		<input class="form-control" type="hidden" asp-for="restarauntId" value=@Model.restarauntId.ToString()>
 		<input type="text" class="form-control " asp-for="Email" id="inlineFormInputName" readonly value="@Model.Email">

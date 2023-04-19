@@ -1,13 +1,12 @@
-﻿
-@model Common.DTO.AddUserViewModel
+﻿@model Common.DTO.AddUserViewModel
 <form asp-action="AddManager" asp-controller="Restaraunt" method="post">
 	<div asp-validation-summary="All" class="input-group mb-3">
 
-				<input class="form-control" type="hidden" asp-for="restarauntId" value=@Model.restarauntId.ToString()>
-				<input class="form-control" asp-for="Email">
-				<span class="text-danger" asp-validation-for="Email"></span>
-			<div class="input-group-append" >
+		<input class="form-control" type="hidden" asp-for="restarauntId" value=@Model.restarauntId.ToString()>
+		<input class="form-control" asp-for="Email">
+		<span class="text-danger" asp-validation-for="Email"></span>
+		<div class="input-group-append">
 			<button class="btn btn-primary" type="submit">Подтвердить</button>
 		</div>
-		</div>
-	</form>
+	</div>
+</form>

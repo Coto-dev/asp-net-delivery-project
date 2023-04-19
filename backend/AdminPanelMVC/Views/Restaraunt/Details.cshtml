@@ -51,31 +51,14 @@
 				@await Html.PartialAsync("_CookEditorPartialView", @Model.ViewModel)
 				@foreach (var cook in Model.CookEmails) {
 					@await Html.PartialAsync("_CookDeletePartialView", new Common.DTO.AddUserViewModel {Email = cook, restarauntId = Model.ViewModel.restarauntId})
-					@*<form>
-						<div asp-validation-summary="All" class="input-group mb-3">
-
-							<input type="text" class="form-control " id="inlineFormInputName" readonly value="@cook">
-
-							<div class="input-group-append">
-								<a class="btn btn-outline-danger" >Удалить</a>
-							</div>
-						</div>
-					</form>*@
+				
 				}
 			</div>
 			<div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
 				@await Html.PartialAsync("_ManagerEditorPartialView", @Model.ViewModel)
 				@foreach (var manager in Model.ManagerEmails) {
-					<form>
-						<div asp-validation-summary="All" class="input-group mb-3">
+					@await Html.PartialAsync("_ManagerDeletePartialView", new Common.DTO.AddUserViewModel {Email = manager, restarauntId = Model.ViewModel.restarauntId})
 
-							<input type="text" class="form-control " id="inlineFormInputName" readonly value="@manager">
-
-							<div class="input-group-append">
-								<button class="btn btn-outline-danger" type="submit">Delete</button>
-							</div>
-						</div>
-					</form>
 				}
 			</div>
 		</div>

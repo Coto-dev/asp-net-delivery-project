@@ -1,0 +1,78 @@
+﻿@using Common.Enums;
+@model Common.DTO.UsersViewModel
+<form method="post">
+	<div class="modal fade" id="a_@Model.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Изменение пользователя</h5>
+					<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input class="form-control" type="hidden" asp-for="Id" value=@Model.Id.ToString()>
+					<input class="form-control" type="hidden" asp-for="Email" value=@Model.Email.ToString()>
+					<div class="mb-3">
+						<label asp-for="FullName" class="form-label"></label>
+						<input type="text" class="form-control" asp-for="FullName">
+						<span class="text-danger" asp-validation-for="FullName"></span>
+					</div>
+					<select asp-for="Gender" class="form-select"  aria-label="select example">
+						@if (Model.Gender == Genders.Male) {
+							<option value="Male" selected>Male</option>
+							<option value="Female" >Female</option>
+						}
+						else {
+							<option value="Female" selected>Female</option>
+							<option value="Male" >Male</option>
+						}
+					</select>
+					<div class="mb-3">
+						<label class="form-label" asp-for="BirthDate.Date"></label>
+						<input type="date" class="form-control" asp-for="BirthDate">
+						<span class="text-danger" asp-validation-for="BirthDate"></span>
+					</div>
+					<div class="mb-3">
+						<label class="form-label" asp-for="PhoneNumber"></label>
+						<input type="text" class="form-control" asp-for="PhoneNumber">
+						<span class="text-danger" asp-validation-for="PhoneNumber"></span>
+					</div>
+					@if (Model.Roles.Contains(ApplicationRoleNames.Customer)) {
+						<div class="mb-3">
+							<label asp-for="Address" class="form-label"></label>
+							<input type="text" class="form-control" asp-for="Address">
+							<span class="text-danger" asp-validation-for="Address"></span>
+						</div>
+					}
+					<select asp-for="Roles" class="form-select" multiple aria-label="multiple select example">
+						@if (Model.Roles.Contains(ApplicationRoleNames.Cook)) {
+							<option value="Cook" selected>Cook</option>
+						}
+						else {
+							<option value="Cook">Cook</option>
+						}
+
+						@if (Model.Roles.Contains(ApplicationRoleNames.Customer)) {
+							<option value="Customer" selected>Customer</option>
+						}
+						else {
+							<option value="Customer">Customer</option>
+						}
+						@if (Model.Roles.Contains(ApplicationRoleNames.Manager)) {
+							<option value="Manager" selected>Manager</option>
+						}
+						else {
+							<option value="Manager">Manager</option>
+						}
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-danger"  asp-action="BanUser" asp-controller="UserManager">Забанить</button>
+					<button type="submit" class="btn btn-primary" asp-action="EditUser" asp-controller="UserManager">Сохранить</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

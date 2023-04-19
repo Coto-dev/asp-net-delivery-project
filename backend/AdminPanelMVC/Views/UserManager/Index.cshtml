@@ -1,0 +1,65 @@
+﻿@using Common.Enums;
+@model Common.DTO.UsersSearchedViewModel
+
+<div class="container-fluid">
+	@if (TempData["Errors"] != null) {
+		<div class="alert alert-danger d-flex align-items-center" role="alert">
+			<svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill" /></svg>
+			<div>
+				@TempData["Errors"].ToString()
+			</div>
+		</div>
+	}
+	<div class="">
+		<form asp-action="index" asp-controller="UserManager" method="post">
+			<div class="input-group mb-3">
+				<input asp-for="Search" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="button-addon2">
+				<button class="btn btn-outline-secondary px-4" type="submit">Найти</button>
+			</div>
+		</form>
+		<div class="d-flex">
+			<div class="col">
+				<div class="row text-muted fw-bold">
+					<div class="col">Email</div>
+					<div class="col ps-0">Roles</div>
+				</div>
+			</div>
+
+			<button class="btn btn-link text-white" disabled type="button">Изменить</button>
+		</div>
+
+		@if (Model.Users.Any()) {
+			@foreach (var user in Model.Users.Where(u => !u.Roles.Contains(ApplicationRoleNames.Administrator))) {
+				<form asp-action="index" asp-controller="UserManager" method="post">
+					<div a class="input-group mb-3">
+
+						<input class="form-control" type="hidden" asp-for="@user.Id" value=@user.Id.ToString()>
+						<div class="col">
+							<div class="row">
+								<div class="col">
+									<input class="form-control" asp-for="@user.Email" readonly>
+								</div>
+								<div class="col">
+									<input class="form-control" asp-for="@user.Roles" readonly value=@String.Join(", ", user.Roles.ToArray())>
+								</div>
+							</div>
+
+						</div>
+						<div class="input-group-append ms-3">
+							<button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#a_@user.Id">Изменить</button>
+						</div>
+					</div>
+				</form>
+				@await Html.PartialAsync("_ModalUserPartialVIew", user)
+			}
+
+		}
+		else {
+			<div class="alert alert-warning alert-dismissible fade show" role="alert">
+				Ничего не найдено...
+			</div>
+		}
+	</div>
+
+</div>
+

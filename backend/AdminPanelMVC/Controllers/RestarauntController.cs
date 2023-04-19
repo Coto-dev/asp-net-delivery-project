@@ -42,7 +42,6 @@ namespace AdminPanelMVC.Controllers {
 		}
 		[HttpPost]
 		public async Task<IActionResult> AddCook(AddUserViewModel model) {
-			var Errors = new Dictionary<string, string>();
 
 			try {
 				await _crudService.AddCook(model.Email, model.restarauntId);
@@ -52,6 +51,13 @@ namespace AdminPanelMVC.Controllers {
 				_logger.LogError(ex,
 				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
                 TempData["Errors"] += ex.Message;
+				return RedirectToAction("Details", new { id = model.restarauntId });
+			}
+			catch (ArgumentException ex) {
+				_logger.LogError(ex,
+				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+
+				TempData["Errors"] += ex.Message;
 				return RedirectToAction("Details", new { id = model.restarauntId });
 			}
 			catch (InvalidOperationException ex) {
@@ -79,6 +85,13 @@ namespace AdminPanelMVC.Controllers {
 				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
 
 				TempData["Errors"] += ex.Message; 
+				return RedirectToAction("Details", new { id = model.restarauntId });
+			}
+			catch (ArgumentException ex) {
+				_logger.LogError(ex,
+				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+
+				TempData["Errors"] += ex.Message;
 				return RedirectToAction("Details", new { id = model.restarauntId });
 			}
 			catch (InvalidOperationException ex) {

@@ -50,7 +50,8 @@ namespace AdmipPanel.BL.Services {
 			
 
 			var result = await _userManager.AddToRoleAsync(user, ApplicationRoleNames.Cook);
-			if (result.Succeeded) {
+			var errors = string.Join(", ", result.Errors.Select(x => x.Description));
+			if (result.Succeeded || errors == "User already in role 'Cook'.") {
 				user.Cook = new CookAuth() {
 					Id = user.Id,
 				};
@@ -59,13 +60,13 @@ namespace AdmipPanel.BL.Services {
 					Restaraunt = restraunt,
 
 				};
+				if (restraunt.Cooks.Any(x=>x.Id == cook.Id)) throw new ArgumentException("this cook already exist in this restaraunt");
 				await _contextBackend.AddAsync(cook);
 				await _contextBackend.SaveChangesAsync();
 				await _userManager.UpdateAsync(user);
 			}
 			else {
-				var errors = string.Join(", ", result.Errors.Select(x => x.Description));
-				throw new InvalidOperationException(errors);
+					throw new InvalidOperationException(errors);
 			}
 		}
 
@@ -75,23 +76,24 @@ namespace AdmipPanel.BL.Services {
 				throw new KeyNotFoundException("user with this email does not exist");
 			}
 			var result = await _userManager.AddToRoleAsync(user, ApplicationRoleNames.Manager);
-			if (result.Succeeded) {
+			var errors = string.Join(", ", result.Errors.Select(x => x.Description));
+			if (result.Succeeded || errors == "User already in role 'Manager'.") {
 				user.Manager = new ManagerAuth() {
 					Id = user.Id,
 				};
-				var restraunt = await _contextBackend.Restaraunts.Include(r => r.Cooks).FirstOrDefaultAsync();
+				var restraunt = await _contextBackend.Restaraunts.Include(r => r.Managers).FirstOrDefaultAsync();
 				if (restraunt == null) throw new KeyNotFoundException("restaraunt with this id does not exist");
 				var manager = new Manager() {
 					Id = user.Id,
 					Restaraunt = restraunt,
 
 				};
+				if (restraunt.Managers.Any(x => x.Id == manager.Id)) throw new ArgumentException("this manager already exist in this restaraunt");
 				await _contextBackend.AddAsync(manager);
 				await _contextBackend.SaveChangesAsync();
 				await _userManager.UpdateAsync(user);
 			}
 			else {
-				var errors = string.Join(", ", result.Errors.Select(x => x.Description));
 				throw new InvalidOperationException(errors);
 			}
 		}

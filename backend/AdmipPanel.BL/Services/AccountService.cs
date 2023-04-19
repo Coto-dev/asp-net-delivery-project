@@ -30,12 +30,11 @@ namespace AdmipPanel.BL.Services {
             _userManager = userManager;
         }
         public async Task Login(LoginCredentials model) {
-            var user = await _userManager.FindByNameAsync(model.Email); // пытаемся найти юзера по email
+            var user = await _userManager.FindByNameAsync(model.Email); 
             if (user == null) {
                 throw new KeyNotFoundException($"User with email = {model.Email} does not found");
             }
 
-            // Далее генерируем набор клеймов, состоящих из необходимых для быстрого доступа данных
             var claims = new List<Claim>
             {
                 new ("Name", user.UserName),
@@ -43,24 +42,20 @@ namespace AdmipPanel.BL.Services {
                 new (ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            // Также в клеймы добавляем все роли пользователя, если они есть
             if (user.Roles?.Any() == true) {
                 var roles = user.Roles.Select(x => x.Role).ToList();
                 claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
             }
 
-            // Задаем параметры аутентификации
             var authProperties = new AuthenticationProperties {
-                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(2), // Куки будет жить 2 дня
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(2),
                 IsPersistent = true
             };
 
-            // Процесс авторизации и создания куки
             await _signInManager.SignInWithClaimsAsync(user, authProperties, claims);
         }
 
         public async Task Logout() {
-            // Выход из системы == удаление куки
             await _signInManager.SignOutAsync();
         }
 
