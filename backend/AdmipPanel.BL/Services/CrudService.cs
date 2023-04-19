@@ -60,7 +60,8 @@ namespace AdmipPanel.BL.Services {
 					Restaraunt = restraunt,
 
 				};
-				if (restraunt.Cooks.Any(x=>x.Id == cook.Id)) throw new ArgumentException("this cook already exist in this restaraunt");
+				if (restraunt.Cooks.Any(x => x.Id == cook.Id)) throw new ArgumentException("this cook already exist in this restaraunt");
+				if (_contextBackend.Restaraunts.Any(x => x.Cooks.Contains(cook))) throw new ArgumentException("this cook already exist in other restaraunt");
 				await _contextBackend.AddAsync(cook);
 				await _contextBackend.SaveChangesAsync();
 				await _userManager.UpdateAsync(user);
@@ -81,7 +82,7 @@ namespace AdmipPanel.BL.Services {
 				user.Manager = new ManagerAuth() {
 					Id = user.Id,
 				};
-				var restraunt = await _contextBackend.Restaraunts.Include(r => r.Managers).FirstOrDefaultAsync();
+				var restraunt = await _contextBackend.Restaraunts.Include(r => r.Managers).FirstOrDefaultAsync(r => r.Id == restarauntId);
 				if (restraunt == null) throw new KeyNotFoundException("restaraunt with this id does not exist");
 				var manager = new Manager() {
 					Id = user.Id,
@@ -89,6 +90,7 @@ namespace AdmipPanel.BL.Services {
 
 				};
 				if (restraunt.Managers.Any(x => x.Id == manager.Id)) throw new ArgumentException("this manager already exist in this restaraunt");
+				if (_contextBackend.Restaraunts.Any(x=>x.Managers.Contains(manager))) throw new ArgumentException("this manager already exist in other restaraunt");
 				await _contextBackend.AddAsync(manager);
 				await _contextBackend.SaveChangesAsync();
 				await _userManager.UpdateAsync(user);
@@ -148,10 +150,10 @@ namespace AdmipPanel.BL.Services {
 			return viewModel;
         }
 
-		public async Task<DeleteViewRestaraunt> GetForDelete(Guid id) {
+		public async Task<ViewRestaraunt> GetRestaraunt(Guid id) {
 			var rest = await _contextBackend.Restaraunts.FirstOrDefaultAsync(x => x.Id == id);
 			if (rest == null) throw new KeyNotFoundException("This restaraunt does not exist");
-			return new DeleteViewRestaraunt {
+			return new ViewRestaraunt {
 				Id = rest.Id,
 				Name = rest.Name
 			};
@@ -189,5 +191,13 @@ namespace AdmipPanel.BL.Services {
 				rest.Managers.Remove(managerRestaraunt);
 				await _contextBackend.SaveChangesAsync();
 		}
+
+		public async Task RecoverRest(Guid id) {
+			var rest = await _contextBackend.Restaraunts.FirstOrDefaultAsync(x => x.Id == id);
+			rest.DeletedTime = null;
+			await _contextBackend.SaveChangesAsync();
+		}
+
+		
 	}
 }

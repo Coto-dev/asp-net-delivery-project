@@ -99,8 +99,12 @@ namespace Auth.BL.Services {
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginCredentials.Password, false);
-            if (!result.Succeeded) 
+
+			if (result.IsLockedOut)
+				throw new InvalidOperationException("Your account is locked out");
+			if (!result.Succeeded) 
             throw new InvalidOperationException("wrong email or password");
+
 
             var claims = new List<Claim> {
                 new Claim(ClaimTypes.Name, user.UserName),

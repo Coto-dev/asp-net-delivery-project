@@ -9,5 +9,6 @@ namespace Common.AdminPanelInterfaces {
 	public interface IUserManagerService {
 		public Task<List<UsersViewModel>> GetUsers(string? Email);
 		public Task EditUser (UsersViewModel model);
+		public Task BanUser (Guid id);
 	}
 }

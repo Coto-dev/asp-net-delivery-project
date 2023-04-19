@@ -57,6 +57,31 @@ namespace AdminPanelMVC.Controllers {
 			TempData["Errors"] = errorString;
 			return RedirectToAction("index");
 		}
-		
+		[HttpPost]
+		public async Task<IActionResult> BanUser(UsersViewModel model) {
+			if (ModelState.IsValid) {
+				try {
+
+					await _userManagerService.BanUser(model.Id);
+					return RedirectToAction("index");
+
+				}
+				catch (InvalidOperationException ex) {
+					_logger.LogError(ex,
+					  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+					return RedirectToAction("index");
+				}
+				catch (Exception ex) {
+					_logger.LogError(ex,
+					  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+					return RedirectToAction("index");
+				}
+			}
+			var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+			string errorString = string.Join(" ", errors);
+			TempData["Errors"] = errorString;
+			return RedirectToAction("index");
+		}
+
 	}
 }

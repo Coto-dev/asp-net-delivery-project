@@ -34,8 +34,13 @@ namespace AdmipPanel.BL.Services {
             if (user == null) {
                 throw new KeyNotFoundException($"User with email = {model.Email} does not found");
             }
+			await _signInManager.SignOutAsync();
+			var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
 
-            var claims = new List<Claim>
+			if (result.IsLockedOut)
+				throw new ArgumentException("Your account is locked out.");
+
+			var claims = new List<Claim>
             {
                 new ("Name", user.UserName),
                 new ("Id", user.Id.ToString()),

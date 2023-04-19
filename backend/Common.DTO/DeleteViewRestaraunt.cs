@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Common.DTO {
-	public class DeleteViewRestaraunt {
+	public class ViewRestaraunt {
 		public Guid Id { get; set; }
 		public string Name { get; set; }
 

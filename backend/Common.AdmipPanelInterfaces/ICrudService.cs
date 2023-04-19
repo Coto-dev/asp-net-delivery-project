@@ -15,10 +15,10 @@ namespace Common.AdminPanelInterfaces {
         public Task DeleteCook(AddUserViewModel model);
 		public Task DeleteManager(AddUserViewModel model);
 		public Task Delete(Guid id);
-		Task<DeleteViewRestaraunt> GetForDelete(Guid id);
-
-		Task Edit(EditRestarauntVIew model);
-		Task<EditRestarauntVIew> GetForEdit(Guid id);
+		public Task<ViewRestaraunt> GetRestaraunt(Guid id);
+		public Task RecoverRest(Guid id);
+		public Task Edit(EditRestarauntVIew model);
+		public Task<EditRestarauntVIew> GetForEdit(Guid id);
 
 
 	}

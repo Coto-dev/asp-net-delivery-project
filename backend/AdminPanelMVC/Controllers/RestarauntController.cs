@@ -27,9 +27,9 @@ namespace AdminPanelMVC.Controllers {
 		[Route("Details/{id}")]
 		public async Task<IActionResult> Details(Guid id) {
 			try {
-                
-					//if (TempData["Errors"]!=null)
-                var model = await _crudService.GetDetails(id);
+
+				//if (TempData["Errors"]!=null)
+				var model = await _crudService.GetDetails(id);
 				model.ViewModel = new AddUserViewModel { restarauntId = id };
 				return View(model);
 			}
@@ -50,7 +50,7 @@ namespace AdminPanelMVC.Controllers {
 			catch (KeyNotFoundException ex) {
 				_logger.LogError(ex,
 				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                TempData["Errors"] += ex.Message;
+				TempData["Errors"] += ex.Message;
 				return RedirectToAction("Details", new { id = model.restarauntId });
 			}
 			catch (ArgumentException ex) {
@@ -63,7 +63,7 @@ namespace AdminPanelMVC.Controllers {
 			catch (InvalidOperationException ex) {
 				_logger.LogError(ex,
 				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                TempData["Errors"] += ex.Message;
+				TempData["Errors"] += ex.Message;
 				return RedirectToAction("Details", new { id = model.restarauntId });
 			}
 			catch (Exception ex) {
@@ -72,7 +72,7 @@ namespace AdminPanelMVC.Controllers {
 				TempData["Errors"] += ex.Message;
 				return RedirectToAction("Details", new { id = model.restarauntId });
 			}
-			
+
 		}
 		[HttpPost]
 		public async Task<IActionResult> AddManager(AddUserViewModel model) {
@@ -84,7 +84,7 @@ namespace AdminPanelMVC.Controllers {
 				_logger.LogError(ex,
 				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
 
-				TempData["Errors"] += ex.Message; 
+				TempData["Errors"] += ex.Message;
 				return RedirectToAction("Details", new { id = model.restarauntId });
 			}
 			catch (ArgumentException ex) {
@@ -154,10 +154,10 @@ namespace AdminPanelMVC.Controllers {
 			}
 		}
 		[HttpPost]
-		public async Task<IActionResult> DeleteRest(DeleteViewRestaraunt model) {
+		public async Task<IActionResult> DeleteRest(ViewRestaraunt model) {
 			try {
 				await _crudService.Delete(model.Id);
-				return RedirectToAction("Index");
+				return RedirectToAction("Details", new { id = model.Id });
 			}
 			catch (ArgumentException ex) {
 				_logger.LogError(ex,
@@ -168,13 +168,43 @@ namespace AdminPanelMVC.Controllers {
 			}
 
 		}
-		
+		[HttpPost]
+		public async Task<IActionResult> RecoverRest(ViewRestaraunt model) {
+			try {
+				await _crudService.RecoverRest(model.Id);
+				return RedirectToAction("Details", new { id = model.Id });
+			}
+			catch (ArgumentException ex) {
+				_logger.LogError(ex,
+				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+
+				ModelState.AddModelError("", ex.Message);
+				return RedirectToAction("Details", new { id = model.Id });
+			}
+		}
+		[HttpGet]
+		[Route("Recover/{id}")]
+		public async Task<IActionResult> Recover(Guid id) {
+			try {
+				var rest = await _crudService.GetRestaraunt(id);
+				return View("Recover",rest);
+			}
+			catch (KeyNotFoundException ex) {
+				_logger.LogError(ex,
+				  $"Message: {ex.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+
+				ModelState.AddModelError("", ex.Message);
+				return RedirectToAction("Details", new { id = id });
+			}
+
+		}
+
 
 		[HttpGet]
 		[Route("Delete/{id}")]
 		public async Task<IActionResult> Delete(Guid id) {
 			try {
-				var rest = await _crudService.GetForDelete(id);
+				var rest = await _crudService.GetRestaraunt(id);
 				return View(rest);
 			}
 			catch (KeyNotFoundException ex) {

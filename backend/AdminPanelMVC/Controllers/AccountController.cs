@@ -16,6 +16,7 @@ namespace AdminPanelMVC.Controllers {
         [HttpGet]
         public IActionResult Login() {
             return View();
+
         }
 
         [HttpPost]
@@ -24,9 +25,12 @@ namespace AdminPanelMVC.Controllers {
             if (ModelState.IsValid) {
                 try {
                     await _accountService.Login(model);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Restaraunt");
                 }
-                catch (Exception ex) {
+				catch (ArgumentException ex) {
+					ModelState.AddModelError("Errors", ex.Message);
+				}
+				catch (Exception ex) {
                     ModelState.AddModelError("Errors", ex.Message);
                 }
             }
@@ -36,7 +40,7 @@ namespace AdminPanelMVC.Controllers {
         [HttpGet]
         public async Task<IActionResult> Logout() {
             await _accountService.Logout();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Restaraunt");
         }
 
     }

@@ -45,15 +45,23 @@ namespace Auth.BL.Services {
                 IssuerSigningKey = JwtConfiguration.GetSymmetricSecurityKey(),
                 ValidateIssuerSigningKey = true,
             };
+            try {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                SecurityToken securityToken;
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken securityToken;
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
-            var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                throw new SecurityTokenException("Invalid token");
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+                var jwtSecurityToken = securityToken as JwtSecurityToken;
 
-            return principal;
+
+                if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                    throw new SecurityTokenException("Invalid token");
+				return principal;
+			}
+            catch(Exception ex) {
+				throw new SecurityTokenException("Invalid token format");
+
+			}
+            
         }
     }
 }

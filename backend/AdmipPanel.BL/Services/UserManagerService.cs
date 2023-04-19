@@ -29,6 +29,11 @@ namespace AdmipPanel.BL.Services {
 			_mapper = mapper;
 		}
 
+		public async Task BanUser(Guid id) {
+			var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+			await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.Now.AddYears(10));
+		}
+
 		public async Task EditUser(UsersViewModel model) {
 			var user = await _userManager.Users.Include(u => u.Customer).FirstOrDefaultAsync(u => u.Id == model.Id);
 			if (user == null) throw new KeyNotFoundException("User not found");

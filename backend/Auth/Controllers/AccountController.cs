@@ -5,6 +5,7 @@ using Common.DTO;
 using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.Controllers {
     [Route("api/account")]
@@ -208,7 +209,12 @@ namespace Auth.Controllers {
                     $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
                 return Problem(statusCode: 401, title: e.Message);
             }
-            catch (Exception e) {
+			catch (SecurityTokenException e) {
+				_logger.LogError(e,
+					$"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
+				return Problem(statusCode: 401, title: e.Message);
+			}
+			catch (Exception e) {
                 _logger.LogError(e,
                     $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
                 return Problem(statusCode: 500, title: "Something went wrong");
