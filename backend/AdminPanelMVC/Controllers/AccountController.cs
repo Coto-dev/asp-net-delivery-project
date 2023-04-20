@@ -1,12 +1,12 @@
 ﻿using AdminPanelMVC.Models;
-using Common.AdmipPanelInterfaces;
+using Common.AdminPanelInterfaces;
 using Common.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdminPanelMVC.Controllers {
 
-    public class AccountController : Controller {
+	public class AccountController : Controller {
         private readonly IAccountService _accountService; 
 
         public AccountController(IAccountService accountService) {

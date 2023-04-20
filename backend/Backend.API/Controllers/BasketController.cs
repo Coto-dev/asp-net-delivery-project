@@ -10,9 +10,9 @@ namespace Backend.API.Controllers {
     public class BasketController : ControllerBase {
 
         ///<summary>
-        ///get basket
+        ///get user basket
         /// </summary>
-        [HttpPost]
+        [HttpGet]
         public async Task<ActionResult<List<BasketDTO>>> GetBasket(Guid dishId) {
             throw new NotImplementedException();
         }
@@ -32,5 +32,13 @@ namespace Backend.API.Controllers {
         public async Task<ActionResult<Response>> RemoveDish(Guid dishId, bool CompletelyDelete) {
             throw new NotImplementedException();
         }
-    }
+		///<summary>
+		///remove all dishes from user's basket
+		/// </summary>
+		[HttpDelete]
+		[Route("clearAll")]
+		public async Task<ActionResult<Response>> ClearBasket(Guid dishId, bool CompletelyDelete) {
+			throw new NotImplementedException();
+		}
+	}
 }

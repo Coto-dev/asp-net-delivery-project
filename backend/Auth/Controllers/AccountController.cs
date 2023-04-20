@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using Common.AuthInterfaces;
+using AuthInterfaces;
 using Common.DTO;
 using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.Controllers {
-    [Route("api/account")]
+	[Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase {
         private readonly ILogger<AccountController> _logger;
@@ -21,6 +21,7 @@ namespace Auth.Controllers {
         /// <summary>
         /// register new user
         /// </summary>
+        /// <remarks>by defualt gender = male</remarks>
         [Route("register")]
         [HttpPost]
         public async Task<ActionResult<AuthenticatedResponse>> Register([FromBody] RegisterModelDTO RegisterModel) {

@@ -12,7 +12,7 @@ namespace Common.DTO {
     public class RegisterModelDTO {
         [Required(ErrorMessage = "Email обязателен для заполнения")]
         [Display(Name = "Email")]
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Дата рождения обязательна для заполнения")]
@@ -24,12 +24,13 @@ namespace Common.DTO {
         [Required(ErrorMessage = "ФИО обязательно для заполнения")]
         [Display(Name = "ФИО")]
         public string FullName { get; set; }
-        [Required(ErrorMessage = "Пол обязательно для заполнения")]
+        [Required(ErrorMessage = "Пол обязателен для заполнения")]
         [Display(Name = "Пол")]
         public Genders Gender { get; set; }  
 
         [Display(Name = "Телефон")]
-        [DataType(DataType.PhoneNumber)]
+		[Required(ErrorMessage = "Телефон обязателен для заполнения")]
+		[Phone]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Пароль обязателен для заполнения")]

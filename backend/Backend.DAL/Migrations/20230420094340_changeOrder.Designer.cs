@@ -4,6 +4,7 @@ using Backend.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.DAL.Migrations
 {
     [DbContext(typeof(BackendDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230420094340_changeOrder")]
+    partial class changeOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,10 +160,10 @@ namespace Backend.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("CookerId")
+                    b.Property<Guid?>("CookId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CourId")
+                    b.Property<Guid?>("CourierId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CustomerId")
@@ -179,6 +182,8 @@ namespace Backend.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CookId");
 
                     b.HasIndex("CustomerId");
 
@@ -308,11 +313,17 @@ namespace Backend.DAL.Migrations
 
             modelBuilder.Entity("Backend.DAL.Data.Entities.Order", b =>
                 {
+                    b.HasOne("Backend.DAL.Data.Entities.Cook", "Cook")
+                        .WithMany()
+                        .HasForeignKey("CookId");
+
                     b.HasOne("Backend.DAL.Data.Entities.Customer", null)
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Cook");
                 });
 
             modelBuilder.Entity("Backend.DAL.Data.Entities.Rating", b =>

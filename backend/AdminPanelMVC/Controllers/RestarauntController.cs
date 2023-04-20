@@ -17,6 +17,7 @@ namespace AdminPanelMVC.Controllers {
 			_crudService = crudservice;
 		}
 		[Route("")]
+		[Authorize]
 		[Route("Restaraunt")]
 		public IActionResult Index() {
 
@@ -24,6 +25,7 @@ namespace AdminPanelMVC.Controllers {
 			return View(model);
 		}
 		[HttpGet]
+		[Authorize]
 		[Route("Details/{id}")]
 		public async Task<IActionResult> Details(Guid id) {
 			try {
@@ -41,6 +43,8 @@ namespace AdminPanelMVC.Controllers {
 			}
 		}
 		[HttpPost]
+		[Authorize]
+
 		public async Task<IActionResult> AddCook(AddUserViewModel model) {
 
 			try {
@@ -75,6 +79,8 @@ namespace AdminPanelMVC.Controllers {
 
 		}
 		[HttpPost]
+		[Authorize]
+
 		public async Task<IActionResult> AddManager(AddUserViewModel model) {
 			try {
 				await _crudService.AddManager(model.Email, model.restarauntId);
@@ -110,6 +116,8 @@ namespace AdminPanelMVC.Controllers {
 			}
 		}
 		[HttpPost]
+		[Authorize]
+
 		public async Task<IActionResult> DeleteCook(AddUserViewModel model) {
 			try {
 
@@ -132,6 +140,8 @@ namespace AdminPanelMVC.Controllers {
 			}
 		}
 		[HttpPost]
+		[Authorize]
+
 		public async Task<IActionResult> DeleteManager(AddUserViewModel model) {
 			try {
 
@@ -153,6 +163,7 @@ namespace AdminPanelMVC.Controllers {
 				return RedirectToAction("Details", new { id = model.restarauntId });
 			}
 		}
+		[Authorize]
 		[HttpPost]
 		public async Task<IActionResult> DeleteRest(ViewRestaraunt model) {
 			try {
@@ -169,6 +180,8 @@ namespace AdminPanelMVC.Controllers {
 
 		}
 		[HttpPost]
+		[Authorize]
+
 		public async Task<IActionResult> RecoverRest(ViewRestaraunt model) {
 			try {
 				await _crudService.RecoverRest(model.Id);
@@ -183,6 +196,7 @@ namespace AdminPanelMVC.Controllers {
 			}
 		}
 		[HttpGet]
+		[Authorize]
 		[Route("Recover/{id}")]
 		public async Task<IActionResult> Recover(Guid id) {
 			try {
@@ -201,6 +215,7 @@ namespace AdminPanelMVC.Controllers {
 
 
 		[HttpGet]
+		[Authorize]
 		[Route("Delete/{id}")]
 		public async Task<IActionResult> Delete(Guid id) {
 			try {
@@ -219,7 +234,7 @@ namespace AdminPanelMVC.Controllers {
 		[HttpPut]
 
 		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Administrator)]
+		[Authorize]
 		[Route("edit/{id}")]
 		public async Task<IActionResult> Edit(Guid id) {
 			try {
@@ -231,7 +246,7 @@ namespace AdminPanelMVC.Controllers {
 			}
 		}
 		[HttpPost]
-		[Authorize(Roles = ApplicationRoleNames.Administrator)]
+		[Authorize]
 		[ValidateAntiForgeryToken]
 		[Route("edit/{id}")]
 		public async Task<IActionResult> Edit(EditRestarauntVIew model) {
@@ -247,6 +262,7 @@ namespace AdminPanelMVC.Controllers {
 				return View(model);
 			}
 		}
+		[Authorize]
 
 		public async Task<IActionResult> Create(RestarauntViewModel model) {
             if (!ModelState.IsValid) {
@@ -272,9 +288,9 @@ namespace AdminPanelMVC.Controllers {
             }
 
         }
-        public IActionResult Privacy() {
+        /*public IActionResult Privacy() {
             return View();
-        }
+        }*/
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() {

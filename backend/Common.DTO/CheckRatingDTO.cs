@@ -4,12 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.Enums {
-	public enum Categories {
-		WOK,
-		Pizza,
-		Soup,
-		Desert,
-		Drink
+namespace Common.DTO {
+	public class CheckRatingDTO {
+		public bool IsAvailable { get; set; }
 	}
 }

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Backend.Common.Enums;
+using Common.Enums;
 
 namespace Common.DTO {
-    public class OrderDTO {
+	public class OrderDTO {
         public Guid Id { get; set; }
+        public string OrderNumber { get; set; }
         public Statuses Statuse { get; set; }
         /// <summary>
         /// Дата к которой будетдоставлен

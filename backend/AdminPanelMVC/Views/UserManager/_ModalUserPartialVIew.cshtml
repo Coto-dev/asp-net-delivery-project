@@ -65,6 +65,12 @@
 						else {
 							<option value="Manager">Manager</option>
 						}
+						@if (Model.Roles.Contains(ApplicationRoleNames.Courier)) {
+							<option value="Courier" selected>Courier</option>
+						}
+						else {
+							<option value="Courier">Courier</option>
+						}
 					</select>
 				</div>
 				<div class="modal-footer">

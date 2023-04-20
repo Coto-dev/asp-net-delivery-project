@@ -1,9 +1,7 @@
-﻿
-
-using Backend.Common.Enums;
+﻿using Common.Enums;
 
 namespace Common.DTO {
-    public class DishDetailsDTO {
+	public class DishDetailsDTO {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }

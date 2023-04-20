@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Backend.Common.Enums {
-    public enum Statuses {
-        Created,
-        Kitchen,
-        ReadyToDelivery,
-        Deilvered,
-        Canceled
-    }
+namespace Common.Enums {
+	public enum Statuses {
+		Created,
+		Kitchen,
+		ReadyToDelivery,
+		Deilvered,
+		Delivery,
+		Canceled
+	}
 }

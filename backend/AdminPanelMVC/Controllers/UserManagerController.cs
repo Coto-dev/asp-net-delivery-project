@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Common.AdminPanelInterfaces;
 using Common.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NuGet.Packaging;
@@ -14,6 +15,8 @@ namespace AdminPanelMVC.Controllers {
 			_logger = logger;
 			_userManagerService = userManagerService;
 		}
+		[Authorize]
+
 		public async Task<IActionResult> Index(string? search) {
 			
 			try {
@@ -32,6 +35,7 @@ namespace AdminPanelMVC.Controllers {
 			}
 		}
 		[HttpPost]
+		[Authorize]
 
 		public async Task<IActionResult> EditUser(UsersViewModel model) {
 			if (ModelState.IsValid) {
@@ -58,6 +62,8 @@ namespace AdminPanelMVC.Controllers {
 			return RedirectToAction("index");
 		}
 		[HttpPost]
+		[Authorize]
+
 		public async Task<IActionResult> BanUser(UsersViewModel model) {
 			if (ModelState.IsValid) {
 				try {

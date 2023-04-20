@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 using Auth.DAL.Data;
 using Auth.DAL.Data.Entities;
 using Backend.DAL.Data;
-using Common.AdmipPanelInterfaces;
+using Common.AdminPanelInterfaces;
 using Common.DTO;
+using Common.Enums;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace AdmipPanel.BL.Services {
-    public class AccountService : IAccountService {
+	public class AccountService : IAccountService {
         private readonly ILogger<AccountService> _logger;
         private readonly BackendDbContext _contextBackend;
         private readonly AuthDbContext _contextAuth;
@@ -30,12 +32,17 @@ namespace AdmipPanel.BL.Services {
             _userManager = userManager;
         }
         public async Task Login(LoginCredentials model) {
-            var user = await _userManager.FindByNameAsync(model.Email); 
+            var user = await _userManager.Users.Include(u=>u.Roles).ThenInclude(r=>r.Role).FirstOrDefaultAsync(x=>x.Email == model.Email); 
             if (user == null) {
                 throw new KeyNotFoundException($"User with email = {model.Email} does not found");
             }
 			await _signInManager.SignOutAsync();
 			var result = await _signInManager.PasswordSignInAsync(user, model.Password, false, true);
+            if (!user.Roles.Any(r=> r.Role.Type == RoleType.Administrator))
+				throw new ArgumentException("only admin user has access to admipanel");
+
+			if (!result.Succeeded)
+				throw new ArgumentException("wrong email or password");
 
 			if (result.IsLockedOut)
 				throw new ArgumentException("Your account is locked out.");

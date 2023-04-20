@@ -10,6 +10,8 @@ using Backend.DAL.Data;
 using Common.AdminPanelInterfaces;
 using Common.DTO;
 using Common.Enums;
+using CookRest = Backend.DAL.Data.Entities.Cook;
+using ManagerRest = Backend.DAL.Data.Entities.Manager;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -35,7 +37,7 @@ namespace AdmipPanel.BL.Services {
 		}
 
 		public async Task EditUser(UsersViewModel model) {
-			var user = await _userManager.Users.Include(u => u.Customer).FirstOrDefaultAsync(u => u.Id == model.Id);
+			var user = await _userManager.Users.Include(u => u.Customer).Include(u=>u.Manager).Include(u => u.Courier).Include(u => u.Cook).FirstOrDefaultAsync(u => u.Id == model.Id);
 			if (user == null) throw new KeyNotFoundException("User not found");
 
 			user.FullName = Regex.Replace(model.FullName, @"\s+", " ");
@@ -46,8 +48,28 @@ namespace AdmipPanel.BL.Services {
 				var userRoles = await _userManager.GetRolesAsync(user);
 				await _userManager.RemoveFromRolesAsync(user, userRoles);
 				await _userManager.AddToRolesAsync(user, model.Roles);
+				model.Roles.ForEach(role => {
+					if (role == ApplicationRoleNames.Cook) user.Cook = new Cook { User = user };
+					if (role == ApplicationRoleNames.Courier) user.Courier = new Courier { User = user  };
+					if (role == ApplicationRoleNames.Manager) user.Manager = new Manager { User = user };
+					if (role == ApplicationRoleNames.Customer) user.Customer = new Customer { User = user,Address = model.Address};
+				});
+				
+				if (!model.Roles.Contains(ApplicationRoleNames.Cook) && userRoles.Contains(ApplicationRoleNames.Cook)) {
+					var rest = await _contextBackend.Restaraunts.Include(r => r.Cooks).Where(r => r.Cooks.Contains(new CookRest { Id = model.Id })).FirstOrDefaultAsync();
+					if (rest != null) {
+						rest.Cooks.Remove(rest.Cooks.FirstOrDefault(r => r.Id == model.Id));
+						await _contextBackend.SaveChangesAsync();
+					}
+				}
+				if (!model.Roles.Contains(ApplicationRoleNames.Manager) && userRoles.Contains(ApplicationRoleNames.Manager)) {
+					var rest = await _contextBackend.Restaraunts.Include(r => r.Managers).Where(r => r.Managers.Contains(new ManagerRest { Id = model.Id })).FirstOrDefaultAsync();
+					if (rest != null) {
+						rest.Managers.Remove(rest.Managers.FirstOrDefault(r => r.Id == model.Id));
+						await _contextBackend.SaveChangesAsync();
+					}
+				}
 			}
-			if (user.Customer != null && model.Address != null) { user.Customer.Address = model.Address; }
 			var result = await _userManager.UpdateAsync(user);
 			if (!result.Succeeded) {
 				var errors = string.Join(", ", result.Errors.Select(x => x.Description));

@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.Enums {
-	public enum Categories {
-		WOK,
-		Pizza,
-		Soup,
-		Desert,
-		Drink
+namespace Common.DTO {
+	public class MenuShortDTO {
+		public Guid Id { get; set; }
+		public string Name { get; set; }
 	}
 }

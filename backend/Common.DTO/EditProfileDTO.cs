@@ -14,15 +14,18 @@ namespace Common.DTO {
         [MaxLength(64)]
         [DisplayName("ФИО")]
         public string FullName { get; set; }
-        [DisplayName("Дата рождения")]
-        [DataType(DataType.Date)]
-        public DateTime BitrhDate { get; set; }
+		[Required(ErrorMessage = "Дата рождения обязательна для заполнения")]
+		[DataType(DataType.Date)]
+		[Display(Name = "Дата рождения")]
+		[Range(typeof(DateTime), "1/1/1900", "1/1/2023")]
+		public DateTime BitrhDate { get; set; }
         [DisplayName("Пол")]
         public Genders Gender { get; set; }
         [DisplayName("Адрес")]
         public string? Address { get; set; }
-        [DataType(DataType.PhoneNumber)]
-        [DisplayName("Номер телефона")]
+        [Phone]
+		[Required(ErrorMessage = "Номер телефона обязателен для заполнения")]
+		[DisplayName("Номер телефона")]
         public string PhoneNumber { get; set; }
     }
 }

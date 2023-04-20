@@ -11,7 +11,6 @@ using Auth.DAL.Data;
 using Auth.DAL.Data.Entities;
 using AuthInterfaces;
 using AutoMapper;
-using Common.AuthInterfaces;
 using Common.DTO;
 using Common.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +19,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.BL.Services {
-    public class AccountService : IAccountService {
+	public class AccountService : IAccountService {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper;
@@ -93,9 +92,9 @@ namespace Auth.BL.Services {
             if (loginCredentials == null) {
                 throw new ArgumentNullException(nameof(loginCredentials));
             }
-            var user = await _userManager.Users.Include(u => u.Customer).FirstOrDefaultAsync(u => u.UserName == loginCredentials.Email);
+            var user = await _userManager.Users.Include(u => u.Customer).FirstOrDefaultAsync(u => u.Email == loginCredentials.Email);
             if (user == null) {
-                throw new ArgumentException(nameof(loginCredentials));
+                throw new ArgumentException("wrong email or password");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginCredentials.Password, false);

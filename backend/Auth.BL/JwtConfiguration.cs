@@ -14,12 +14,6 @@ namespace Auth.BL {
             .AddJsonFile("appsettings.json")
             .Build();
 
-        /*public static int Lifetime = configuration.GetSection("JwtConfiguration").GetValue<int>("LifetimeMinutes");
-        public static string Issuer = configuration.GetSection("JwtConfiguration").GetValue<string>("Issuer");
-        public static string Audience = configuration.GetSection("JwtConfiguration").GetValue<string>("Audience");
-        private static string Key = configuration.GetSection("JwtConfiguration").GetValue<string>("Key");*/
-
-        public static int Lifetime = jwtConfig.Lifetime;
         public static string Issuer = jwtConfig.Issuer;
         public static string Audience = jwtConfig.Audience;
         private static string Key = jwtConfig.Key;

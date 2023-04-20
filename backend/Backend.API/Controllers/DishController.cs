@@ -1,70 +1,114 @@
-﻿using Common.AuthInterfaces;
+﻿using Common.BackendInterfaces;
 using Common.DTO;
+using Common.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace backend.Controllers {
-    /// <summary>
-    /// Controller for dish managment
-    /// </summary>
-    [Route("api/dish")]
-    [ApiController]
-    public class DishController : ControllerBase {
+namespace Backend.API.Controllers {
+	/// <summary>
+	/// Controller for dish managment
+	/// </summary>
+	[Route("api/dish")]
+	[ApiController]
+	public class DishController : ControllerBase {
 
-        private readonly ILogger<DishController> _logger;
-        private readonly IDishService _dishService;
+		private readonly ILogger<DishController> _logger;
+		private readonly IDishService _dishService;
 
-        public DishController(ILogger<DishController> logger, IDishService scheduleService) {
-            _logger = logger;
-            _dishService = scheduleService;
+		public DishController(ILogger<DishController> logger, IDishService scheduleService) {
+			_logger = logger;
+			_dishService = scheduleService;
 
-        }
+		}
+		/// <summary>
+		/// create new dish in concrete menu for manager
+		/// </summary>
+		[HttpPost]
+		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Route("{id}/restaraunt/{restarauntId}/menu/{menuId}")]
+		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid restarauntId, Guid menuId) {
+			throw new NotImplementedException();
+		}
+		/// <summary>
+		/// create new dish in hidden menu for manager
+		/// </summary>
+		/// <response code = "400" > Bad Request</response>
+		/// <response code = "404" >Not Found</response>
+		/// <response code = "500" >InternalServerError</response>
+		[HttpPost]
+		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Route("restaraunt/{restarauntId}/create")]
+		public async Task<ActionResult<Response>> CreateDish(Guid restarauntId) {
+			throw new NotImplementedException();
+		}
+		/// <summary>
+		/// Get all dishes from menu
+		/// </summary>
+		/// <response code = "400" > Bad Request</response>
+		/// <response code = "404" >Not Found</response>
+		/// <response code = "500" >InternalServerError</response>
+		[HttpGet]
+		[Route("restaraunt/{restarauntId}/getAll")]
+		public async Task<ActionResult<DishesPagedListDTO>> GetGishes([FromQuery] DishFilterModelDTO model) {
+			throw new NotImplementedException();
+		}
 
-        /// <summary>
-        /// Get all dishes from menu
-        /// </summary>
-        /// <response code = "400" > Bad Request</response>
-        /// <response code = "404" >Not Found</response>
-        /// <response code = "500" >InternalServerError</response>
-        [HttpGet]
-        public async Task<ActionResult<DishesPagedListDTO>> GetGishes([FromQuery] DishFilterModelDTO model) {
-            throw new NotImplementedException();
-        }
 
+		/// <summary>
+		/// Get dish details by id 
+		/// </summary>
+		/// <response code = "400" > Bad Request</response>
+		[HttpGet]
+		[Route("{Dishid}/getDetails")]
+		public async Task<ActionResult<DishDetailsDTO>> GetGishDetails(Guid Dishid) {
+			throw new NotImplementedException();
+		}
 
-        /// <summary>
-        /// Get dish details by id 
-        /// </summary>
-        /// <response code = "400" > Bad Request</response>
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<ActionResult<DishDetailsDTO>> GetGishDetails() {
-            throw new NotImplementedException();
-        }
+		/// <summary>
+		/// add rating to dish 
+		/// </summary>
+		/// <response code = "400" > Bad Request</response>
+		/// <response code = "404" >Not Found</response>
+		/// <response code = "500" >InternalServerError</response>
+		[HttpPost]
+		[Route("{Dishid}/rating")]
+		public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid Dishid) {
+			throw new NotImplementedException();
+		}
+		[HttpGet]
+		[Route("{Dishid}/rating/check")]
+		public async Task<ActionResult<RatingDTO>> CheckRating(Guid Dishid) {
+			throw new NotImplementedException();
+		}
 
-        /// <summary>
-        /// add rating to dish  
-        /// </summary>
-        /// <response code = "400" > Bad Request</response>
-        /// <response code = "404" >Not Found</response>
-        /// <response code = "500" >InternalServerError</response>
-        [HttpPost]
-        [Route("{id}/rating")]
-        public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid dishId) {
-            throw new NotImplementedException();
-        }
+		/// <summary>
+		/// edit dish for manager
+		/// </summary>
+		[HttpPut]
+		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Route("{dishId}/edit")]
+		public async Task<ActionResult<Response>> EditDish(DishModelDTO model) {
+			throw new NotImplementedException();
+		}
 
-        /// <summary>
-        /// create new dish  
-        /// </summary>
-        /// <response code = "400" > Bad Request</response>
-        /// <response code = "404" >Not Found</response>
-        /// <response code = "500" >InternalServerError</response>
-        /// <param name="MenuId">if null then saved to hidden menu</param>
-        [HttpPost]
-        [Route("create/{restarauntId}")]
-        public async Task<ActionResult<DishDetailsDTO>> CreateDish(Guid menuId) {
-            throw new NotImplementedException();
-        }
-    }
+		/// <summary>
+		/// soft delete dish for manager
+		/// </summary>
+		[HttpDelete]
+		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Route("{dishId}/delete")]
+		public async Task<ActionResult<Response>> DeleteDish(Guid restarauntId) {
+			throw new NotImplementedException();
+		}
+		/// <summary>
+		/// recover dish for manager
+		/// </summary>
+		[HttpPut]
+		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Route("{dishId}/recover")]
+		public async Task<ActionResult<Response>> RecoverDish(Guid restarauntId) {
+			throw new NotImplementedException();
+		}
+	}
 }

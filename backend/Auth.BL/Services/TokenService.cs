@@ -19,7 +19,7 @@ namespace Auth.BL.Services {
                 issuer: JwtConfiguration.Issuer,
                 audience: JwtConfiguration.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(60),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: signinCredentials
             );
 
@@ -41,7 +41,7 @@ namespace Auth.BL.Services {
                 ValidIssuer = JwtConfiguration.Issuer,
                 ValidateAudience = true,
                 ValidAudience = JwtConfiguration.Audience,
-                ValidateLifetime = true,
+                ValidateLifetime = false,
                 IssuerSigningKey = JwtConfiguration.GetSymmetricSecurityKey(),
                 ValidateIssuerSigningKey = true,
             };
