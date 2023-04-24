@@ -13,7 +13,11 @@ namespace Backend.BL.Extensions {
 	public static class ServiceProviderExtensions {
         public static void AddDishService(this IServiceCollection services) {
             services.AddScoped<IDishService,DishService>();
-            services.AddScoped<IRestarauntService, RestarauntService>();
-        }
+			services.AddScoped<IOrderService, OrderService>();
+			services.AddScoped<IBasketService, BasketService>();
+			services.AddScoped<IMenuService, MenuService>();
+			services.AddScoped<IRestarauntService, RestarauntService>();
+			services.AddAutoMapper(typeof(MappingProfileBackend));
+		}
     }
 }

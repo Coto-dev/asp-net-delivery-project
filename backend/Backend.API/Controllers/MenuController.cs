@@ -27,7 +27,7 @@ namespace Backend.API.Controllers {
 		[HttpPost]
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/restaraunt/{restarauntId}/dish/{dishId}/addDish")]
-		public async Task<ActionResult<Response>> AddDishToMenu(Guid menuId) {
+		public async Task<ActionResult<Response>> AddDishToMenu(Guid menuId, Guid dishId) {
 			throw new NotImplementedException();
 		}
 		/// <summary>
@@ -36,7 +36,7 @@ namespace Backend.API.Controllers {
 		[HttpDelete]
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/restaraunt/{restarauntId}/dish/{dishId}/deleteDish")]
-		public async Task<ActionResult<Response>> DeleteDishFromMenu(Guid menuId) {
+		public async Task<ActionResult<Response>> DeleteDishFromMenu(Guid menuId, Guid dishId) {
 			throw new NotImplementedException();
 		}
 		/// <summary>
@@ -45,7 +45,7 @@ namespace Backend.API.Controllers {
 		[HttpPut]
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/edit")]
-		public async Task<ActionResult<Response>> EditMenu( Guid menuId, [FromBody] MenuShortModelDTO model) {
+		public async Task<ActionResult<Response>> EditMenu(Guid menuId, [FromBody] MenuShortModelDTO model) {
 			throw new NotImplementedException();
 		}
 		/// <summary>

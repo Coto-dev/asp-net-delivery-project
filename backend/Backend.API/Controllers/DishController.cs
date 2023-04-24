@@ -50,7 +50,18 @@ namespace Backend.API.Controllers {
 		/// <response code = "500" >InternalServerError</response>
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getAll")]
-		public async Task<ActionResult<DishesPagedListDTO>> GetGishes([FromQuery] DishFilterModelDTO model) {
+		public async Task<ActionResult<DishesPagedListDTO>> GetDishes([FromQuery] DishFilterModelDTO model) {
+			throw new NotImplementedException();
+		}
+		/// <summary>
+		/// Get all dishes from menu
+		/// </summary>
+		/// <response code = "400" > Bad Request</response>
+		/// <response code = "404" >Not Found</response>
+		/// <response code = "500" >InternalServerError</response>
+		[HttpGet]
+		[Route("restaraunt/{restarauntId}/getDeleted")]
+		public async Task<ActionResult<DishesPagedListDTO>> GetDeletedDishes([FromQuery] DishFilterModelDTO model) {
 			throw new NotImplementedException();
 		}
 
@@ -60,8 +71,8 @@ namespace Backend.API.Controllers {
 		/// </summary>
 		/// <response code = "400" > Bad Request</response>
 		[HttpGet]
-		[Route("{Dishid}/getDetails")]
-		public async Task<ActionResult<DishDetailsDTO>> GetGishDetails(Guid Dishid) {
+		[Route("{dishId}/getDetails")]
+		public async Task<ActionResult<DishDetailsDTO>> GetGishDetails(Guid dishId) {
 			throw new NotImplementedException();
 		}
 
@@ -72,13 +83,13 @@ namespace Backend.API.Controllers {
 		/// <response code = "404" >Not Found</response>
 		/// <response code = "500" >InternalServerError</response>
 		[HttpPost]
-		[Route("{Dishid}/rating")]
-		public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid Dishid) {
+		[Route("{dishId}/rating")]
+		public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid dishId, double value) {
 			throw new NotImplementedException();
 		}
 		[HttpGet]
-		[Route("{Dishid}/rating/check")]
-		public async Task<ActionResult<RatingDTO>> CheckRating(Guid Dishid) {
+		[Route("{dishId}/rating/check")]
+		public async Task<ActionResult<RatingDTO>> CheckRating(Guid dishId) {
 			throw new NotImplementedException();
 		}
 
@@ -98,7 +109,7 @@ namespace Backend.API.Controllers {
 		[HttpDelete]
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{dishId}/delete")]
-		public async Task<ActionResult<Response>> DeleteDish(Guid restarauntId) {
+		public async Task<ActionResult<Response>> DeleteDish(Guid dishId) {
 			throw new NotImplementedException();
 		}
 		/// <summary>

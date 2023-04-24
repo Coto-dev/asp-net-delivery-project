@@ -7,8 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Backend.DAL\Backend.DAL.csproj" />
     <ProjectReference Include="..\BackendInterfaces\Common.BackendInterfaces.csproj" />
+    <ProjectReference Include="..\Exceptions\Common.Exceptions.csproj" />
+    <ProjectReference Include="..\jwtConfiguration\CoomonThings.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,19 +8,29 @@ namespace Backend.API.Controllers {
 	[Route("api/order")]
 	[ApiController]
 	public class OrderController : ControllerBase {
+		/// <summary>
+		/// return customer address if not null for customer 
+		/// </summary>
+		[HttpGet]
+		[Authorize(Roles = ApplicationRoleNames.Customer)]
+		[Route("customer/Address")]
+		public async Task<ActionResult<string>> CheckAdress() {
+			throw new NotImplementedException();
 
-
+		}
 		/// <summary>
 		/// get information about customer orders history  
 		/// </summary>
 		/// <response code = "400" > Bad Request</response>
 		/// <response code = "404" >Not Found</response>
 		/// <response code = "500" >InternalServerError</response>
+		/// 
 		[HttpGet]
 		[Authorize(Roles = ApplicationRoleNames.Customer)]
 		[Route("customer/ordersHistory")]
 		public async Task<ActionResult<OrderPagedList>> GetCustomerOrder([FromQuery] OrderFilterCustomer model) {
 			throw new NotImplementedException();
+			
 		}
 		/// <summary>
 		/// get information about current order 

@@ -14,7 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Auth.DAL\Auth.DAL.csproj" />
     <ProjectReference Include="..\AuthInterfaces\AuthInterfaces.csproj" />
-    <ProjectReference Include="..\jwtConfiguration\jwtConfiguration.csproj" />
+    <ProjectReference Include="..\jwtConfiguration\CoomonThings.csproj" />
   </ItemGroup>
 
 </Project>

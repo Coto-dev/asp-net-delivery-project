@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 using AuthInterfaces;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Auth.BL.Services {
+namespace Auth.BL.Services
+{
     public class TokenService : ITokenService {
         public string GenerateAccessToken(IEnumerable<Claim> claims) {
             var secretKey = JwtConfiguration.GetSymmetricSecurityKey();

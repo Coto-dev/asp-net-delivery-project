@@ -7,8 +7,10 @@ using jwtConfiguration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Auth.BL {
-    public class JwtConfiguration {
+namespace Auth.BL
+{
+    public class JwtConfiguration
+    {
         private static IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json")
@@ -17,9 +19,10 @@ namespace Auth.BL {
         public static string Issuer = jwtConfig.Issuer;
         public static string Audience = jwtConfig.Audience;
         private static string Key = jwtConfig.Key;
-        public static SymmetricSecurityKey GetSymmetricSecurityKey() {
+        public static SymmetricSecurityKey GetSymmetricSecurityKey()
+        {
             return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Key));
         }
     }
-   
+
 }

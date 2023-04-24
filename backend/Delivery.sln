@@ -10,6 +10,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth", "Auth\Auth.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend.BL", "backend.BL\Backend.BL.csproj", "{3E3FEDF4-0559-4A66-B25F-26646C785F73}"
 	ProjectSection(ProjectDependencies) = postProject
+		{57DC8880-E00F-469D-9C74-E1C21CFF9C51} = {57DC8880-E00F-469D-9C74-E1C21CFF9C51}
+		{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4} = {A760C2B4-AE67-465F-B537-EDE2D9D9C0C4}
 		{CF2BE87D-ADEF-4830-A604-4A287377C70D} = {CF2BE87D-ADEF-4830-A604-4A287377C70D}
 	EndProjectSection
 EndProject
@@ -49,6 +51,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exceptions", "Exceptions", "{F991F924-3D1E-40FF-BD6B-BD5DF929B3F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend.API", "Backend.API\Backend.API.csproj", "{39855A0D-1FCE-4DC1-AEFA-4CB089660911}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4} = {A760C2B4-AE67-465F-B537-EDE2D9D9C0C4}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.BackendInterfaces", "BackendInterfaces\Common.BackendInterfaces.csproj", "{CF2BE87D-ADEF-4830-A604-4A287377C70D}"
 EndProject
@@ -62,11 +67,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthInterfaces", "AuthInter
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common things", "Common things", "{55DC8315-C91C-4A90-A48B-AA47BF1CBE3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jwtConfiguration", "jwtConfiguration\jwtConfiguration.csproj", "{57DC8880-E00F-469D-9C74-E1C21CFF9C51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoomonThings", "jwtConfiguration\CoomonThings.csproj", "{57DC8880-E00F-469D-9C74-E1C21CFF9C51}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.AdminPanelInterfaces", "Common.AdmipPanelInterfaces\Common.AdminPanelInterfaces.csproj", "{74770D45-6E4F-4F79-A6B3-62D1137475D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Extensions", "Common.Extensions\Common.Extensions.csproj", "{76C6BD21-F6F0-4E79-BC3C-9DBF0CB5E2E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Exceptions", "Exceptions\Common.Exceptions.csproj", "{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -138,6 +145,10 @@ Global
 		{76C6BD21-F6F0-4E79-BC3C-9DBF0CB5E2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76C6BD21-F6F0-4E79-BC3C-9DBF0CB5E2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76C6BD21-F6F0-4E79-BC3C-9DBF0CB5E2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,6 +167,7 @@ Global
 		{57DC8880-E00F-469D-9C74-E1C21CFF9C51} = {55DC8315-C91C-4A90-A48B-AA47BF1CBE3D}
 		{74770D45-6E4F-4F79-A6B3-62D1137475D9} = {BA171023-6F29-4DEE-9D55-7D8CFD5C1A43}
 		{76C6BD21-F6F0-4E79-BC3C-9DBF0CB5E2E6} = {00F2093A-B0C6-4F60-BD40-74188D6F32DD}
+		{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4} = {F991F924-3D1E-40FF-BD6B-BD5DF929B3F3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C3A511A0-D209-412A-AE14-A8893ADB0B6A}
