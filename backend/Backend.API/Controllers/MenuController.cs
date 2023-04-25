@@ -1,4 +1,6 @@
-﻿using Common.DTO;
+﻿using Backend.DAL.Data.Entities;
+using Common.BackendInterfaces;
+using Common.DTO;
 using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +10,12 @@ namespace Backend.API.Controllers {
 	[Route("api/menu")]
 	[ApiController]
 	public class MenuController : ControllerBase {
+		private readonly IMenuService _menuService;
+
+		public MenuController(IMenuService menuService) {
+			_menuService = menuService;
+
+		}
 		/// <summary>
 		/// create menu in restaraunt for manager
 		/// </summary>
@@ -18,8 +26,8 @@ namespace Backend.API.Controllers {
 		[HttpPost]
 		[Authorize(Roles =ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}/create")]
-		public async Task<Response> CreateMenu(Guid restarauntId, [FromBody] MenuShortModelDTO model) {
-			throw new NotImplementedException();
+		public async Task<ActionResult<Response>> CreateMenu(Guid restarauntId, [FromBody] MenuShortModelDTO model) {
+			 return Ok(await _menuService.CreateMenu(restarauntId, model));
 		}
 		/// <summary>
 		/// add dish to concrete menu for manager
@@ -28,7 +36,7 @@ namespace Backend.API.Controllers {
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/restaraunt/{restarauntId}/dish/{dishId}/addDish")]
 		public async Task<ActionResult<Response>> AddDishToMenu(Guid menuId, Guid dishId) {
-			throw new NotImplementedException();
+			return Ok(await _menuService.AddDishToMenu(menuId, dishId));
 		}
 		/// <summary>
 		/// delete dish from menu for manager
@@ -37,7 +45,7 @@ namespace Backend.API.Controllers {
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/restaraunt/{restarauntId}/dish/{dishId}/deleteDish")]
 		public async Task<ActionResult<Response>> DeleteDishFromMenu(Guid menuId, Guid dishId) {
-			throw new NotImplementedException();
+			return Ok(await _menuService.DeleteDishFromMenu(menuId, dishId));
 		}
 		/// <summary>
 		/// edit menu for manager
@@ -46,7 +54,7 @@ namespace Backend.API.Controllers {
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/edit")]
 		public async Task<ActionResult<Response>> EditMenu(Guid menuId, [FromBody] MenuShortModelDTO model) {
-			throw new NotImplementedException();
+			return Ok(await _menuService.EditMenu(menuId, model));
 		}
 		/// <summary>
 		/// soft delete menu for manager
@@ -55,7 +63,7 @@ namespace Backend.API.Controllers {
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/delete")]
 		public async Task<ActionResult<Response>> DeleteMenu(Guid menuId) {
-			throw new NotImplementedException();
+			return Ok(await _menuService.DeleteMenu(menuId));
 		}
 		/// <summary>
 		/// recover menu for manager
@@ -64,7 +72,7 @@ namespace Backend.API.Controllers {
 		[Route("{menuId}/recover")]
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		public async Task<ActionResult<Response>> RecoverMenu(Guid menuId) {
-			throw new NotImplementedException();
+			return Ok(await _menuService.RecoverMenu(menuId));
 		}
 		/// <summary>
 		/// get deleted menus for manager
@@ -73,7 +81,7 @@ namespace Backend.API.Controllers {
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}")]
 		public async Task<ActionResult<MenuDTO>> GetDeletedMenus(Guid restarauntId) {
-			throw new NotImplementedException();
+			return Ok(await _menuService.GetDeletedMenus(restarauntId));
 		}
 		/// <summary>
 		/// get all existing not deleted menus
@@ -81,15 +89,15 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getAll")]
 		public async Task<ActionResult<List<MenuShortDTO>>> GetMenus(Guid restarauntId) {
-			throw new NotImplementedException();
+			return Ok(await _menuService.GetMenus(restarauntId));
 		}
 		/// <summary>
 		/// get menu details with list of dishes
 		/// </summary>
 		[HttpGet]
 		[Route("{menuId}/getDetails")]
-		public async Task<ActionResult<MenuDTO>> GetMenuDetails(Guid menuId) {
-			throw new NotImplementedException();
+		public async Task<ActionResult<MenuDTO>> GetMenuDetails(Guid menuId, [FromQuery] int page = 1) {
+			return Ok(await _menuService.GetMenuDetails(menuId, page));
 		}
 
 	}

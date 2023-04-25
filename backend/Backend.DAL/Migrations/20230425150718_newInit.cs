@@ -6,22 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class newInit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Courier",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Courier", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Customer",
                 columns: table => new
@@ -57,6 +46,9 @@ namespace Backend.DAL.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DeletedTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -70,7 +62,6 @@ namespace Backend.DAL.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Count = table.Column<int>(type: "int", nullable: false),
-                    DishId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -80,12 +71,6 @@ namespace Backend.DAL.Migrations
                         name: "FK_CartDishes_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CartDishes_Dishes_DishId",
-                        column: x => x.DishId,
-                        principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -174,6 +159,30 @@ namespace Backend.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DishDishInCart",
+                columns: table => new
+                {
+                    DishesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DishesInCartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DishDishInCart", x => new { x.DishesId, x.DishesInCartId });
+                    table.ForeignKey(
+                        name: "FK_DishDishInCart_CartDishes_DishesInCartId",
+                        column: x => x.DishesInCartId,
+                        principalTable: "CartDishes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DishDishInCart_Dishes_DishesId",
+                        column: x => x.DishesId,
+                        principalTable: "Dishes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -183,30 +192,25 @@ namespace Backend.DAL.Migrations
                     Price = table.Column<double>(type: "float", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CourierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CookId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CourId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CookerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DishesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Cook_CookId",
-                        column: x => x.CookId,
-                        principalTable: "Cook",
+                        name: "FK_Orders_CartDishes_DishesId",
+                        column: x => x.DishesId,
+                        principalTable: "CartDishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Orders_Courier_CourierId",
-                        column: x => x.CourierId,
-                        principalTable: "Courier",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customer",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -239,14 +243,14 @@ namespace Backend.DAL.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartDishes_DishId",
-                table: "CartDishes",
-                column: "DishId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Cook_RestarauntId",
                 table: "Cook",
                 column: "RestarauntId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DishDishInCart_DishesInCartId",
+                table: "DishDishInCart",
+                column: "DishesInCartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DishMenu_MenusId",
@@ -264,19 +268,14 @@ namespace Backend.DAL.Migrations
                 column: "RestarauntId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_CookId",
-                table: "Orders",
-                column: "CookId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_CourierId",
-                table: "Orders",
-                column: "CourierId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_DishesId",
+                table: "Orders",
+                column: "DishesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ratings_CustomerId",
@@ -293,7 +292,10 @@ namespace Backend.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CartDishes");
+                name: "Cook");
+
+            migrationBuilder.DropTable(
+                name: "DishDishInCart");
 
             migrationBuilder.DropTable(
                 name: "DishMenu");
@@ -311,19 +313,16 @@ namespace Backend.DAL.Migrations
                 name: "Menus");
 
             migrationBuilder.DropTable(
-                name: "Cook");
-
-            migrationBuilder.DropTable(
-                name: "Courier");
-
-            migrationBuilder.DropTable(
-                name: "Customer");
+                name: "CartDishes");
 
             migrationBuilder.DropTable(
                 name: "Dishes");
 
             migrationBuilder.DropTable(
                 name: "Restaraunts");
+
+            migrationBuilder.DropTable(
+                name: "Customer");
         }
     }
 }

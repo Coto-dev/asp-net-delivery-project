@@ -16,7 +16,8 @@ namespace Backend.DAL.Data.Entities {
         public string PhotoUrl { get; set; }
         public Categories Category { get; set; }
         public List<Rating> Ratings { get; set; } = new List<Rating>();
-        public List<Menu> Menus { get; set; } = new List<Menu>();
+		public List<DishInCart> DishesInCart { get; set; } = new List<DishInCart>();
+		public List<Menu> Menus { get; set; } = new List<Menu>();
         public DateTime? DeletedTime { get; set; }
 
     }

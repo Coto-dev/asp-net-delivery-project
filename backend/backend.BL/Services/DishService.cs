@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.DAL.Data;
+using Backend.DAL.Data.Entities;
 using Common.BackendInterfaces;
 using Common.DTO;
 using Common.Enums;
@@ -15,38 +16,49 @@ using Microsoft.Extensions.Logging;
 namespace Backend.BL.Services {
 
 	public class DishService : IDishService {
-        private readonly ILogger<DishService> _logger;
         private readonly BackendDbContext _context;
-        public DishService(ILogger<DishService> logger, BackendDbContext context) {
-            _logger = logger;
+        public DishService(BackendDbContext context) {
             _context = context;
         }
 
-        public async Task<Response> AddRatingToDish(Guid DishId, double value) {
-            throw new NotImplementedException();
-        }
+        public async Task<Response> AddRatingToDish(Guid dishId, double value, Guid userId) {
+			var dish = await _context.Dishes
+				.Include(x => x.Ratings)
+				.ThenInclude(r=>r.Customer).
+				FirstOrDefaultAsync(x => x.Id == dishId);
+			if (dish == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
 
-		public async Task<ActionResult<RatingDTO>> CheckRating(Guid Dishid) {
+			return null;
+		}
+
+		public async Task<bool> CheckRating(Guid dishId, Guid userId) {
+			var dish = await _context.Dishes
+				.Include(x => x.Ratings)
+				.ThenInclude(r => r.Customer).
+				FirstOrDefaultAsync(x => x.Id == dishId);
+			var check = await _context.Orders.FirstOrDefaultAsync(o=>o.Status == Statuses.Deilvered && o.Dishes.DishesCart.Contains(dish));
+			if (check == null) return false;
+			return true;
+
+		}
+
+		public async Task<Response> CreateDish(DishModelDTO model, Guid restarauntId, Guid menuId) {
 			throw new NotImplementedException();
 		}
 
-		public async Task<ActionResult<Response>> CreateDish(DishModelDTO model, Guid restarauntId, Guid menuId) {
+		public async Task<Response> CreateDish(Guid restarauntId) {
 			throw new NotImplementedException();
 		}
 
-		public async Task<ActionResult<Response>> CreateDish(Guid restarauntId) {
+		public async Task<Response> DeleteDish(Guid dishId) {
 			throw new NotImplementedException();
 		}
 
-		public async Task<ActionResult<Response>> DeleteDish(Guid dishId) {
+		public async Task<Response> EditDish(DishModelDTO model) {
 			throw new NotImplementedException();
 		}
 
-		public async Task<ActionResult<Response>> EditDish(DishModelDTO model) {
-			throw new NotImplementedException();
-		}
-
-		public async Task<ActionResult<DishesPagedListDTO>> GetDeletedDishes(DishFilterModelDTO model) {
+		public async Task<DishesPagedListDTO> GetDeletedDishes(DishFilterModelDTO model) {
 			throw new NotImplementedException();
 		}
 
@@ -54,7 +66,7 @@ namespace Backend.BL.Services {
             throw new NotImplementedException();
         }
 
-		public async Task<ActionResult<DishesPagedListDTO>> GetGishes(DishFilterModelDTO model) {
+		public async Task<DishesPagedListDTO> GetGishes(DishFilterModelDTO model) {
 			throw new NotImplementedException();
 		}
 
@@ -62,7 +74,7 @@ namespace Backend.BL.Services {
             throw new NotImplementedException();
         }
 
-		public async Task<ActionResult<Response>> RecoverDish(Guid restarauntId) {
+		public async Task<Response> RecoverDish(Guid restarauntId) {
 			throw new NotImplementedException();
 		}
 	}

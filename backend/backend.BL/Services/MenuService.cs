@@ -25,8 +25,8 @@ namespace Backend.BL.Services {
 			_mapper = mapper;
 		}
 
-		public async Task<ActionResult<Response>> AddDishToMenu(Guid menuId, Guid dishId) {
-			var menu = await _context.Menus.Include(x=>x.Dishes).FirstOrDefaultAsync();
+		public async Task<Response> AddDishToMenu(Guid menuId, Guid dishId) {
+			var menu = await _context.Menus.Include(x=>x.Dishes).FirstOrDefaultAsync(x=>x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
 			var dish = _context.Dishes.FirstOrDefault(d => d.Id == dishId);
 			if (dish == null) throw new KeyNotFoundException("Блюдо с таким id не существует");
@@ -40,7 +40,7 @@ namespace Backend.BL.Services {
 
 		public async Task<Response> CreateMenu(Guid restarauntId, MenuShortModelDTO model) {
 			if (model.Name == null) throw new ArgumentNullException(nameof(model.Name));
-			var rest = await _context.Restaraunts.Include(r=>r.Menus).FirstOrDefaultAsync();
+			var rest = await _context.Restaraunts.Include(r=>r.Menus).FirstOrDefaultAsync(x => x.Id == restarauntId);
 			if (rest == null) throw new KeyNotFoundException("Ресторан с таким id не найден");
 			rest.Menus.Add(new Menu
 			{ Name = model.Name,
@@ -53,8 +53,8 @@ namespace Backend.BL.Services {
 			};
 		}
 
-		public async Task<ActionResult<Response>> DeleteDishFromMenu(Guid menuId, Guid dishId) {
-			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync();
+		public async Task<Response> DeleteDishFromMenu(Guid menuId, Guid dishId) {
+			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
 			var dish = _context.Dishes.FirstOrDefault(d => d.Id == dishId);
 			if (dish == null) throw new KeyNotFoundException("Блюдо с таким id не существует");
@@ -67,8 +67,8 @@ namespace Backend.BL.Services {
 			};
 		}
 
-		public async Task<ActionResult<Response>> DeleteMenu(Guid menuId) {
-			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync();
+		public async Task<Response> DeleteMenu(Guid menuId) {
+			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
 			menu.DeletedTime= DateTime.Now;
 			await _context.SaveChangesAsync();
@@ -79,8 +79,8 @@ namespace Backend.BL.Services {
 			};
 		}
 
-		public async Task<ActionResult<Response>> EditMenu(Guid menuId, MenuShortModelDTO model) {
-			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync();
+		public async Task<Response> EditMenu(Guid menuId, MenuShortModelDTO model) {
+			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
 			menu.Name = model.Name;
 			await _context.SaveChangesAsync();
@@ -91,14 +91,14 @@ namespace Backend.BL.Services {
 			};
 		}
 
-		public async Task<ActionResult<List<MenuDTO>>> GetDeletedMenus(Guid restarauntId) {
+		public async Task<List<MenuDTO>> GetDeletedMenus(Guid restarauntId) {
 			var rest = await _context.Restaraunts.Include(r => r.Menus).FirstOrDefaultAsync(x=>x.Id == restarauntId);
 			if (rest == null) throw new KeyNotFoundException("Ресторан с таким id не найден");
 			return rest.Menus.Where(m=>m.DeletedTime.HasValue).Select(m=> _mapper.Map<MenuDTO>(m)).ToList();
 		}
 
-		public async Task<ActionResult<MenuDishesPagedListDTO>> GetMenuDetails(Guid menuId, int Page =1) {
-			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync();
+		public async Task<MenuDishesPagedListDTO> GetMenuDetails(Guid menuId, int Page =1) {
+			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
 
 			if (Page <= 0 || Page == null) throw new BadRequestException("Неверно указана страница");
@@ -122,14 +122,14 @@ namespace Backend.BL.Services {
 			return response;
 		}
 
-		public async Task<ActionResult<List<MenuShortDTO>>> GetMenus(Guid restarauntId) {
+		public async Task<List<MenuShortDTO>> GetMenus(Guid restarauntId) {
 			var rest = await _context.Restaraunts.FirstOrDefaultAsync(x => x.Id == restarauntId);
 			if (rest == null) throw new KeyNotFoundException("Ресторан с таким id не найден");
 			return rest.Menus.Where(m => !m.DeletedTime.HasValue).Select(m => _mapper.Map<MenuShortDTO>(m)).ToList();
 		}
 
-		public async Task<ActionResult<Response>> RecoverMenu(Guid menuId) {
-			var menu = await _context.Menus.FirstOrDefaultAsync();
+		public async Task<Response> RecoverMenu(Guid menuId) {
+			var menu = await _context.Menus.FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
 			menu.DeletedTime = null;
 			await _context.SaveChangesAsync();

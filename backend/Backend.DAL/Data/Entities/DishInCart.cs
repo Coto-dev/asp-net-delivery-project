@@ -9,11 +9,7 @@ namespace Backend.DAL.Data.Entities {
     public class DishInCart {
         public Guid Id { get; set; } = Guid.NewGuid();
         public int Count { get; set; }
-        public Dish Dish { get; set; }
-        [ForeignKey("Dish")]
-        public Guid DishId { get; set; }
-        [ForeignKey("Customer")]
-        public Guid CustomerId { get; set; }
+        public List<Dish> DishesCart { get; set; } = new List<Dish>();   
         public Customer Customer { get; set; }
     }
 }

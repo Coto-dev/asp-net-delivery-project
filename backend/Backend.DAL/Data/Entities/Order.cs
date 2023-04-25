@@ -18,9 +18,11 @@ namespace Backend.DAL.Data.Entities {
         public double Price { get; set; }
         public string Address { get; set; }
         public Statuses Status { get; set; }
-		public Guid CustomerId { get; set; }
+	//	public Guid CustomerId { get; set; }
 		public Guid? CourId { get; set; }
 		public Guid? CookerId { get; set; }
+
+		public DishInCart Dishes { get; set; }
        
 
     }

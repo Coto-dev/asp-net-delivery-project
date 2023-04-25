@@ -9,13 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Common.BackendInterfaces {
 	public interface IMenuService {
 		public Task<Response> CreateMenu(Guid restarauntId, MenuShortModelDTO model);
-		public Task<ActionResult<Response>> AddDishToMenu(Guid menuId, Guid dishId);
-		public Task<ActionResult<Response>> DeleteDishFromMenu(Guid menuId, Guid dishId);
-		public Task<ActionResult<Response>> EditMenu(Guid menuId, MenuShortModelDTO model);
-		public Task<ActionResult<Response>> DeleteMenu(Guid menuId);
-		public Task<ActionResult<Response>> RecoverMenu(Guid menuId);
-		public Task<ActionResult<List<MenuDTO>>> GetDeletedMenus(Guid restarauntId);
-		public Task<ActionResult<List<MenuShortDTO>>> GetMenus(Guid restarauntId);
-		public Task<ActionResult<MenuDishesPagedListDTO>> GetMenuDetails(Guid menuId, int Page =1);
+		public Task<Response> AddDishToMenu(Guid menuId, Guid dishId);
+		public Task<Response> DeleteDishFromMenu(Guid menuId, Guid dishId);
+		public Task<Response> EditMenu(Guid menuId, MenuShortModelDTO model);
+		public Task<Response> DeleteMenu(Guid menuId);
+		public Task<Response> RecoverMenu(Guid menuId);
+		public Task<List<MenuDTO>> GetDeletedMenus(Guid restarauntId);
+		public Task<List<MenuShortDTO>> GetMenus(Guid restarauntId);
+		public Task<MenuDishesPagedListDTO> GetMenuDetails(Guid menuId, int Page =1);
 	}
 }
