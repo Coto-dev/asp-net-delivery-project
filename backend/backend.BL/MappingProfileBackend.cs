@@ -15,7 +15,10 @@ namespace Backend.BL {
 				source => source.MapFrom(source => source.Dishes.Select(x => x).ToList()));
 				
 			CreateMap<Menu, MenuShortDTO>();
-			CreateMap<Dish, DishDetailsDTO>();
+
+			CreateMap<DishModelDTO, Dish>();
+			CreateMap<Dish, DishDetailsDTO>().ForMember(dest => dest.Rating,
+				source => source.MapFrom(source => source.Ratings.Average(x => x.Value))); ;
 			CreateMap<Restaraunt, RestarauntDTO>();
 
 		}

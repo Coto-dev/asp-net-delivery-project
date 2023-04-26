@@ -42,6 +42,8 @@ namespace Backend.BL.Services {
 			if (model.Name == null) throw new ArgumentNullException(nameof(model.Name));
 			var rest = await _context.Restaraunts.Include(r=>r.Menus).FirstOrDefaultAsync(x => x.Id == restarauntId);
 			if (rest == null) throw new KeyNotFoundException("Ресторан с таким id не найден");
+			if (model.Name == "<<hidden>>") throw new NotAllowedException("Использовано служебное название меню");
+
 			rest.Menus.Add(new Menu
 			{ Name = model.Name,
 			  Restaraunt = rest 
@@ -70,6 +72,7 @@ namespace Backend.BL.Services {
 		public async Task<Response> DeleteMenu(Guid menuId) {
 			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
+			if (menu.Name == "<<hidden>>") throw new NotAllowedException("Невозможно удалить служебное меню");
 			menu.DeletedTime= DateTime.Now;
 			await _context.SaveChangesAsync();
 
@@ -82,6 +85,7 @@ namespace Backend.BL.Services {
 		public async Task<Response> EditMenu(Guid menuId, MenuShortModelDTO model) {
 			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
+			if (model.Name == "<<hidden>>") throw new NotAllowedException("Невозможно изменить меню,т.к использовано служебное название");
 			menu.Name = model.Name;
 			await _context.SaveChangesAsync();
 

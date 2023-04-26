@@ -1,4 +1,5 @@
-﻿using Common.BackendInterfaces;
+﻿using Backend.DAL.Data.Entities;
+using Common.BackendInterfaces;
 using Common.DTO;
 using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -50,18 +51,18 @@ namespace Backend.API.Controllers {
 		/// <response code = "500" >InternalServerError</response>
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getAll")]
-		public async Task<ActionResult<DishesPagedListDTO>> GetDishes([FromQuery] DishFilterModelDTO model) {
+		public async Task<ActionResult<DishesPagedListDTO>> GetDishes([FromQuery] DishFilterModelDTO model, Guid restarauntId) {
 			throw new NotImplementedException();
 		}
 		/// <summary>
-		/// Get all dishes from menu
+		/// Get all deleted dishes from menu
 		/// </summary>
 		/// <response code = "400" > Bad Request</response>
 		/// <response code = "404" >Not Found</response>
 		/// <response code = "500" >InternalServerError</response>
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getDeleted")]
-		public async Task<ActionResult<DishesPagedListDTO>> GetDeletedDishes([FromQuery] DishFilterModelDTO model) {
+		public async Task<ActionResult<DishesPagedListDTO>> GetDeletedDishes([FromQuery] DishFilterModelDTO model,Guid restarauntId) {
 			throw new NotImplementedException();
 		}
 
@@ -72,7 +73,7 @@ namespace Backend.API.Controllers {
 		/// <response code = "400" > Bad Request</response>
 		[HttpGet]
 		[Route("{dishId}/getDetails")]
-		public async Task<ActionResult<DishDetailsDTO>> GetGishDetails(Guid dishId) {
+		public async Task<ActionResult<DishDetailsDTO>> GetDishDetails(Guid dishId) {
 			throw new NotImplementedException();
 		}
 
@@ -99,7 +100,7 @@ namespace Backend.API.Controllers {
 		[HttpPut]
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{dishId}/edit")]
-		public async Task<ActionResult<Response>> EditDish(DishModelDTO model) {
+		public async Task<ActionResult<Response>> EditDish(DishModelDTO model, Guid dishId) {
 			throw new NotImplementedException();
 		}
 
@@ -118,7 +119,7 @@ namespace Backend.API.Controllers {
 		[HttpPut]
 		[Authorize(Roles = ApplicationRoleNames.Manager)]
 		[Route("{dishId}/recover")]
-		public async Task<ActionResult<Response>> RecoverDish(Guid restarauntId) {
+		public async Task<ActionResult<Response>> RecoverDish(Guid dishId) {
 			throw new NotImplementedException();
 		}
 	}

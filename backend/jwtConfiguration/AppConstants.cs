@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoomonThings {
 	public static class AppConstants {
-		public const int PageSize = 6;
+		public const int PageSize = 2;
+		public const int DishPageSize = 3;
 	}
 }
