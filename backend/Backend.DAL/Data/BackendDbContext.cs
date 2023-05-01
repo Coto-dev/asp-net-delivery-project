@@ -15,7 +15,9 @@ namespace Backend.DAL.Data {
         public BackendDbContext(DbContextOptions<BackendDbContext> options) : base(options) { }
 
         public virtual DbSet<Dish> Dishes { get; set; }
-        public virtual DbSet<Menu> Menus { get; set; }
+		public virtual DbSet<DishInOrder> OrderDishes { get; set; }
+		public virtual DbSet<Customer> Customers { get; set; }
+		public virtual DbSet<Menu> Menus { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
         public virtual DbSet<Restaraunt> Restaraunts { get; set; }

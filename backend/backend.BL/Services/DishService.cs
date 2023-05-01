@@ -55,8 +55,8 @@ namespace Backend.BL.Services {
 			if (dish == null) throw new KeyNotFoundException("Блюдо с с таким id не найдено");
 			var check = await _context.Orders
 				.FirstOrDefaultAsync(o=>o.Status == Statuses.Deilvered
-				&& o.Dishes.DishesCart.Contains(dish)
-				&& o.Dishes.Customer.Id == userId);
+				&& o.Dishes.Any(d=>d.Dish.Id == dishId)
+				&& o.Customer.Id == userId);
 			if (check == null) return false;
 			return true;
 

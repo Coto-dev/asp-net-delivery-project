@@ -9,7 +9,7 @@ namespace Backend.DAL.Data.Entities {
     public class DishInCart {
         public Guid Id { get; set; } = Guid.NewGuid();
         public int Count { get; set; }
-        public List<Dish> DishesCart { get; set; } = new List<Dish>();   
+        public Dish Dish  { get; set; }
         public Customer Customer { get; set; }
     }
 }

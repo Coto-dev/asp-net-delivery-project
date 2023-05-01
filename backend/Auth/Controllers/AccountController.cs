@@ -81,7 +81,7 @@ namespace Auth.Controllers {
         /// Change user's password
         /// </summary>
         [Authorize(AuthenticationSchemes = "Bearer")]
-        [Route("changePassword")]
+		[Route("changePassword")]
         [HttpPut]
         public async Task<ActionResult<AuthenticatedResponse>> ChangePassword([FromBody] ChangePasswordModelDTO model) {
             try {

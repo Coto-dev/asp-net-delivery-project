@@ -20,7 +20,7 @@ namespace Auth.BL.Services
                 issuer: JwtConfiguration.Issuer,
                 audience: JwtConfiguration.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: signinCredentials
             );
 

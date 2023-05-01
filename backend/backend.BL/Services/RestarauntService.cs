@@ -30,7 +30,7 @@ namespace Backend.BL.Services {
 			var totalItems = await _context.Restaraunts.CountAsync();
 			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.PageSize);
 
-			if (totalPages < Page) throw new BadRequestException("Неверно указана текущая страница");
+			if (totalPages < Page) throw new BadRequestException("Неверно указана текущая страница или список ресторанов пуст");
 
 			var restaraunts = new List<Restaraunt>();
 			if (string.IsNullOrEmpty(NameFilter)) {

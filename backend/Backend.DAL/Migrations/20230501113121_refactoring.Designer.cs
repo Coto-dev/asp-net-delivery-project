@@ -4,6 +4,7 @@ using Backend.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.DAL.Migrations
 {
     [DbContext(typeof(BackendDbContext))]
-    partial class BackendDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230501113121_refactoring")]
+    partial class refactoring
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,37 +102,18 @@ namespace Backend.DAL.Migrations
                     b.Property<Guid>("DishId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("DishId");
 
-                    b.ToTable("CartDishes");
-                });
-
-            modelBuilder.Entity("Backend.DAL.Data.Entities.DishInOrder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("DishId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DishId");
-
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDishes");
+                    b.ToTable("CartDishes");
                 });
 
             modelBuilder.Entity("Backend.DAL.Data.Entities.Manager", b =>
@@ -187,7 +171,7 @@ namespace Backend.DAL.Migrations
                     b.Property<Guid?>("CourId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DeliveryTime")
@@ -303,22 +287,11 @@ namespace Backend.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
-
-                    b.Navigation("Dish");
-                });
-
-            modelBuilder.Entity("Backend.DAL.Data.Entities.DishInOrder", b =>
-                {
-                    b.HasOne("Backend.DAL.Data.Entities.Dish", "Dish")
-                        .WithMany()
-                        .HasForeignKey("DishId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Backend.DAL.Data.Entities.Order", null)
                         .WithMany("Dishes")
                         .HasForeignKey("OrderId");
+
+                    b.Navigation("Customer");
 
                     b.Navigation("Dish");
                 });
@@ -347,13 +320,9 @@ namespace Backend.DAL.Migrations
 
             modelBuilder.Entity("Backend.DAL.Data.Entities.Order", b =>
                 {
-                    b.HasOne("Backend.DAL.Data.Entities.Customer", "Customer")
+                    b.HasOne("Backend.DAL.Data.Entities.Customer", null)
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
+                        .HasForeignKey("CustomerId");
                 });
 
             modelBuilder.Entity("Backend.DAL.Data.Entities.Rating", b =>

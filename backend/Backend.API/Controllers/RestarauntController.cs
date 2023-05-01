@@ -16,6 +16,7 @@ namespace Backend.API.Controllers {
 		private readonly ILogger<RestarauntController> _logger;
 		private readonly IRestarauntService _restarauntService;
 
+
 		public RestarauntController(ILogger<RestarauntController> logger, IRestarauntService restarauntService) {
 			_logger = logger;
 			_restarauntService = restarauntService;
