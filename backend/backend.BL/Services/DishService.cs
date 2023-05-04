@@ -11,10 +11,7 @@ using Common.DTO;
 using Common.Enums;
 using Common.Exceptions;
 using CoomonThings;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.BL.Services {
@@ -65,9 +62,17 @@ namespace Backend.BL.Services {
 		public async Task<Response> CreateDishWithMenu(DishModelDTO model, Guid menuId) {
 			var menu = await _context.Menus.Include(m=>m.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с таким id не найдено");
-
-			menu.Dishes.Add(_mapper.Map<Dish>(model));
+			var dish = (new Dish {
+				Description = model.Description,
+				Name = model.Name,
+				Category = Categories.Desert,
+				IsVagetarian = model.IsVagetarian,
+				Price = model.Price,
+			});
+			await _context.Dishes.AddAsync(dish);
 			await _context.SaveChangesAsync();
+
+			//	menu.Dishes.Add(_mapper.Map<Dish>(model));
 			return new Response {
 				Message = "Succesfully created",
 				Status = "200"
@@ -122,7 +127,19 @@ namespace Backend.BL.Services {
 
 		public async Task<DishDetailsDTO> GetDishById(Guid id) {
            var dish =  await _context.Dishes.Include(x=>x.Ratings).FirstOrDefaultAsync();
-		   return _mapper.Map<DishDetailsDTO>(dish);
+			var response = new DishDetailsDTO {
+				Id = dish.Id,
+				Description = dish.Description,
+				Category = dish.Category,
+				IsVagetarian = dish.IsVagetarian,
+				Name = dish.Name,
+				Price = dish.Price,
+				PhotoUrl = dish.PhotoUrl,
+				Rating = dish.Ratings.Average(x => x.Value)
+			};
+			//return null;
+			return response;
+		 //  return _mapper.Map<DishDetailsDTO>(dish);
         }
 
 		public async Task<DishesPagedListDTO> GetDishes(DishFilterModelDTO model, Guid restarauntId) {
@@ -218,6 +235,7 @@ namespace Backend.BL.Services {
 
 
 		public async Task<Response> RecoverDish(Guid dishId) {
+
 			var dish = await _context.Dishes.FirstOrDefaultAsync(x => x.Id == dishId);
 			if (dish == null) throw new KeyNotFoundException("Блюдо с таким id не найдено");
 			dish.DeletedTime = null;
@@ -226,6 +244,14 @@ namespace Backend.BL.Services {
 				Message = "Succesfully recovered",
 				Status = "200"
 			};
+		}
+		public async Task CheckPermissionForManager(Guid restarauntId, Guid managerId) {
+			var restaraunt = await _context.Restaraunts.Include(x=>x.Managers).FirstOrDefaultAsync(x => x.Id == restarauntId);
+			if (restaraunt == null) throw new KeyNotFoundException("ресторана с таким id не найдено");
+			if (restaraunt.Managers == null) throw new KeyNotFoundException("у этого ресторана нет менеджеров");
+			if (!restaraunt.Managers.Any(x=>x.Id == managerId)) throw new NotFoundException("Этот менеджер не имеет отношения к этому ресторану");
+	
+
 		}
 	}
 }

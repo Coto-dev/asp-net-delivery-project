@@ -24,7 +24,7 @@ namespace Backend.API.Controllers {
 		/// </remarks>
 
 		[HttpPost]
-		[Authorize(Roles =ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}/create")]
 		public async Task<ActionResult<Response>> CreateMenu(Guid restarauntId, [FromBody] MenuShortModelDTO model) {
 			 return Ok(await _menuService.CreateMenu(restarauntId, model));
@@ -33,7 +33,7 @@ namespace Backend.API.Controllers {
 		/// add dish to concrete menu for manager
 		/// </summary>
 		[HttpPost]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/restaraunt/{restarauntId}/dish/{dishId}/addDish")]
 		public async Task<ActionResult<Response>> AddDishToMenu(Guid menuId, Guid dishId) {
 			return Ok(await _menuService.AddDishToMenu(menuId, dishId));
@@ -42,7 +42,7 @@ namespace Backend.API.Controllers {
 		/// delete dish from menu for manager
 		/// </summary>
 		[HttpDelete]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/restaraunt/{restarauntId}/dish/{dishId}/deleteDish")]
 		public async Task<ActionResult<Response>> DeleteDishFromMenu(Guid menuId, Guid dishId) {
 			return Ok(await _menuService.DeleteDishFromMenu(menuId, dishId));
@@ -51,7 +51,7 @@ namespace Backend.API.Controllers {
 		/// edit menu for manager
 		/// </summary>
 		[HttpPut]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/edit")]
 		public async Task<ActionResult<Response>> EditMenu(Guid menuId, [FromBody] MenuShortModelDTO model) {
 			return Ok(await _menuService.EditMenu(menuId, model));
@@ -60,7 +60,7 @@ namespace Backend.API.Controllers {
 		/// soft delete menu for manager
 		/// </summary>
 		[HttpDelete]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/delete")]
 		public async Task<ActionResult<Response>> DeleteMenu(Guid menuId) {
 			return Ok(await _menuService.DeleteMenu(menuId));
@@ -70,7 +70,7 @@ namespace Backend.API.Controllers {
 		/// </summary>
 		[HttpPut]
 		[Route("{menuId}/recover")]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		public async Task<ActionResult<Response>> RecoverMenu(Guid menuId) {
 			return Ok(await _menuService.RecoverMenu(menuId));
 		}
@@ -78,7 +78,7 @@ namespace Backend.API.Controllers {
 		/// get deleted menus for manager
 		/// </summary>
 		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}")]
 		public async Task<ActionResult<MenuDTO>> GetDeletedMenus(Guid restarauntId) {
 			return Ok(await _menuService.GetDeletedMenus(restarauntId));
@@ -94,11 +94,11 @@ namespace Backend.API.Controllers {
 		/// <summary>
 		/// get menu details with list of dishes
 		/// </summary>
-		[HttpGet]
+		/*[HttpGet]
 		[Route("{menuId}/getDetails")]
 		public async Task<ActionResult<MenuDTO>> GetMenuDetails(Guid menuId, [FromQuery] int page = 1) {
 			return Ok(await _menuService.GetMenuDetails(menuId, page));
-		}
+		}*/
 
 	}
 }

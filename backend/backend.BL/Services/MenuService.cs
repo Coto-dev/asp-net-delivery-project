@@ -43,10 +43,10 @@ namespace Backend.BL.Services {
 			var rest = await _context.Restaraunts.Include(r=>r.Menus).FirstOrDefaultAsync(x => x.Id == restarauntId);
 			if (rest == null) throw new KeyNotFoundException("Ресторан с таким id не найден");
 			if (model.Name == "<<hidden>>") throw new NotAllowedException("Использовано служебное название меню");
-
-			rest.Menus.Add(new Menu
+			
+			await _context.AddAsync(new Menu
 			{ Name = model.Name,
-			  Restaraunt = rest 
+			 Restaraunt = rest 
 			});
 			await _context.SaveChangesAsync();
 			return new Response {
@@ -127,7 +127,7 @@ namespace Backend.BL.Services {
 		}
 
 		public async Task<List<MenuShortDTO>> GetMenus(Guid restarauntId) {
-			var rest = await _context.Restaraunts.FirstOrDefaultAsync(x => x.Id == restarauntId);
+			var rest = await _context.Restaraunts.Include(x=>x.Menus).FirstOrDefaultAsync(x => x.Id == restarauntId);
 			if (rest == null) throw new KeyNotFoundException("Ресторан с таким id не найден");
 			return rest.Menus.Where(m => !m.DeletedTime.HasValue).Select(m => _mapper.Map<MenuShortDTO>(m)).ToList();
 		}

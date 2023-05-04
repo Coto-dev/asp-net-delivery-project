@@ -1,4 +1,5 @@
-﻿using Backend.DAL.Data.Entities;
+﻿using System.Security.Claims;
+using Backend.DAL.Data.Entities;
 using Common.BackendInterfaces;
 using Common.DTO;
 using Common.Enums;
@@ -26,10 +27,11 @@ namespace Backend.API.Controllers {
 		/// create new dish in concrete menu for manager
 		/// </summary>
 		[HttpPost]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
-		[Route("{id}/restaraunt/{restarauntId}/menu/{menuId}")]
-		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid restarauntId, Guid menuId) {
-			throw new NotImplementedException();
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
+		[Route("/restaraunt/{restarauntId}/menu/{menuId}")]
+		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid menuId , Guid restarauntId) {
+			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(_dishService.CreateDishWithMenu(model, menuId));
 		}
 		/// <summary>
 		/// create new dish in hidden menu for manager
@@ -38,10 +40,11 @@ namespace Backend.API.Controllers {
 		/// <response code = "404" >Not Found</response>
 		/// <response code = "500" >InternalServerError</response>
 		[HttpPost]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}/create")]
-		public async Task<ActionResult<Response>> CreateDish(Guid restarauntId) {
-			throw new NotImplementedException();
+		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid restarauntId) {
+			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(_dishService.CreateDishWithHiddenMenu(model,restarauntId));
 		}
 		/// <summary>
 		/// Get all dishes from menu
@@ -52,7 +55,7 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getAll")]
 		public async Task<ActionResult<DishesPagedListDTO>> GetDishes([FromQuery] DishFilterModelDTO model, Guid restarauntId) {
-			throw new NotImplementedException();
+			return Ok(_dishService.GetDishes(model, restarauntId));
 		}
 		/// <summary>
 		/// Get all deleted dishes from menu
@@ -63,7 +66,8 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getDeleted")]
 		public async Task<ActionResult<DishesPagedListDTO>> GetDeletedDishes([FromQuery] DishFilterModelDTO model,Guid restarauntId) {
-			throw new NotImplementedException();
+			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(_dishService.GetDeletedDishes(model, restarauntId));
 		}
 
 
@@ -74,7 +78,7 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Route("{dishId}/getDetails")]
 		public async Task<ActionResult<DishDetailsDTO>> GetDishDetails(Guid dishId) {
-			throw new NotImplementedException();
+			return Ok(_dishService.GetDishById(dishId));
 		}
 
 		/// <summary>
@@ -86,40 +90,43 @@ namespace Backend.API.Controllers {
 		[HttpPost]
 		[Route("{dishId}/rating")]
 		public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid dishId, double value) {
-			throw new NotImplementedException();
+			return Ok(_dishService.AddRatingToDish(dishId, value, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		[HttpGet]
 		[Route("{dishId}/rating/check")]
 		public async Task<ActionResult<RatingDTO>> CheckRating(Guid dishId) {
-			throw new NotImplementedException();
+			return Ok(_dishService.CheckRating(dishId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 
 		/// <summary>
 		/// edit dish for manager
 		/// </summary>
 		[HttpPut]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
-		[Route("{dishId}/edit")]
-		public async Task<ActionResult<Response>> EditDish(DishModelDTO model, Guid dishId) {
-			throw new NotImplementedException();
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
+		[Route("{dishId}/restaraunt/{restarauntId}/edit")]
+		public async Task<ActionResult<Response>> EditDish(DishModelDTO model, Guid dishId , Guid restarauntId) {
+			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(_dishService.EditDish(model, dishId));
 		}
 
 		/// <summary>
 		/// soft delete dish for manager
 		/// </summary>
 		[HttpDelete]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
-		[Route("{dishId}/delete")]
-		public async Task<ActionResult<Response>> DeleteDish(Guid dishId) {
-			throw new NotImplementedException();
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
+		[Route("{dishId}/restaraunt/{restarauntId}/delete")]
+		public async Task<ActionResult<Response>> DeleteDish(Guid dishId, Guid restarauntId) {
+			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(_dishService.DeleteDish(dishId));
 		}
 		/// <summary>
 		/// recover dish for manager
 		/// </summary>
 		[HttpPut]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
-		[Route("{dishId}/recover")]
-		public async Task<ActionResult<Response>> RecoverDish(Guid dishId) {
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
+		[Route("{dishId}/restaraunt/{restarauntId}/recover")]
+		public async Task<ActionResult<Response>> RecoverDish(Guid dishId, Guid restarauntId) {
+			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			throw new NotImplementedException();
 		}
 	}
