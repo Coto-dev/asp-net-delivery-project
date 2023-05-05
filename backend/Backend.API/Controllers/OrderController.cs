@@ -1,5 +1,6 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
+using Backend.DAL.Data.Entities;
 using Common.BackendInterfaces;
 using Common.DTO;
 using Common.Enums;
@@ -13,11 +14,12 @@ namespace Backend.API.Controllers {
 	public class OrderController : ControllerBase {
 		private readonly ILogger<OrderController> _logger;
 		private readonly IOrderService _orderService;
+		private readonly IPermissionCheckService _permissionService;
 
-
-		public OrderController(ILogger<OrderController> logger, IOrderService orderService) {
+		public OrderController(ILogger<OrderController> logger, IOrderService orderService, IPermissionCheckService checkPermission) {
 			_logger = logger;
 			_orderService = orderService;
+			_permissionService = checkPermission;
 		}
 		/// <summary>
 		/// return customer address if not null for customer 
@@ -78,6 +80,8 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		[Route("customer/repeat/{orderId}")]
 		public async Task<ActionResult<Response>> RepeatOrder(Guid orderId) {
+			await _permissionService.CheckPermissionForCustomer(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
 			throw new NotImplementedException();
 		}
 
@@ -91,6 +95,8 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Cook)]
 		[Route("cook/status/change/{orderId}")]
 		public async Task<ActionResult<Response>> ChangeOrderStatusCook(Guid orderId) {
+			await _permissionService.CheckPermissionForCook(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+
 			throw new NotImplementedException();// 
 		}
 		/// <summary>
@@ -103,6 +109,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Courier)]
 		[Route("courier/status/change/{orderId}")]
 		public async Task<ActionResult<Response>> ChangeOrderStatusCourier(Guid orderId) {
+			await _permissionService.CheckPermissionForCourier(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			throw new NotImplementedException();// 
 		}
 		/// <summary>
@@ -116,7 +123,8 @@ namespace Backend.API.Controllers {
 
 		[Route("{orderId}/customer/cancel")]
 		public async Task<ActionResult<Response>> CancelOrderCustomer(Guid orderId) {
-			return Ok(await _orderService.CancelOrderCustomer(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+			await _permissionService.CheckPermissionForCustomer(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _orderService.CancelOrderCustomer(orderId));
 		}
 		/// <summary>
 		/// cancel order if only status delivery
@@ -128,7 +136,8 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Courier)]
 		[Route("{orderId}/courier/cancel")]
 		public async Task<ActionResult<Response>> CancelOrderCourier(Guid orderId) {
-			return Ok(await _orderService.CancelOrderCourier(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+			await _permissionService.CheckPermissionForCourier(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _orderService.CancelOrderCourier(orderId));
 		}
 
 

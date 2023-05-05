@@ -8,9 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Common.BackendInterfaces {
 	public interface IBasketService {
-		public Task<ActionResult<List<BasketDTO>>> GetBasket(Guid dishId);
-		public Task<ActionResult<Response>> AddDishToBasket(Guid dishId);
-		public  Task<ActionResult<Response>> RemoveDish(Guid dishId, bool CompletelyDelete);
-		public Task<ActionResult<Response>> ClearBasket(Guid dishId, bool CompletelyDelete);
+		public Task<BasketDTO> GetBasket(Guid customerId);
+		/// <summary>
+		/// возвращает название ресторана, блюда которого на данный момент лежат в корзине
+		/// </summary>
+		/// <param name="customerId"></param>
+		/// <returns></returns>
+		public Task<string> CheckBasketOndishesFromOneRestaraunt(Guid customerId);
+		public Task<Response> AddDishToBasket(Guid dishId, Guid customerId);
+		public  Task<Response> RemoveDish(Guid dishId, Guid customerId, bool CompletelyDelete);
+		public Task<Response> ClearBasket(Guid customerId);
 	}
 }

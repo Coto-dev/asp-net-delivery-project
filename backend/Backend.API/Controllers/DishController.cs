@@ -17,21 +17,23 @@ namespace Backend.API.Controllers {
 
 		private readonly ILogger<DishController> _logger;
 		private readonly IDishService _dishService;
+		private readonly IPermissionCheckService _permissionService;
 
-		public DishController(ILogger<DishController> logger, IDishService scheduleService) {
+
+		public DishController(ILogger<DishController> logger, IDishService dishService, IPermissionCheckService permissionService) {
 			_logger = logger;
-			_dishService = scheduleService;
-
+			_dishService = dishService;
+			_permissionService = permissionService;
 		}
 		/// <summary>
 		/// create new dish in concrete menu for manager
 		/// </summary>
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
-		[Route("/restaraunt/{restarauntId}/menu/{menuId}")]
+		[Route("restaraunt/{restarauntId}/menu/{menuId}")]
 		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid menuId , Guid restarauntId) {
-			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			return Ok(_dishService.CreateDishWithMenu(model, menuId));
+			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _dishService.CreateDishWithMenu(model, menuId));
 		}
 		/// <summary>
 		/// create new dish in hidden menu for manager
@@ -43,8 +45,8 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}/create")]
 		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid restarauntId) {
-			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			return Ok(_dishService.CreateDishWithHiddenMenu(model,restarauntId));
+			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _dishService.CreateDishWithHiddenMenu(model, restarauntId));
 		}
 		/// <summary>
 		/// Get all dishes from menu
@@ -55,7 +57,7 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getAll")]
 		public async Task<ActionResult<DishesPagedListDTO>> GetDishes([FromQuery] DishFilterModelDTO model, Guid restarauntId) {
-			return Ok(_dishService.GetDishes(model, restarauntId));
+			return Ok(await _dishService.GetDishes(model, restarauntId));
 		}
 		/// <summary>
 		/// Get all deleted dishes from menu
@@ -66,8 +68,8 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getDeleted")]
 		public async Task<ActionResult<DishesPagedListDTO>> GetDeletedDishes([FromQuery] DishFilterModelDTO model,Guid restarauntId) {
-			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			return Ok(_dishService.GetDeletedDishes(model, restarauntId));
+			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _dishService.GetDeletedDishes(model, restarauntId));
 		}
 
 
@@ -78,7 +80,7 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Route("{dishId}/getDetails")]
 		public async Task<ActionResult<DishDetailsDTO>> GetDishDetails(Guid dishId) {
-			return Ok(_dishService.GetDishById(dishId));
+			return Ok(await _dishService.GetDishById(dishId));
 		}
 
 		/// <summary>
@@ -90,12 +92,12 @@ namespace Backend.API.Controllers {
 		[HttpPost]
 		[Route("{dishId}/rating")]
 		public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid dishId, double value) {
-			return Ok(_dishService.AddRatingToDish(dishId, value, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+			return Ok(await _dishService.AddRatingToDish(dishId, value, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		[HttpGet]
 		[Route("{dishId}/rating/check")]
 		public async Task<ActionResult<RatingDTO>> CheckRating(Guid dishId) {
-			return Ok(_dishService.CheckRating(dishId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+			return Ok(await _dishService.CheckRating(dishId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 
 		/// <summary>
@@ -105,8 +107,8 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{dishId}/restaraunt/{restarauntId}/edit")]
 		public async Task<ActionResult<Response>> EditDish(DishModelDTO model, Guid dishId , Guid restarauntId) {
-			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			return Ok(_dishService.EditDish(model, dishId));
+			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _dishService.EditDish(model, dishId));
 		}
 
 		/// <summary>
@@ -116,8 +118,8 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{dishId}/restaraunt/{restarauntId}/delete")]
 		public async Task<ActionResult<Response>> DeleteDish(Guid dishId, Guid restarauntId) {
-			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			return Ok(_dishService.DeleteDish(dishId));
+			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _dishService.DeleteDish(dishId));
 		}
 		/// <summary>
 		/// recover dish for manager
@@ -126,7 +128,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{dishId}/restaraunt/{restarauntId}/recover")]
 		public async Task<ActionResult<Response>> RecoverDish(Guid dishId, Guid restarauntId) {
-			await _dishService.CheckPermissionForManager(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			throw new NotImplementedException();
 		}
 	}

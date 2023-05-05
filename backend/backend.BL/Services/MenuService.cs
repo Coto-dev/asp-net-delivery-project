@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -26,10 +27,12 @@ namespace Backend.BL.Services {
 		}
 
 		public async Task<Response> AddDishToMenu(Guid menuId, Guid dishId) {
-			var menu = await _context.Menus.Include(x=>x.Dishes).FirstOrDefaultAsync(x=>x.Id == menuId);
+			var menu = await _context.Menus.Include(x=>x.Restaraunt).Include(x=>x.Dishes).FirstOrDefaultAsync(x=>x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
 			var dish = _context.Dishes.FirstOrDefault(d => d.Id == dishId);
 			if (dish == null) throw new KeyNotFoundException("Блюдо с таким id не существует");
+			if (!menu.Restaraunt.Menus.Any(m => m.Dishes.Contains(dish))) throw new NotAllowedException("это блюдо принадлежит другому ресторану");
+			if (menu.Dishes.Contains(dish)) throw new BadRequestException("это блюдо уже состоит в этом меню");
 			menu.Dishes.Add(dish);
 			await _context.SaveChangesAsync();
 			return new Response {

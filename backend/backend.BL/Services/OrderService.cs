@@ -12,6 +12,7 @@ using Common.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.BL.Services {
 	public class OrderService : IOrderService {
@@ -21,10 +22,11 @@ namespace Backend.BL.Services {
 			_logger = logger;
 			_context = context;
 		}
-		public async Task<ActionResult<Response>> CancelOrderCustomer(Guid orderId , Guid customerId) {
-			await CheckPermissionForCustomer(orderId, customerId);
-			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId );
+		public async Task<ActionResult<Response>> CancelOrderCustomer(Guid orderId) {
+			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказ с таким id не найдено");
+			if (!(order.Status == Statuses.Created)) 
+				throw new NotAllowedException("Заказ нельзя отменить т.к, его статус: " + order.Status.ToString());
 			order.Status = Statuses.Canceled;
 			await _context.SaveChangesAsync();
 
@@ -33,10 +35,11 @@ namespace Backend.BL.Services {
 				Message = "succesfully cancelled"
 			};
 		}
-		public async Task<ActionResult<Response>> CancelOrderCourier(Guid orderId, Guid courierId) {
-			await CheckPermissionForCourier(orderId, courierId);
-			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId && x.Status == Statuses.Delivery);
+		public async Task<ActionResult<Response>> CancelOrderCourier(Guid orderId) {
+			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
+			if (!(order.Status == Statuses.Delivery)) 
+				throw new NotAllowedException("Заказ нельзя отменить т.к, его статус: " + order.Status);
 			order.Status = Statuses.Canceled;
 			await _context.SaveChangesAsync();
 
@@ -46,12 +49,37 @@ namespace Backend.BL.Services {
 			};
 		}
 
-		public async Task<ActionResult<Response>> ChangeOrderStatusCook(Guid orderId) {
-			throw new NotImplementedException();
+		public async Task<ActionResult<Response>> ChangeOrderStatusCook(Guid orderId, Guid cookId) {
+			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
+			if (!(order.Status == Statuses.Created | order.Status == Statuses.Kitchen))
+				throw new NotAllowedException("Статус заказа нельзя изменить т.к его статус: " + order.Status.ToString());
+			var status = order.Status;
+			order.Status = order.Status == Statuses.Kitchen ? Statuses.ReadyToDelivery : Statuses.Kitchen;
+			if (order.Status == Statuses.Created) order.CookerId = cookId;
+			await _context.SaveChangesAsync();
+
+			return new Response {
+				Status = "200",
+				Message = $"succesfully changed status: {status} to {order.Status}"
+			};
 		}
 
-		public async Task<ActionResult<Response>> ChangeOrderStatusCourier(Guid orderId) {
-			throw new NotImplementedException();
+		public async Task<ActionResult<Response>> ChangeOrderStatusCourier(Guid orderId, Guid courierId) {
+			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
+			if (!(order.Status == Statuses.ReadyToDelivery | order.Status == Statuses.Delivery))
+				throw new NotAllowedException("Статус заказа нельзя изменить т.к его статус: " + order.Status);
+			var status = order.Status;
+			order.Status = order.Status == Statuses.ReadyToDelivery ? Statuses.Delivery : Statuses.Deilvered;
+			if (order.Status == Statuses.ReadyToDelivery) order.CourId = courierId;
+
+			await _context.SaveChangesAsync();
+
+			return new Response {
+				Status = "200",
+				Message = $"succesfully changed status: {status} to {order.Status}"
+			};
 		}
 
 		public async Task<ActionResult<string>> CheckAdress(string address) {
@@ -59,40 +87,34 @@ namespace Backend.BL.Services {
 			else return address;
 		}
 
-		public async Task CheckPermissionForCook(Guid orderId, Guid cookId) {
-			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
-			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
-			if (order.CookerId == null) throw new NotFoundException("у этого заказа еще нет повара");
-			if (order.CookerId != cookId) {
-				throw new NotAllowedException("Этот заказ не принадлжит этому повару") ;
-			}
-
-		}
-		public async Task CheckPermissionForCourier(Guid orderId, Guid courierId) {
-			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
-			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
-			if (order.CourId == null) throw new NotFoundException("у этого заказа еще нет курьера");
-			if (order.CourId != courierId) {
-				throw new NotAllowedException("Этот заказ не принадлжит этому курьеру");
-			}
-		}
-
-
-		public async Task CheckPermissionForCustomer(Guid orderId, Guid customerId) {
-			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
-			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
-			var customer = await _context.Customers.Include(o => o.Orders).FirstOrDefaultAsync(o => o.Id == customerId);
-			if (customer == null) throw new KeyNotFoundException("пользователя с таким id не найдено");
-			if (!customer.Orders.Contains(order)) throw new NotAllowedException("Этот заказ не принадлжит этому пользователю");
-		}
 		/// <summary>
 		/// TODO 
 		/// </summary>
-		public async Task<ActionResult<Response>> CreateOrder(string? address, DateTime deliveryTime, Guid customerId) {
-			var customer = await _context.Customers.Include(x=>x.DishInCart).FirstOrDefaultAsync(x => x.Id == customerId);
+		public async Task<ActionResult<Response>> CreateOrder(string address, DateTime deliveryTime, Guid customerId) {
+			var customer = await _context.Customers.Include(x=>x.DishInCart).ThenInclude(d=>d.Dish).FirstOrDefaultAsync(x => x.Id == customerId);
 			if (customer == null) throw new KeyNotFoundException("Такой пользователь не найден");
-			if (customer.DishInCart == null) throw new KeyNotFoundException("Корзина пользователя пуста");
-			return null;
+			if (customer.DishInCart.IsNullOrEmpty()) throw new NotFoundException("Корзина пользователя пуста");
+			if (!(deliveryTime > DateTime.Now.AddHours(1))) throw new BadRequestException("Дата доставки должна быть не раньше чем через час от текущего времени");
+
+			var order = new Order {
+				Address = address,
+				DeliveryTime = deliveryTime,
+				Customer = customer,
+				Dishes = customer.DishInCart
+				.Select(x => new DishInOrder {
+					Dish = x.Dish,
+					Count = x.Count
+				}).ToList(),
+				OrderTime = DateTime.Now,
+				Price = customer.DishInCart.Sum(x => x.Dish.Price),
+				Status = Statuses.Created,
+			};
+			await _context.Orders.AddAsync(order);
+			await _context.SaveChangesAsync();
+			return new Response {
+				Status = "200",
+				Message = "order uccesfully created"
+			};
 		}
 
 		public async Task<ActionResult<OrderPagedList>> GetCourierOrders(OrderFilterCourier filter) {

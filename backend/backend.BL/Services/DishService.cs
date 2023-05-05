@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Backend.DAL.Data;
 using Backend.DAL.Data.Entities;
+using Backend.DAL.Migrations;
 using Common.BackendInterfaces;
 using Common.DTO;
 using Common.Enums;
@@ -62,17 +63,19 @@ namespace Backend.BL.Services {
 		public async Task<Response> CreateDishWithMenu(DishModelDTO model, Guid menuId) {
 			var menu = await _context.Menus.Include(m=>m.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с таким id не найдено");
-			var dish = (new Dish {
+			/*var dish = (new Dish {
 				Description = model.Description,
 				Name = model.Name,
 				Category = Categories.Desert,
 				IsVagetarian = model.IsVagetarian,
-				Price = model.Price,
-			});
-			await _context.Dishes.AddAsync(dish);
-			await _context.SaveChangesAsync();
+				PhotoUrl = model.PhotoUrl,
+				Price = model.Price
+			});*/
 
-			//	menu.Dishes.Add(_mapper.Map<Dish>(model));
+			var dish =  _mapper.Map<Dish>(model);
+			await _context.Dishes.AddAsync(dish);
+			menu.Dishes.Add(dish);
+			await _context.SaveChangesAsync();
 			return new Response {
 				Message = "Succesfully created",
 				Status = "200"
@@ -126,20 +129,9 @@ namespace Backend.BL.Services {
 		}
 
 		public async Task<DishDetailsDTO> GetDishById(Guid id) {
-           var dish =  await _context.Dishes.Include(x=>x.Ratings).FirstOrDefaultAsync();
-			var response = new DishDetailsDTO {
-				Id = dish.Id,
-				Description = dish.Description,
-				Category = dish.Category,
-				IsVagetarian = dish.IsVagetarian,
-				Name = dish.Name,
-				Price = dish.Price,
-				PhotoUrl = dish.PhotoUrl,
-				Rating = dish.Ratings.Average(x => x.Value)
-			};
-			//return null;
-			return response;
-		 //  return _mapper.Map<DishDetailsDTO>(dish);
+           var dish =  await _context.Dishes.Include(x=>x.Ratings).FirstOrDefaultAsync(x=>x.Id == id);
+			if (dish == null) throw new KeyNotFoundException("Блюда с таким id не существует");
+		   return _mapper.Map<DishDetailsDTO>(dish);
         }
 
 		public async Task<DishesPagedListDTO> GetDishes(DishFilterModelDTO model, Guid restarauntId) {

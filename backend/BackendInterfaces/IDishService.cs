@@ -15,7 +15,7 @@ namespace Common.BackendInterfaces {
 		public Task<Response> EditDish(DishModelDTO model, Guid dishId);
 		public Task<Response> DeleteDish(Guid dishId);
 		public Task<Response> RecoverDish(Guid dishId);
-		public Task CheckPermissionForManager(Guid restarauntId, Guid managerId);
+		//public Task CheckPermissionForManager(Guid restarauntId, Guid managerId);
 
 	}
 }

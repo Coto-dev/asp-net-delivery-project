@@ -1,4 +1,6 @@
-﻿using Backend.DAL.Data.Entities;
+﻿using System.Security.Claims;
+using Backend.BL.Services;
+using Backend.DAL.Data.Entities;
 using Common.BackendInterfaces;
 using Common.DTO;
 using Common.Enums;
@@ -11,8 +13,10 @@ namespace Backend.API.Controllers {
 	[ApiController]
 	public class MenuController : ControllerBase {
 		private readonly IMenuService _menuService;
+		private readonly IPermissionCheckService _permissionService;
 
-		public MenuController(IMenuService menuService) {
+		public MenuController(IMenuService menuService, IPermissionCheckService checkPermission) {
+			_permissionService = checkPermission;
 			_menuService = menuService;
 
 		}
@@ -20,22 +24,24 @@ namespace Backend.API.Controllers {
 		/// create menu in restaraunt for manager
 		/// </summary>
 		/// <remarks>
-		/// you already have default empty menu after creating restaraunt
+		/// you already have default empty menu after creating restaraunt TODO
 		/// </remarks>
 
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}/create")]
 		public async Task<ActionResult<Response>> CreateMenu(Guid restarauntId, [FromBody] MenuShortModelDTO model) {
-			 return Ok(await _menuService.CreateMenu(restarauntId, model));
+			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _menuService.CreateMenu(restarauntId, model));
 		}
 		/// <summary>
 		/// add dish to concrete menu for manager
 		/// </summary>
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
-		[Route("{menuId}/restaraunt/{restarauntId}/dish/{dishId}/addDish")]
+		[Route("{menuId}/dish/{dishId}/addDish")]
 		public async Task<ActionResult<Response>> AddDishToMenu(Guid menuId, Guid dishId) {
+			await _permissionService.CheckPermissionForManagerByMenu(menuId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _menuService.AddDishToMenu(menuId, dishId));
 		}
 		/// <summary>
@@ -43,8 +49,9 @@ namespace Backend.API.Controllers {
 		/// </summary>
 		[HttpDelete]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
-		[Route("{menuId}/restaraunt/{restarauntId}/dish/{dishId}/deleteDish")]
+		[Route("{menuId}/dish/{dishId}/deleteDish")]
 		public async Task<ActionResult<Response>> DeleteDishFromMenu(Guid menuId, Guid dishId) {
+			await _permissionService.CheckPermissionForManagerByMenu(menuId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _menuService.DeleteDishFromMenu(menuId, dishId));
 		}
 		/// <summary>
@@ -54,6 +61,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/edit")]
 		public async Task<ActionResult<Response>> EditMenu(Guid menuId, [FromBody] MenuShortModelDTO model) {
+			await _permissionService.CheckPermissionForManagerByMenu(menuId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _menuService.EditMenu(menuId, model));
 		}
 		/// <summary>
@@ -63,6 +71,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("{menuId}/delete")]
 		public async Task<ActionResult<Response>> DeleteMenu(Guid menuId) {
+			await _permissionService.CheckPermissionForManagerByMenu(menuId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _menuService.DeleteMenu(menuId));
 		}
 		/// <summary>
@@ -72,6 +81,7 @@ namespace Backend.API.Controllers {
 		[Route("{menuId}/recover")]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		public async Task<ActionResult<Response>> RecoverMenu(Guid menuId) {
+			await _permissionService.CheckPermissionForManagerByMenu(menuId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _menuService.RecoverMenu(menuId));
 		}
 		/// <summary>
@@ -81,6 +91,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}")]
 		public async Task<ActionResult<MenuDTO>> GetDeletedMenus(Guid restarauntId) {
+			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _menuService.GetDeletedMenus(restarauntId));
 		}
 		/// <summary>
