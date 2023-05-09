@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.DTO {
 	public class BasketDTO {
-		public List<DishBasketDTO> Dishes { get; set; }
+		public List<DishShortModelDTO> Dishes { get; set; }
 		public int BasketPrice { get; set;}
 	}
 }

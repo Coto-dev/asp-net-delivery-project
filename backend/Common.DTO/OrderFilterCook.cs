@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace Common.DTO {
     public class OrderFilterCook {
         public int Page { get; set; } = 1;
-        public string OrderNumber { get; set; }
+        public string? SortingDate { get; set; }
     }
 }

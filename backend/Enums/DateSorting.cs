@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Common.Enums {
     public enum DateSorting {
-        DateAsc,
-        DateDesc
+        OrderDateAsc,
+        OrderDateDesc,
+        DeliveryDateAsc,
+        DeliveryDateDesc,
     }
 }

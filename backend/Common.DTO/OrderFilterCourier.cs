@@ -8,14 +8,10 @@ using Common.Enums;
 namespace Common.DTO {
 	public class OrderFilterCourier {
 		public int Page { get; set; } = 1;
-		public string OrderNumber { get; set; }
+		public string? OrderNumber { get; set; }
 		/// <summary>
-		/// Дата создания заказа
+		/// Выбор по какой дате сортировать
 		/// </summary>
-		public DateSorting? OrderDate { get; set; }
-		/// <summary>
-		/// Дата к которой будет доставлен заказ
-		/// </summary>
-		public DateSorting? DeliveryDate { get; set; }
+		public DateSorting? SortingDate { get; set; }
 	}
 }

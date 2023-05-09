@@ -13,9 +13,11 @@ namespace Backend.DAL.Data.Entities {
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
-        public DateTime DeliveryTime { get; set; }
+        public string OrderNumber { get; set; } = Guid.NewGuid().ToString().Substring(0,4);
+
+		public DateTime DeliveryTime { get; set; }
         public DateTime OrderTime { get; set; }
-        public double Price { get; set; }
+        public int Price { get; set; }
         public string Address { get; set; }
         public Statuses Status { get; set; }
 		public Customer Customer { get; set; }

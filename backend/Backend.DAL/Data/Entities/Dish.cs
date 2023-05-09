@@ -10,7 +10,7 @@ namespace Backend.DAL.Data.Entities {
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
-        public double Price { get; set; }
+        public int Price { get; set; }
         public string Description { get; set; }
         public bool IsVagetarian { get; set; }
         public string PhotoUrl { get; set; }

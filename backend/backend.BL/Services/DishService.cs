@@ -63,14 +63,7 @@ namespace Backend.BL.Services {
 		public async Task<Response> CreateDishWithMenu(DishModelDTO model, Guid menuId) {
 			var menu = await _context.Menus.Include(m=>m.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с таким id не найдено");
-			/*var dish = (new Dish {
-				Description = model.Description,
-				Name = model.Name,
-				Category = Categories.Desert,
-				IsVagetarian = model.IsVagetarian,
-				PhotoUrl = model.PhotoUrl,
-				Price = model.Price
-			});*/
+	
 
 			var dish =  _mapper.Map<Dish>(model);
 			await _context.Dishes.AddAsync(dish);
@@ -153,7 +146,7 @@ namespace Backend.BL.Services {
 			var totalItems = rest.Menus.Select(x => x.Dishes.Count).Sum();
 			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.DishPageSize);
 
-			if (totalPages < model.Page) throw new BadRequestException("Неверно указана текущая страница"); ;
+			if (totalPages < model.Page) throw new BadRequestException("Неверно указана текущая страница");
 			if (deleted) {
 				if (model.Vegetarian == true) {
 					dishes = rest.Menus.SelectMany(m => m.Dishes

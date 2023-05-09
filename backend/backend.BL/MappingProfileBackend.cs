@@ -11,12 +11,18 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Backend.BL {
 	public class MappingProfileBackend : Profile {
 		public MappingProfileBackend() {
+
+			/*CreateMap<Order, OrderDTO>().ForMember(dest => dest.Dishes,
+				source => source.MapFrom(source => source.Dishes.Select(x => x.Dish).ToList()));
+
+			CreateMap<Dish, DishShortModelDTO>();*/
+
 			CreateMap<Menu, MenuDTO>().ForMember(dest => dest.DishDetails,
 				source => source.MapFrom(source => source.Dishes.Select(x => x).ToList()));
 
 			CreateMap<Menu, MenuShortDTO>();
 
-			CreateMap<DishInCart, DishBasketDTO>().ForMember(dest => dest.TotalPrice,
+			CreateMap<DishInCart, DishShortModelDTO>().ForMember(dest => dest.TotalPrice,
 				source => source.MapFrom(source => source.Dish.Price * source.Count))
 				.ForMember(dest => dest.Price,
 				source => source.MapFrom(source => source.Dish.Price))

@@ -8,10 +8,10 @@ using Common.Enums;
 namespace Common.DTO {
     public class OrderFilterCustomer {
         public int Page { get; set; } = 1; 
-        public int OrderNumber { get; set; }
-        /// <summary>
-        /// Дата заказа
-        /// </summary>
-        public DateSorting OrderDate { get; set; }
-    }
+        public string? OrderNumber { get; set; }
+		/// <summary>
+		/// Выбор по какой дате сортировать
+		/// </summary>
+		public DateSorting? SortingDate { get; set; }
+	}
 }

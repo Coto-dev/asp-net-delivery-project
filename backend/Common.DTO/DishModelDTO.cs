@@ -12,7 +12,7 @@ namespace Common.DTO {
 		[MinLength(1)]
 		public string Name { get; set; }
 		[Required]
-		public double Price { get; set; }
+		public int Price { get; set; }
 		[Required]
 		public string Description { get; set; }
 		[Required]

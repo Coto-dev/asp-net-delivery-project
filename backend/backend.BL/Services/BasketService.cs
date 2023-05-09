@@ -99,9 +99,9 @@ namespace Backend.BL.Services {
 				.ThenInclude(d => d.Dish)
 				.FirstOrDefaultAsync(x => x.Id == customerId);
 			if (customer == null) throw new KeyNotFoundException("пользователь не найден");
-			var dishes = customer.DishInCart.Select(x=> _mapper.Map<DishBasketDTO>(x)).ToList();
+			var dishes = customer.DishInCart.Select(x=> _mapper.Map<DishShortModelDTO>(x)).ToList();
 			return new BasketDTO {
-				Dishes = customer.DishInCart.Select(x => _mapper.Map<DishBasketDTO>(x)).ToList(),
+				Dishes = customer.DishInCart.Select(x => _mapper.Map<DishShortModelDTO>(x)).ToList(),
 				BasketPrice = dishes.Select(x => x.TotalPrice).Sum()
 			};
 

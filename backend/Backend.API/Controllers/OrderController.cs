@@ -70,7 +70,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		[Route("create")]
 		public async Task<ActionResult<Response>> CreateOrder(string? address, DateTime deliveryTime) {
-			throw new NotImplementedException();
+			return Ok(await _orderService.CreateOrder(address, deliveryTime, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace Backend.API.Controllers {
 		public async Task<ActionResult<Response>> ChangeOrderStatusCook(Guid orderId) {
 			await _permissionService.CheckPermissionForCook(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 
-			throw new NotImplementedException();// 
+			return Ok(await _orderService.ChangeOrderStatusCook(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		/// <summary>
 		/// Change order status for courier
@@ -110,7 +110,7 @@ namespace Backend.API.Controllers {
 		[Route("courier/status/change/{orderId}")]
 		public async Task<ActionResult<Response>> ChangeOrderStatusCourier(Guid orderId) {
 			await _permissionService.CheckPermissionForCourier(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			throw new NotImplementedException();// 
+			return Ok(await _orderService.ChangeOrderStatusCourier(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		/// <summary>
 		/// cancel order if only status created
@@ -148,7 +148,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Courier)]
 		[Route("courier/ordersHistory")]
 		public async Task<ActionResult<OrderPagedList>> GetCourierOrdersHistory([FromQuery] OrderFilterCourier filter) {
-			throw new NotImplementedException();
+			return Ok(await _orderService.GetCourierOrdersHistory(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 
 		/// <summary>
@@ -158,7 +158,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Courier)]
 		[Route("courier/orders/readyToDelivery")]
 		public async Task<ActionResult<OrderPagedList>> GetCourierOrders([FromQuery] OrderFilterCourier filter) {
-			throw new NotImplementedException();
+			return Ok(await _orderService.GetCourierReadyToDeliveryOrders(filter));
 		}
 		/// <summary>
 		/// get info about current orders for courier
@@ -167,7 +167,7 @@ namespace Backend.API.Controllers {
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Courier)]
 		[Route("courier/current")]
 		public async Task<ActionResult<OrderPagedList>> GetCurrentCourier([FromQuery] OrderFilterCourier filter) {
-			throw new NotImplementedException();
+			return Ok(await _orderService.GetCurrentCourier(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 
 
