@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.Net;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using Backend.DAL.Data.Entities;
 using Common.BackendInterfaces;
@@ -26,7 +27,7 @@ namespace Backend.API.Controllers {
 		/// </summary>
 		[HttpGet]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
-		[Route("customer/Address")]
+		[Route("customer/address")]
 		public async Task<ActionResult<string>> CheckAdress() {
 			return Ok(await _orderService.CheckAdress(User.FindFirst(ClaimTypes.StreetAddress).Value));
 		}
@@ -39,10 +40,10 @@ namespace Backend.API.Controllers {
 		/// 
 		[HttpGet]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
-		[Route("customer/ordersHistory")]
-		public async Task<ActionResult<OrderPagedList>> GetCustomerOrder([FromQuery] OrderFilterCustomer model) {
-			throw new NotImplementedException();
-			
+		[Route("customer/history")]
+		public async Task<ActionResult<OrderPagedList>> GetCustomerOrderHistory([FromQuery] OrderFilter filter) {
+			return Ok(await _orderService.GetOrderHistoryCustomer(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+
 		}
 		/// <summary>
 		/// get information about current order 
@@ -56,8 +57,8 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		[Route("customer/current")]
-		public async Task<ActionResult<List<OrderDTO>>> GetCurrentOrder() {
-			throw new NotImplementedException(); //если у заказа статус от created до deliveried(не включая)
+		public async Task<ActionResult<OrderPagedList>> GetCurrentOrder() {
+			return Ok(await _orderService.GetCurrentOrderCustomer(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 
 		/// <summary>
@@ -69,7 +70,7 @@ namespace Backend.API.Controllers {
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		[Route("create")]
-		public async Task<ActionResult<Response>> CreateOrder(string? address, DateTime deliveryTime) {
+		public async Task<ActionResult<Response>> CreateOrder(string address, DateTime deliveryTime) {
 			return Ok(await _orderService.CreateOrder(address, deliveryTime, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 
@@ -79,10 +80,10 @@ namespace Backend.API.Controllers {
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		[Route("customer/repeat/{orderId}")]
-		public async Task<ActionResult<Response>> RepeatOrder(Guid orderId) {
+		public async Task<ActionResult<Response>> RepeatOrder(string address, DateTime deliveryTime, Guid orderId) {
 			await _permissionService.CheckPermissionForCustomer(orderId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
+			return Ok(await _orderService.RepeatOrder(address, deliveryTime, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value),orderId));
 
-			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -146,9 +147,9 @@ namespace Backend.API.Controllers {
 		/// </summary>
 		[HttpGet]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Courier)]
-		[Route("courier/ordersHistory")]
-		public async Task<ActionResult<OrderPagedList>> GetCourierOrdersHistory([FromQuery] OrderFilterCourier filter) {
-			return Ok(await _orderService.GetCourierOrdersHistory(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+		[Route("courier/history")]
+		public async Task<ActionResult<OrderPagedList>> GetCourierOrdersHistory([FromQuery] OrderFilter filter) {
+			return Ok(await _orderService.GetOrdersHistoryCourier(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 
 		/// <summary>
@@ -156,9 +157,9 @@ namespace Backend.API.Controllers {
 		/// </summary>
 		[HttpGet]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Courier)]
-		[Route("courier/orders/readyToDelivery")]
-		public async Task<ActionResult<OrderPagedList>> GetCourierOrders([FromQuery] OrderFilterCourier filter) {
-			return Ok(await _orderService.GetCourierReadyToDeliveryOrders(filter));
+		[Route("courier/readyToDelivery")]
+		public async Task<ActionResult<OrderPagedList>> GetCourierOrders([FromQuery] OrderFilter filter) {
+			return Ok(await _orderService.GetReadyToDeliveryOrdersCourier(filter));
 		}
 		/// <summary>
 		/// get info about current orders for courier
@@ -166,10 +167,45 @@ namespace Backend.API.Controllers {
 		[HttpGet]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Courier)]
 		[Route("courier/current")]
-		public async Task<ActionResult<OrderPagedList>> GetCurrentCourier([FromQuery] OrderFilterCourier filter) {
+		public async Task<ActionResult<OrderPagedList>> GetCurrentCourier([FromQuery] OrderFilter filter) {
 			return Ok(await _orderService.GetCurrentCourier(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
-
+		/// <summary>
+		/// get info about created orders for cook
+		/// </summary>
+		[HttpGet]
+		[Authorize(Roles = ApplicationRoleNames.Cook)]
+		[Route("cook/created")]
+		public async Task<ActionResult<OrderPagedList>> GetCreatedOrders([FromQuery] OrderFilter filter) {
+			return Ok(await _orderService.GetCreatedOrdersCook(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+		}
+		/// <summary>
+		/// get info about history orders for concrete cook
+		/// </summary>
+		[HttpGet]
+		[Authorize(Roles = ApplicationRoleNames.Cook)]
+		[Route("cook/history")]
+		public async Task<ActionResult<OrderPagedList>> GetOrdersHistoryCook([FromQuery] OrderFilter filter) {
+			return Ok(await _orderService.GetOrdersHistoryCook(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+		}
+		/// <summary>
+		/// get info about current orders for concrete cook
+		/// </summary>
+		[HttpGet]
+		[Authorize(Roles = ApplicationRoleNames.Cook)]
+		[Route("cook/current")]
+		public async Task<ActionResult<OrderPagedList>> GetOrdersCurrentCook([FromQuery] OrderFilter filter) {
+			return Ok(await _orderService.GetOrdersCurrentCook(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+		}
+		/// <summary>
+		/// get info about all orders where manager's working
+		/// </summary>
+		[HttpGet]
+		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Route("manager/all")]
+		public async Task<ActionResult<OrderPagedList>> GetManagerOrders([FromQuery] OrderFilterManager filter) {
+			return Ok(await _orderService.GetOrdersManager(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+		}
 
 	}
 }

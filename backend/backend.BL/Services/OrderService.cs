@@ -120,18 +120,20 @@ namespace Backend.BL.Services {
 			await _context.SaveChangesAsync();
 			return new Response {
 				Status = "200",
-				Message = "order uccesfully created"
+				Message = "order succesfully created"
 			};
 		}
-		public async Task<OrderPagedList> GetCourierOrders(OrderFilterCourier filter, Guid? courierId, Guid? customerId, List<Statuses> statuses) {
+		public async Task<OrderPagedList> GetOrders(OrderFilter filter, Guid? courierId, Guid? customerId, List<Statuses> statuses, Guid? restarauntId, Guid? cookId) {
 			if (filter.Page <= 0) throw new BadRequestException("Неверно указана страница");
 
 			var totalItems = await _context.Orders
 				.Where(x =>
-				(filter == null || x.OrderNumber == filter.OrderNumber)
+				(filter.OrderNumber == null || x.OrderNumber == filter.OrderNumber)
 				&& (courierId == null || x.CourId == courierId)
-				&& (customerId == null || x.CourId == customerId)
-				&&(statuses.Count == 0 || statuses.Contains(x.Status)))
+				&& (customerId == null || x.Customer.Id == customerId)
+				&& (cookId == null || x.CookerId == cookId)
+				&& (statuses.Count == 0 || statuses.Contains(x.Status))
+				&& (restarauntId == null || x.Dishes.Any(d=>d.Dish.Menus.Any(m=>m.Restaraunt.Id == restarauntId))))
 				.CountAsync();
 			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.OrderPage);
 
@@ -141,10 +143,12 @@ namespace Backend.BL.Services {
 					.Include(x => x.Dishes)
 					.ThenInclude(x => x.Dish)
 					.Where(x =>
-					(filter == null || x.OrderNumber == filter.OrderNumber)
+					(filter.OrderNumber == null || x.OrderNumber == filter.OrderNumber)
 					&& (courierId == null || x.CourId == courierId)
-					&& (customerId == null || x.CourId == customerId)
-					&& (statuses.Count == 0 || statuses.Contains(x.Status)))
+					&& (customerId == null || x.Customer.Id == customerId)
+					&& (cookId == null || x.CookerId == cookId)
+					&& (statuses.Count == 0 || statuses.Contains(x.Status))
+					&& (restarauntId == null || x.Dishes.Any(d => d.Dish.Menus.Any(m => m.Restaraunt.Id == restarauntId))))
 				   .Select(x => x)
 				   .Skip((filter.Page - 1) * AppConstants.OrderPage)
 				   .Take(AppConstants.OrderPage)
@@ -183,39 +187,109 @@ namespace Backend.BL.Services {
 			}
 			return new OrderPagedList {
 				Orders = ordersDTO,
-				PageInfo = new PageInfoDTO()
+				PageInfo = new PageInfoDTO {
+					Count = totalPages,
+					Current = filter.Page,
+					Size = AppConstants.OrderPage
+				}
 			};
 		}
 
-		public async Task<OrderPagedList> GetCourierReadyToDeliveryOrders(OrderFilterCourier filter) {
-			return await GetCourierOrders(filter,null,null,new List<Statuses>());
+		public async Task<OrderPagedList> GetReadyToDeliveryOrdersCourier(OrderFilter filter) {
+			return await GetOrders(filter,null,null,new List<Statuses>(),null,null);
 		}
 
-		public async Task<OrderPagedList> GetCourierOrdersHistory(OrderFilterCourier filter, Guid courierId) {
-			return await GetCourierOrders(filter, courierId,null, new List<Statuses>() { Statuses.Deilvered });
+		public async Task<OrderPagedList> GetOrdersHistoryCourier(OrderFilter filter, Guid courierId) {
+			return await GetOrders(filter, courierId,null, new List<Statuses>() { Statuses.Deilvered }, null, null);
 
 		}
 
-		public async Task<OrderPagedList> GetCurrentCourier(OrderFilterCourier filter, Guid courierId) {
-			return await GetCourierOrders(filter, courierId,null, new List<Statuses>() { Statuses.Delivery });
+		public async Task<OrderPagedList> GetCurrentCourier(OrderFilter filter, Guid courierId) {
+			return await GetOrders(filter, courierId,null, new List<Statuses>() { Statuses.Delivery }, null, null);
 		}
 
-		public async Task<OrderPagedList> GetCurrentCustomerOrder(Guid customerId) {
-			return await GetCourierOrders(new OrderFilterCourier(), null, customerId, new List<Statuses>() {
+		public async Task<OrderPagedList> GetCurrentOrderCustomer(Guid customerId) {
+			return await GetOrders(new OrderFilter(), null, customerId, new List<Statuses>() {
 				Statuses.Delivery,
 				Statuses.Created,
 				Statuses.Kitchen,
-				Statuses.ReadyToDelivery});
+				Statuses.ReadyToDelivery},
+				null, null);
 		}
 
-		public async Task<OrderPagedList> GetCustomerOrderHistory(OrderFilterCourier model, Guid customerId) {
-			return await GetCourierOrders(model, null, customerId, new List<Statuses>() {
+		public async Task<OrderPagedList> GetOrderHistoryCustomer(OrderFilter model, Guid customerId) {
+			return await GetOrders(model, null, customerId, new List<Statuses>() {
 				Statuses.Canceled,
 				Statuses.Deilvered,
 				Statuses.Delivery,
 				Statuses.Created,
 				Statuses.Kitchen,
-				Statuses.ReadyToDelivery});
+				Statuses.ReadyToDelivery},
+				null, null);
+		}
+
+		public async Task<OrderPagedList> GetCreatedOrdersCook(OrderFilter model, Guid cookId) {
+			var restaraunt = await _context.Restaraunts.FirstOrDefaultAsync(x=>x.Cooks.Any(x=>x.Id == cookId));
+			if (restaraunt == null) throw new NotFoundException("этот повар не работает в ресторане");
+			return await GetOrders(model, null, null, new List<Statuses>() { Statuses.Created }, restaraunt.Id, null);
+
+		}
+
+		public async Task<OrderPagedList> GetOrdersHistoryCook(OrderFilter model, Guid cookId) {
+			return await GetOrders(model, null, null, new List<Statuses>() { Statuses.Kitchen,
+			Statuses.ReadyToDelivery,
+			Statuses.Canceled,
+			Statuses.Deilvered,
+			Statuses.Delivery
+			}, null, cookId);
+		}
+
+		public async Task<OrderPagedList> GetOrdersCurrentCook(OrderFilter model, Guid cookId) {
+			var restaraunt = await _context.Restaraunts.FirstOrDefaultAsync(x => x.Cooks.Any(x => x.Id == cookId));
+			if (restaraunt == null) throw new NotFoundException("этот повар не работает в ресторане");
+			return await GetOrders(model, null, null, new List<Statuses>() { Statuses.Kitchen,
+			Statuses.ReadyToDelivery,
+			Statuses.Canceled,
+			Statuses.Deilvered,
+			Statuses.Delivery
+			}, restaraunt.Id, cookId);
+		}
+
+		public async Task<OrderPagedList> GetOrdersManager(OrderFilterManager model, Guid managerId) {
+			var restaraunt = await _context.Restaraunts.FirstOrDefaultAsync(x => x.Managers.Any(x => x.Id == managerId));
+			if (restaraunt == null) throw new NotFoundException("этот менеджер не работает в ресторане");
+			return await GetOrders(new OrderFilter { 
+				OrderNumber = model.OrderNumber,
+				Page= model.Page,
+				SortingDate = model.SortingDate,
+			}, null, null, model.Statuses, restaraunt.Id, null);
+		}
+
+		public async Task<Response> RepeatOrder(string address, DateTime deliveryTime, Guid customerId, Guid orderId) {
+			var customer = await _context.Customers.FirstOrDefaultAsync(x => x.Id == customerId);
+			if (customer == null) throw new KeyNotFoundException("такой пользователь не найден");
+			var order = await _context.Orders
+				.Include(x=>x.Customer)
+				.Include(x => x.Dishes)
+				.ThenInclude(d => d.Dish)
+				.FirstOrDefaultAsync(x => x.Id == orderId);
+			if (order == null) throw new KeyNotFoundException("такой заказ не найден");
+			if (order.Customer.Id != customerId) throw new NotAllowedException("этот заказ не принадлежит этому пользователю");
+			var NewOrder = new Order {
+				Address = address,
+				DeliveryTime = deliveryTime,
+				Customer = customer,
+				Dishes = order.Dishes,
+				OrderTime = DateTime.Now,
+				Price = order.Price,
+				Status = Statuses.Created,
+			};
+			await _context.Orders.AddAsync(NewOrder);
+			await _context.SaveChangesAsync();
+			return new Response {
+				Status = "200",
+				Message = "order succesfully created"
+			};
 		}
 	}
 }

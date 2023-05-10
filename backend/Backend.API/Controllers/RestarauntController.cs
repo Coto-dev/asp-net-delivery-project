@@ -34,46 +34,6 @@ namespace Backend.API.Controllers {
 
 		}
 
-		/// <summary>
-		/// get info about created orders for cook
-		/// </summary>
-		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Cook)]
-		[Route("{restarauntId}/cook/createdOrders")]
-		public async Task<ActionResult<OrderPagedList>> GetCreatedOrders([FromQuery] OrderFilterCookCreated model,Guid  restarauntId) {
-			var claims = User.Claims.ToList();
-			
-			throw new NotImplementedException();
-			
-		}
-		/// <summary>
-		/// get info about history orders for concrete cook
-		/// </summary>
-		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Cook)]
-		[Route("{restarauntId}/cook/history")]
-		public async Task<ActionResult<OrderPagedList>> GetOrdersHistoryCook([FromQuery] OrderFilterCook model,Guid restarauntId) {
-			throw new NotImplementedException();
-		}
-		/// <summary>
-		/// get info about current orders for concrete cook
-		/// </summary>
-		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Cook)]
-		[Route("{restarauntId}/cook/current")]
-		public async Task<ActionResult<OrderPagedList>> GetOrdersCurrentCook([FromQuery] OrderFilterCook model, Guid restarauntId) {
-			throw new NotImplementedException();
-		}
-		/// <summary>
-		/// get info about all orders in single restaraunt for manager
-		/// </summary>
-		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
-		[Route("{restarauntId}/manager/allOrders")]
-		public async Task<ActionResult<OrderPagedList>> GetManagerOrders([FromQuery] OrderFilterManager model,Guid restarauntId) {
-			throw new NotImplementedException();
-		}
-
 
 	}
 }

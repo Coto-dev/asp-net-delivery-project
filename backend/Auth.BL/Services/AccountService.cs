@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
@@ -54,11 +55,18 @@ namespace Auth.BL.Services {
 
             var user = _mapper.Map<User>(RegisterModel);
             
-            var result = await _userManager.CreateAsync(user, RegisterModel.Password); // Создание нового пользователя в системе с указанными данными и введенным паролем
-            if (result.Succeeded) // результат может быть успешным, может также возникнуть ошибка, если был введен пароль, не отвечающий требованиям
+            var result = await _userManager.CreateAsync(user, RegisterModel.Password);
+			if (result.Succeeded) 
             {
-
-                return await Login(new LoginCredentials {
+				/*var resultRole = await _userManager.AddToRoleAsync(user, ApplicationRoleNames.Customer);
+				if (resultRole.Succeeded) {
+					user.Customer = new Customer() {
+						Id = user.Id,
+						Address = "",
+					};
+					await _userManager.UpdateAsync(user);
+				}*/
+				return await Login(new LoginCredentials {
                     Email = RegisterModel.Email, Password = RegisterModel.Password 
                 });
             }

@@ -60,20 +60,5 @@ namespace Backend.BL.Services {
 			return response;
 		}
 
-		public async Task<ActionResult<OrderPagedList>> GetCreatedOrders(OrderFilterCookCreated model, Guid restarauntId) {
-			throw new NotImplementedException();
-		}
-
-		public async Task<ActionResult<OrderPagedList>> GetManagerOrders(OrderFilterManager model, Guid restarauntId) {
-			throw new NotImplementedException();
-		}
-
-		public async Task<ActionResult<OrderPagedList>> GetOrdersCurrentCook(OrderFilterCook model, Guid restarauntId) {
-			throw new NotImplementedException();
-		}
-
-		public async Task<ActionResult<OrderPagedList>> GetOrdersHistoryCook(OrderFilterCook model, Guid restarauntId) {
-			throw new NotImplementedException();
-		}
 	}
 }

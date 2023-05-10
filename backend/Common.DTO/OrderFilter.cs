@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Common.Enums;
 
 namespace Common.DTO {
-	public class OrderFilterCourier {
+	public class OrderFilter {
 		public int Page { get; set; } = 1;
 		public string? OrderNumber { get; set; }
 		/// <summary>

@@ -19,7 +19,6 @@ namespace Backend.BL.Services {
 		public async Task CheckPermissionForCook(Guid orderId, Guid cookId) {
 			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
-			if (order.CookerId == null) throw new NotFoundException("у этого заказа еще нет повара");
 			if (order.CookerId != cookId) {
 				throw new NotAllowedException("Этот заказ не принадлжит этому повару");
 			}
@@ -28,7 +27,6 @@ namespace Backend.BL.Services {
 		public async Task CheckPermissionForCourier(Guid orderId, Guid courierId) {
 			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
-			if (order.CourId == null) throw new NotFoundException("у этого заказа еще нет курьера");
 			if (order.CourId != courierId) {
 				throw new NotAllowedException("Этот заказ не принадлжит этому курьеру");
 			}
@@ -39,13 +37,13 @@ namespace Backend.BL.Services {
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
 			var customer = await _context.Customers.Include(o => o.Orders).FirstOrDefaultAsync(o => o.Id == customerId);
 			if (customer == null) throw new KeyNotFoundException("пользователя с таким id не найдено");
-			if (!customer.Orders.Contains(order)) throw new NotAllowedException("Этот заказ не принадлжит этому пользователю");
+			if (!customer.Orders.Contains(order)) throw new NotAllowedException("Этот заказ не принадлежит этому пользователю");
 		}
 
 		public async Task CheckPermissionForManagerByMenu(Guid menuId, Guid managerId) {
 			var menu = await _context.Menus.Include(m=>m.Restaraunt).ThenInclude(r=>r.Managers).FirstOrDefaultAsync(m => m.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("меню с таким id не найдено");
-			if (menu.Restaraunt.Managers == null) throw new KeyNotFoundException("в рестора1не, в котором содержится меню нет менеджеров");
+			if (menu.Restaraunt.Managers == null) throw new KeyNotFoundException("в ресторане, в котором содержится меню, нет менеджеров");
 			if (!menu.Restaraunt.Managers.Any(x => x.Id == managerId)) throw new NotFoundException("этот менеджер не имеет отношения к этому меню");
 		}
 
