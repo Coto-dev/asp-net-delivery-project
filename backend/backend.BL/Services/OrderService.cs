@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,10 +25,12 @@ namespace Backend.BL.Services {
 		private readonly ILogger<OrderService> _logger;
 		private readonly BackendDbContext _context;
 		private readonly IMapper _mapper;
-		public OrderService(ILogger<OrderService> logger, BackendDbContext context, IMapper mapper) {
+		private readonly IRabbitMQService _rabbitmqService;
+		public OrderService(ILogger<OrderService> logger, BackendDbContext context, IMapper mapper, IRabbitMQService rabbitmqService) {
 			_logger = logger;
 			_context = context;
 			_mapper = mapper;
+			_rabbitmqService = rabbitmqService;
 		}
 		public async Task<Response> CancelOrderCustomer(Guid orderId) {
 			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
@@ -65,10 +68,17 @@ namespace Backend.BL.Services {
 			order.Status = order.Status == Statuses.Kitchen ? Statuses.ReadyToDelivery : Statuses.Kitchen;
 			if (order.Status == Statuses.Created) order.CookerId = cookId;
 			await _context.SaveChangesAsync();
+			var message = $"succesfully changed status: {status} to {order.Status}";
+			_rabbitmqService.SendMessage(new OrderChangeStatusMessage { 
+				description = message,
+				orderId = orderId.ToString(),
+				userId= orderId.ToString(),
+
+			});
 
 			return new Response {
 				Status = "200",
-				Message = $"succesfully changed status: {status} to {order.Status}"
+				Message = message
 			};
 		}
 
@@ -82,10 +92,17 @@ namespace Backend.BL.Services {
 			if (order.Status == Statuses.ReadyToDelivery) order.CourId = courierId;
 
 			await _context.SaveChangesAsync();
+			var message = $"succesfully changed status: {status} to {order.Status}";
+			_rabbitmqService.SendMessage(new OrderChangeStatusMessage {
+				description = message,
+				orderId = orderId.ToString(),
+				userId = orderId.ToString(),
+
+			});
 
 			return new Response {
 				Status = "200",
-				Message = $"succesfully changed status: {status} to {order.Status}"
+				Message = message
 			};
 		}
 

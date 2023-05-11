@@ -19,7 +19,7 @@ builder.Services.AddControllers().AddJsonOptions(opts => {
 });
 
 
-builder.Services.AddDishService();
+builder.Services.AddServices();
 
 builder.Services.AddBackendBlServiceDependencies();
 
