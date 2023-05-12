@@ -75,9 +75,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Extensions", "Common
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Exceptions", "Exceptions\Common.Exceptions.csproj", "{A760C2B4-AE67-465F-B537-EDE2D9D9C0C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.API", "Notifications.API\Notifications.API.csproj", "{4BFC9E06-FC96-482E-8462-9EB9A8D4836D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications.API", "Notifications.API\Notifications.API.csproj", "{4BFC9E06-FC96-482E-8462-9EB9A8D4836D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consumer", "Consumer\Consumer.csproj", "{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer", "Consumer\Consumer.csproj", "{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.BL", "Notifications.BL\Notifications.BL.csproj", "{6244F61D-CB47-4814-969A-AA42ED532687}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,6 +163,10 @@ Global
 		{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6244F61D-CB47-4814-969A-AA42ED532687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6244F61D-CB47-4814-969A-AA42ED532687}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6244F61D-CB47-4814-969A-AA42ED532687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6244F61D-CB47-4814-969A-AA42ED532687}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

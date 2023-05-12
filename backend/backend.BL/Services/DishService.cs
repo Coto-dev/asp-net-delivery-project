@@ -33,11 +33,19 @@ namespace Backend.BL.Services {
 			if (dish == null) throw new KeyNotFoundException("Блюдо с с таким id не найдено");
 			if (dish.DeletedTime.HasValue) throw new NotAllowedException("Блюдо удалено");
 			if (! await CheckRating(dishId, userId)) throw new NotAllowedException("Пользователь с таким id не может поставить рейтинг");
-			dish.Ratings.Add(new Rating { 
-				Dish = dish,
-				Value= value,
-				CustomerId = userId
-			});
+			var userRating = await _context.Ratings.FirstOrDefaultAsync(x=>x.CustomerId == userId);
+			if (userRating != null) {
+				userRating.Value = value;
+				_context.Update(userRating);
+			}
+			else {
+				var newRating = new Rating {
+					Dish = dish,
+					Value = value,
+					CustomerId = userId
+				};
+				await _context.AddRangeAsync(newRating);
+			}
 			await _context.SaveChangesAsync();
 			return new Response {
 				Message = "Succesfully added",

@@ -8,6 +8,7 @@ using Common.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Notifications.BL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddControllers().AddJsonOptions(opts => {
 
 
 builder.Services.AddServices();
+
+builder.Services.AddNotifactionsServices();
 
 builder.Services.AddBackendBlServiceDependencies();
 

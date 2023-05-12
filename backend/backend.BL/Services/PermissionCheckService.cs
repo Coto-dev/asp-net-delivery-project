@@ -7,6 +7,7 @@ using AutoMapper;
 using Backend.DAL.Data;
 using Backend.DAL.Data.Entities;
 using Common.BackendInterfaces;
+using Common.Enums;
 using Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +20,7 @@ namespace Backend.BL.Services {
 		public async Task CheckPermissionForCook(Guid orderId, Guid cookId) {
 			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
-			if (order.CookerId != cookId) {
+			if (order.CookerId != cookId && order.Status != Statuses.Created) {
 				throw new NotAllowedException("Этот заказ не принадлжит этому повару");
 			}
 		}
@@ -27,7 +28,7 @@ namespace Backend.BL.Services {
 		public async Task CheckPermissionForCourier(Guid orderId, Guid courierId) {
 			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
-			if (order.CourId != courierId) {
+			if (order.CourId != courierId && order.Status != Statuses.ReadyToDelivery) {
 				throw new NotAllowedException("Этот заказ не принадлжит этому курьеру");
 			}
 		}

@@ -36,7 +36,7 @@ namespace Backend.API.Controllers {
 		[Route("dish/check")]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		public async Task<ActionResult<string>> CheckBasket() {
-			return Ok(await _basketService.GetBasket(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+			return Ok(await _basketService.CheckBasketOnDishesFromOneRestaraunt(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		///<summary>
 		///add dish to cart
@@ -64,7 +64,7 @@ namespace Backend.API.Controllers {
 		[Route("clearAll")]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 
-		public async Task<ActionResult<Response>> ClearBasket(Guid dishId, bool CompletelyDelete) {
+		public async Task<ActionResult<Response>> ClearBasket() {
 			return Ok(await _basketService.ClearBasket(new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 	}

@@ -17,7 +17,6 @@ namespace Backend.BL.Extensions {
 			services.AddScoped<IOrderService, OrderService>();
 			services.AddScoped<IBasketService, BasketService>();
 			services.AddScoped<IMenuService, MenuService>();
-			services.AddSingleton<IRabbitMQService, RabbitMQService>();
 			services.AddScoped<IRestarauntService, RestarauntService>();
 			services.AddAutoMapper(typeof(MappingProfileBackend));
 		}

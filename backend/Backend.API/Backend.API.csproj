@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\backend.BL\Backend.BL.csproj" />
     <ProjectReference Include="..\Exceptions\Common.Exceptions.csproj" />
+    <ProjectReference Include="..\Notifications.BL\Notifications.BL.csproj" />
   </ItemGroup>
 
 </Project>

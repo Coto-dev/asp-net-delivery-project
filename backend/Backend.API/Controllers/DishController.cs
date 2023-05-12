@@ -67,6 +67,8 @@ namespace Backend.API.Controllers {
 		/// <response code = "500" >InternalServerError</response>
 		[HttpGet]
 		[Route("restaraunt/{restarauntId}/getDeleted")]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
+
 		public async Task<ActionResult<DishesPagedListDTO>> GetDeletedDishes([FromQuery] DishFilterModelDTO model,Guid restarauntId) {
 			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _dishService.GetDeletedDishes(model, restarauntId));
@@ -91,11 +93,13 @@ namespace Backend.API.Controllers {
 		/// <response code = "500" >InternalServerError</response>
 		[HttpPost]
 		[Route("{dishId}/rating")]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid dishId, double value) {
 			return Ok(await _dishService.AddRatingToDish(dishId, value, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		[HttpGet]
 		[Route("{dishId}/rating/check")]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		public async Task<ActionResult<RatingDTO>> CheckRating(Guid dishId) {
 			return Ok(await _dishService.CheckRating(dishId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}

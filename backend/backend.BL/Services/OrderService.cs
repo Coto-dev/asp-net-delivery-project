@@ -39,7 +39,13 @@ namespace Backend.BL.Services {
 				throw new NotAllowedException("Заказ нельзя отменить т.к, его статус: " + order.Status.ToString());
 			order.Status = Statuses.Canceled;
 			await _context.SaveChangesAsync();
+			var message = $"Order cancelled";
+			_rabbitmqService.SendMessage(new OrderChangeStatusMessage {
+				description = message,
+				orderId = orderId.ToString(),
+				userId = orderId.ToString(),
 
+			});
 			return new Response {
 				Status = "200",
 				Message = "succesfully cancelled"
@@ -52,7 +58,13 @@ namespace Backend.BL.Services {
 				throw new NotAllowedException("Заказ нельзя отменить т.к, его статус: " + order.Status);
 			order.Status = Statuses.Canceled;
 			await _context.SaveChangesAsync();
+			var message = $"Order cancelled";
+			_rabbitmqService.SendMessage(new OrderChangeStatusMessage {
+				description = message,
+				orderId = orderId.ToString(),
+				userId = orderId.ToString(),
 
+			});
 			return new Response {
 				Status = "200",
 				Message = "succesfully cancelled"
@@ -66,9 +78,9 @@ namespace Backend.BL.Services {
 				throw new NotAllowedException("Статус заказа нельзя изменить т.к его статус: " + order.Status.ToString());
 			var status = order.Status;
 			order.Status = order.Status == Statuses.Kitchen ? Statuses.ReadyToDelivery : Statuses.Kitchen;
-			if (order.Status == Statuses.Created) order.CookerId = cookId;
+			if (status == Statuses.Created) order.CookerId = cookId;
 			await _context.SaveChangesAsync();
-			var message = $"succesfully changed status: {status} to {order.Status}";
+			var message = $"Статус заказа изменен: с {status} на {order.Status}";
 			_rabbitmqService.SendMessage(new OrderChangeStatusMessage { 
 				description = message,
 				orderId = orderId.ToString(),
@@ -89,10 +101,10 @@ namespace Backend.BL.Services {
 				throw new NotAllowedException("Статус заказа нельзя изменить т.к его статус: " + order.Status);
 			var status = order.Status;
 			order.Status = order.Status == Statuses.ReadyToDelivery ? Statuses.Delivery : Statuses.Deilvered;
-			if (order.Status == Statuses.ReadyToDelivery) order.CourId = courierId;
+			if (status == Statuses.ReadyToDelivery) order.CourId = courierId;
 
 			await _context.SaveChangesAsync();
-			var message = $"succesfully changed status: {status} to {order.Status}";
+			var message = $"Статус заказа изменен: с {status} на {order.Status}";
 			_rabbitmqService.SendMessage(new OrderChangeStatusMessage {
 				description = message,
 				orderId = orderId.ToString(),
@@ -107,6 +119,7 @@ namespace Backend.BL.Services {
 		}
 
 		public async Task<string> CheckAdress(string address) {
+			_rabbitmqService.SendMessage(address);
 			if (address == null) throw new NotFoundException("адресс пользователя не найден");
 			else return address;
 		}
@@ -134,6 +147,7 @@ namespace Backend.BL.Services {
 				Status = Statuses.Created,
 			};
 			await _context.Orders.AddAsync(order);
+			customer.DishInCart.Clear();
 			await _context.SaveChangesAsync();
 			return new Response {
 				Status = "200",
@@ -213,7 +227,7 @@ namespace Backend.BL.Services {
 		}
 
 		public async Task<OrderPagedList> GetReadyToDeliveryOrdersCourier(OrderFilter filter) {
-			return await GetOrders(filter,null,null,new List<Statuses>(),null,null);
+			return await GetOrders(filter,null,null,new List<Statuses>() { Statuses.ReadyToDelivery }, null,null);
 		}
 
 		public async Task<OrderPagedList> GetOrdersHistoryCourier(OrderFilter filter, Guid courierId) {
@@ -237,11 +251,8 @@ namespace Backend.BL.Services {
 		public async Task<OrderPagedList> GetOrderHistoryCustomer(OrderFilter model, Guid customerId) {
 			return await GetOrders(model, null, customerId, new List<Statuses>() {
 				Statuses.Canceled,
-				Statuses.Deilvered,
-				Statuses.Delivery,
-				Statuses.Created,
-				Statuses.Kitchen,
-				Statuses.ReadyToDelivery},
+				Statuses.Deilvered 
+			},
 				null, null);
 		}
 
@@ -264,11 +275,8 @@ namespace Backend.BL.Services {
 		public async Task<OrderPagedList> GetOrdersCurrentCook(OrderFilter model, Guid cookId) {
 			var restaraunt = await _context.Restaraunts.FirstOrDefaultAsync(x => x.Cooks.Any(x => x.Id == cookId));
 			if (restaraunt == null) throw new NotFoundException("этот повар не работает в ресторане");
-			return await GetOrders(model, null, null, new List<Statuses>() { Statuses.Kitchen,
-			Statuses.ReadyToDelivery,
-			Statuses.Canceled,
-			Statuses.Deilvered,
-			Statuses.Delivery
+			return await GetOrders(model, null, null, new List<Statuses>() {
+				Statuses.Kitchen,
 			}, restaraunt.Id, cookId);
 		}
 
@@ -296,7 +304,10 @@ namespace Backend.BL.Services {
 				Address = address,
 				DeliveryTime = deliveryTime,
 				Customer = customer,
-				Dishes = order.Dishes,
+				Dishes = order.Dishes.Select(x => new DishInOrder {
+					Dish = x.Dish,
+					Count = x.Count
+				}).ToList(),
 				OrderTime = DateTime.Now,
 				Price = order.Price,
 				Status = Statuses.Created,

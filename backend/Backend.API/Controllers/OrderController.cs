@@ -174,7 +174,7 @@ namespace Backend.API.Controllers {
 		/// get info about created orders for cook
 		/// </summary>
 		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Cook)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Cook)]
 		[Route("cook/created")]
 		public async Task<ActionResult<OrderPagedList>> GetCreatedOrders([FromQuery] OrderFilter filter) {
 			return Ok(await _orderService.GetCreatedOrdersCook(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
@@ -183,7 +183,7 @@ namespace Backend.API.Controllers {
 		/// get info about history orders for concrete cook
 		/// </summary>
 		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Cook)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Cook)]
 		[Route("cook/history")]
 		public async Task<ActionResult<OrderPagedList>> GetOrdersHistoryCook([FromQuery] OrderFilter filter) {
 			return Ok(await _orderService.GetOrdersHistoryCook(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
@@ -192,7 +192,7 @@ namespace Backend.API.Controllers {
 		/// get info about current orders for concrete cook
 		/// </summary>
 		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Cook)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Cook)]
 		[Route("cook/current")]
 		public async Task<ActionResult<OrderPagedList>> GetOrdersCurrentCook([FromQuery] OrderFilter filter) {
 			return Ok(await _orderService.GetOrdersCurrentCook(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
@@ -201,7 +201,7 @@ namespace Backend.API.Controllers {
 		/// get info about all orders where manager's working
 		/// </summary>
 		[HttpGet]
-		[Authorize(Roles = ApplicationRoleNames.Manager)]
+		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("manager/all")]
 		public async Task<ActionResult<OrderPagedList>> GetManagerOrders([FromQuery] OrderFilterManager filter) {
 			return Ok(await _orderService.GetOrdersManager(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));

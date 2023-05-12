@@ -38,7 +38,6 @@ namespace Backend.BL.Services {
 			if (customer == null) {
 				customer = new Customer() { Id = customerId };
 				customer.DishInCart.Add(new DishInCart {
-					Id = dishId,
 					Count = 1,
 					Customer = customer,
 					Dish = dish,
@@ -56,7 +55,6 @@ namespace Backend.BL.Services {
 
 			if (!customer.DishInCart.Any(d => d.Dish.Id == dish.Id)) {
 				await _context.AddAsync(new DishInCart {
-					Id = dishId,
 					Count = 1,
 					Customer = customer,
 					Dish = dish,
@@ -74,8 +72,22 @@ namespace Backend.BL.Services {
 				
 		}
 
-		public async Task<string> CheckBasketOndishesFromOneRestaraunt(Guid customerId) {
-			throw new NotImplementedException();
+		public async Task<string> CheckBasketOnDishesFromOneRestaraunt(Guid customerId) {
+			var customer = await _context.Customers
+				.Include(x => x.DishInCart)
+				.ThenInclude(d => d.Dish)
+				.ThenInclude(d => d.Menus)
+				.ThenInclude(m => m.Restaraunt)
+				.FirstOrDefaultAsync(x => x.Id == customerId);
+			if (customer == null)	throw new KeyNotFoundException("пользователь не найден");
+
+			var restaurantName = customer
+				.DishInCart
+				.FirstOrDefault()?
+				.Dish?.Menus?
+				.FirstOrDefault()?
+				.Restaraunt!.Name;
+			return restaurantName ?? "Корзина пользователя пуста";
 		}
 
 		public async Task<Response> ClearBasket(Guid customerId) {

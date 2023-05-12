@@ -14,7 +14,7 @@ namespace Common.BackendInterfaces {
 		/// </summary>
 		/// <param name="customerId"></param>
 		/// <returns></returns>
-		public Task<string> CheckBasketOndishesFromOneRestaraunt(Guid customerId);
+		public Task<string> CheckBasketOnDishesFromOneRestaraunt(Guid customerId);
 		public Task<Response> AddDishToBasket(Guid dishId, Guid customerId);
 		public  Task<Response> RemoveDish(Guid dishId, Guid customerId, bool CompletelyDelete);
 		public Task<Response> ClearBasket(Guid customerId);
