@@ -25,30 +25,7 @@ namespace Auth.Controllers {
         [Route("register")]
         [HttpPost]
         public async Task<ActionResult<AuthenticatedResponse>> Register([FromBody] RegisterModelDTO RegisterModel) {
-            try {
-
                 return Ok( await _accountService.Register(RegisterModel));
-            }
-            catch (InvalidOperationException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (ArgumentNullException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (ArgumentException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 409, title: e.Message);
-            }
-            catch (Exception e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 500, title: "Something went wrong");
-            }
         }
 
         /// <summary>
@@ -57,24 +34,7 @@ namespace Auth.Controllers {
         [Route("login")]
         [HttpPost]
         public async Task<ActionResult<AuthenticatedResponse>> Login([FromBody] LoginCredentials Login ) {
-            try {
                 return Ok(await _accountService.Login(Login));
-            }
-            catch (ArgumentException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (InvalidOperationException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 401, title: e.Message);
-            }
-            catch (Exception e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 500, title: "Something went wrong");
-            }
 
         }
         /// <summary>
@@ -84,24 +44,7 @@ namespace Auth.Controllers {
 		[Route("changePassword")]
         [HttpPut]
         public async Task<ActionResult<AuthenticatedResponse>> ChangePassword([FromBody] ChangePasswordModelDTO model) {
-            try {
                 return Ok(await _accountService.ChangePassword(User.Identity.Name, model));
-            }
-            catch (KeyNotFoundException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (InvalidOperationException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (Exception e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 500, title: "Something went wrong");
-            }
         }
 
 
@@ -116,24 +59,7 @@ namespace Auth.Controllers {
         [Route("AddAddress")]
         [HttpPut]
         public async Task<ActionResult<Response>> EditUserToCustomer(string address) {
-            try {
                 return Ok(await _accountService.EditUserToCustomer(address, User.Identity.Name));
-            }
-            catch (InvalidOperationException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 403, title: e.Message);
-            }
-            catch (ArgumentNullException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 409, title: e.Message);
-            }
-            catch (Exception e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 500, title: "Something went wrong");
-            }
         }
         /// <summary>
         /// get user profile
@@ -145,45 +71,47 @@ namespace Auth.Controllers {
         [Route("profile")]
         [HttpGet]
         public async Task<ActionResult<ProfileDTO>> GetProfile() {
-
-            try {
                 return Ok(await _accountService.GetProfile(User.Identity.Name));
-            }
-            
-            catch (Exception e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 500, title: "Something went wrong");
-            }
         }
-
-        /// <summary>
-        /// edit ser profile
-        /// </summary>
-        /// <remarks>
-        /// if user is not a customer you not need to write address.But if you did it, the address will not be recorded
-        /// </remarks>
-        ///<returns></returns>
-        /// <response code = "400" > Bad Request</response>
-        /// <response code = "500" > Internal Server Error</response>
-        [Authorize(AuthenticationSchemes = "Bearer")]
+		/// <summary>
+		/// get cook name by id 
+		/// </summary>
+		///<returns></returns>
+		/// <response code = "400" > Bad Request</response>
+		/// <response code = "500" > Internal Server Error</response>
+		[Authorize(AuthenticationSchemes = "Bearer")]
+		[Route("cook/name/{id}")]
+		[HttpGet]
+		public async Task<ActionResult<string>> GetCookName(Guid id) {
+			return Ok(await _accountService.GetCookName(id));
+		}
+		/// <summary>
+		/// get courier name by id 
+		/// </summary>
+		///<returns></returns>
+		/// <response code = "400" > Bad Request</response>
+		/// <response code = "500" > Internal Server Error</response>
+		[Authorize(AuthenticationSchemes = "Bearer")]
+		[Route("courier/name/{id}")]
+		[HttpGet]
+		public async Task<ActionResult<string>> GetCourierName(Guid id) {
+			return Ok(await _accountService.GetCourierName(id));
+		}
+		/// <summary>
+		/// edit ser profile
+		/// </summary>
+		/// <remarks>
+		/// if user is not a customer you not need to write address.But if you did it, the address will not be recorded
+		/// </remarks>
+		///<returns></returns>
+		/// <response code = "400" > Bad Request</response>
+		/// <response code = "500" > Internal Server Error</response>
+		[Authorize(AuthenticationSchemes = "Bearer")]
         [Route("profile/edit")]
         [HttpPut]
         public async Task<ActionResult<ProfileDTO>> EditProfile([FromBody] EditProfileDTO model) {
-
-            try {
                 return Ok(await _accountService.EditProfile(model, User.Identity.Name));
-            }
-            catch (ArgumentException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (Exception e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 500, title: "Something went wrong");
-            }
+            
         }
         /// <summary>
         /// update access token 
@@ -191,35 +119,8 @@ namespace Auth.Controllers {
         [Route("refresh")]
         [HttpPost]
         public async Task<ActionResult<AuthenticatedResponse>> Refresh(TokenApiModel token) {
-
-            try {
                 return Ok(await _accountService.Refresh(token));
-            }
-            catch (KeyNotFoundException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (ArgumentNullException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (InvalidOperationException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 401, title: e.Message);
-            }
-			catch (SecurityTokenException e) {
-				_logger.LogError(e,
-					$"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-				return Problem(statusCode: 401, title: e.Message);
-			}
-			catch (Exception e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 500, title: "Something went wrong");
-            }
+          
         }
         /// <summary>
         /// log out system user
@@ -228,30 +129,8 @@ namespace Auth.Controllers {
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost]
         public async Task<ActionResult<Response>> Logout() {
-
-            try {
                 return Ok(await _accountService.Logout(User.Identity.Name));
-            }
-            catch (KeyNotFoundException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (ArgumentNullException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 400, title: e.Message);
-            }
-            catch (InvalidOperationException e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 401, title: e.Message);
-            }
-            catch (Exception e) {
-                _logger.LogError(e,
-                    $"Message: {e.Message} TraceId: {Activity.Current?.Id ?? HttpContext.TraceIdentifier}");
-                return Problem(statusCode: 500, title: "Something went wrong");
-            }
         }
-    }
+		
+	}
 }

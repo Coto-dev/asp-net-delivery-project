@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BackendInterfaces\Common.BackendInterfaces.csproj" />
-    <ProjectReference Include="..\Notifications.API\Notifications.API.csproj" />
   </ItemGroup>
 
 </Project>

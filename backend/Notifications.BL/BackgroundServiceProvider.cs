@@ -10,7 +10,7 @@ using Notifcations.BL;
 namespace Notifications.BL {
 	public static class BackgroundServiceProvider {
 		public static void AddBackGroundService(this IServiceCollection services) {
-			services.AddHostedService<RabbitMqBackGroundListener>();
+			services.AddHostedService<RabbitMqBackGroundListenerr>();
 
 		}
 	}

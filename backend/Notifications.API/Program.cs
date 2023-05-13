@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Notifications.API;
 using Notifications.API.Hubs;
+using Notifications.BL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +22,7 @@ builder.Services.AddCors(options => {
 // Add services to the container.
 builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
 //builder.Services.AddBackGroundService();
-//builder.Services.AddHostedService<RabbitMqBackGroundListener>(); TODO
-
+builder.Services.AddHostedService<RabbitMqBackGroundListener>();
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
 

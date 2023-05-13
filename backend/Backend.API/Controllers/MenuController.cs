@@ -23,9 +23,6 @@ namespace Backend.API.Controllers {
 		/// <summary>
 		/// create menu in restaraunt for manager
 		/// </summary>
-		/// <remarks>
-		/// you already have default empty menu after creating restaraunt TODO
-		/// </remarks>
 
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]

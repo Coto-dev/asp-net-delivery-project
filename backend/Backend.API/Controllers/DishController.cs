@@ -41,13 +41,13 @@ namespace Backend.API.Controllers {
 		/// <response code = "400" > Bad Request</response>
 		/// <response code = "404" >Not Found</response>
 		/// <response code = "500" >InternalServerError</response>
-		[HttpPost]
+		/*[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}/create")]
 		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid restarauntId) {
 			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _dishService.CreateDishWithHiddenMenu(model, restarauntId));
-		}
+		}*/
 		/// <summary>
 		/// Get all dishes from menu
 		/// </summary>

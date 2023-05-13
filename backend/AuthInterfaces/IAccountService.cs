@@ -11,6 +11,9 @@ namespace AuthInterfaces {
 		Task<AuthenticatedResponse> Login(LoginCredentials login);
 		Task<Response> EditUserToCustomer(string address, string userName);
 		Task<ProfileDTO> GetProfile(string userName);
+		Task<string> GetCourierName(Guid courId);
+		Task<string> GetCookName(Guid cookId);
+
 		Task<Response> EditProfile(EditProfileDTO model, string userName);
 		Task<AuthenticatedResponse> Refresh(TokenApiModel tokenApiModel);
 		Task<Response> Logout(string userName);

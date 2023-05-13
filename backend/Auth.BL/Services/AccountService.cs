@@ -236,5 +236,25 @@ namespace Auth.BL.Services {
             throw new InvalidOperationException(errors);
             
         }
-    }
+		/// <summary>
+		/// GetCourierName и GetCookName разделил на два метода, поскольку, если система будет расширяться, то у повара или курьера могут появится уникальные поля 
+		/// </summary>
+		/// <param name="courId"></param>
+		/// <returns></returns>
+		/// <exception cref="KeyNotFoundException"></exception>
+		public async Task<string> GetCourierName(Guid courId) {
+			var user = await _userManager.Users
+                .FirstOrDefaultAsync(x=>x.Id == courId);
+			if (user is null) throw new KeyNotFoundException("User not found");
+            return user.FullName;
+
+		}
+
+		public async Task<string> GetCookName(Guid cookId) {
+			var user = await _userManager.Users
+				.FirstOrDefaultAsync(x => x.Id == cookId);
+			if (user is null) throw new KeyNotFoundException("User not found");
+			return user.FullName;
+		}
+	}
 }

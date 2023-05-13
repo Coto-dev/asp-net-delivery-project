@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Notifications.BL {
 	using RabbitMQ.Client.Events;
 	using RabbitMQ.Client;
@@ -14,16 +9,15 @@ namespace Notifications.BL {
 	using System.Diagnostics;
 	using System;
 	using Microsoft.AspNetCore.SignalR;
-	using Notifications.API.Hubs;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.Logging;
 
-	public class RabbitMqBackGroundListener : BackgroundService {
+	public class RabbitMqBackGroundListenerr : BackgroundService {
 		private IConnection _connection;
 		private IModel _channel;
 		private IServiceScopeFactory _scope { get; }
 
-		public RabbitMqBackGroundListener(IServiceScopeFactory scopeFactory) {
+		public RabbitMqBackGroundListenerr(IServiceScopeFactory scopeFactory) {
 			var factory = new ConnectionFactory { HostName = "localhost" };
 			_connection = factory.CreateConnection();
 			_channel = _connection.CreateModel();
@@ -39,8 +33,10 @@ namespace Notifications.BL {
 			{
 				var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 				using (var scope = _scope.CreateScope()) {
-					var logger = scope.ServiceProvider.GetRequiredService<IHubContext<NotificationsHub>>();
-					logger.Clients.All.SendAsync("ReceiveMessage", content);
+					var _hub = scope.ServiceProvider.GetRequiredService<IHubContext>();
+				//	var _hub = scope.ServiceProvider.GetRequiredService<IHubContext<NotifcationsHub>();
+
+					_hub.Clients.All.SendAsync("ReceiveMessage", content);
 				}
 
 				Debug.WriteLine($"Получено сообщение: {content}");

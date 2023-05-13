@@ -33,7 +33,9 @@ namespace Backend.BL.Services {
 			_rabbitmqService = rabbitmqService;
 		}
 		public async Task<Response> CancelOrderCustomer(Guid orderId) {
-			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+			var order = await _context.Orders
+				.Include(x=>x.Customer)
+				.FirstOrDefaultAsync(x => x.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказ с таким id не найдено");
 			if (!(order.Status == Statuses.Created)) 
 				throw new NotAllowedException("Заказ нельзя отменить т.к, его статус: " + order.Status.ToString());
@@ -43,7 +45,7 @@ namespace Backend.BL.Services {
 			_rabbitmqService.SendMessage(new OrderChangeStatusMessage {
 				description = message,
 				orderId = orderId.ToString(),
-				userId = orderId.ToString(),
+				userId = order.Customer.Id.ToString(),
 
 			});
 			return new Response {
@@ -52,7 +54,9 @@ namespace Backend.BL.Services {
 			};
 		}
 		public async Task<Response> CancelOrderCourier(Guid orderId) {
-			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+			var order = await _context.Orders
+				.Include(x => x.Customer)
+				.FirstOrDefaultAsync(x => x.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
 			if (!(order.Status == Statuses.Delivery)) 
 				throw new NotAllowedException("Заказ нельзя отменить т.к, его статус: " + order.Status);
@@ -62,7 +66,7 @@ namespace Backend.BL.Services {
 			_rabbitmqService.SendMessage(new OrderChangeStatusMessage {
 				description = message,
 				orderId = orderId.ToString(),
-				userId = orderId.ToString(),
+				userId = order.Customer.Id.ToString(),
 
 			});
 			return new Response {
@@ -72,7 +76,9 @@ namespace Backend.BL.Services {
 		}
 
 		public async Task<Response> ChangeOrderStatusCook(Guid orderId, Guid cookId) {
-			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+			var order = await _context.Orders
+				.Include(x => x.Customer)
+				.FirstOrDefaultAsync(x => x.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
 			if (!(order.Status == Statuses.Created | order.Status == Statuses.Kitchen))
 				throw new NotAllowedException("Статус заказа нельзя изменить т.к его статус: " + order.Status.ToString());
@@ -84,7 +90,7 @@ namespace Backend.BL.Services {
 			_rabbitmqService.SendMessage(new OrderChangeStatusMessage { 
 				description = message,
 				orderId = orderId.ToString(),
-				userId= orderId.ToString(),
+				userId = order.Customer.Id.ToString(),
 
 			});
 
@@ -95,7 +101,9 @@ namespace Backend.BL.Services {
 		}
 
 		public async Task<Response> ChangeOrderStatusCourier(Guid orderId, Guid courierId) {
-			var order = await _context.Orders.FirstOrDefaultAsync(x => x.Id == orderId);
+			var order = await _context.Orders
+				.Include(x => x.Customer)
+				.FirstOrDefaultAsync(x => x.Id == orderId);
 			if (order == null) throw new KeyNotFoundException("заказа с таким id не найдено");
 			if (!(order.Status == Statuses.ReadyToDelivery | order.Status == Statuses.Delivery))
 				throw new NotAllowedException("Статус заказа нельзя изменить т.к его статус: " + order.Status);
@@ -108,7 +116,7 @@ namespace Backend.BL.Services {
 			_rabbitmqService.SendMessage(new OrderChangeStatusMessage {
 				description = message,
 				orderId = orderId.ToString(),
-				userId = orderId.ToString(),
+				userId = order.Customer.Id.ToString(),
 
 			});
 

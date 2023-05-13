@@ -12,6 +12,7 @@ namespace Notifications.BL {
 		public static class ServiceProviderExtensions {
 			public static void AddNotifactionsServices(this IServiceCollection services) {
 				services.AddScoped<IRabbitMQService, RabbitMQService>();
+				//services.AddHostedService<RabbitMqBackGroundListener>();
 		}
 	}
 	

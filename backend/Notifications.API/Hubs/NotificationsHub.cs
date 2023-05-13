@@ -9,19 +9,20 @@ namespace Notifications.API.Hubs {
 	public class NotificationsHub : Hub {
 
 		public override async Task OnConnectedAsync() {
+
 			var _client = new HttpClient();
 				await Clients.Caller.SendAsync("ReceiveMessage", "подключение установлено");
-				await Groups.AddToGroupAsync(Context.ConnectionId, Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-			
+				await Groups.AddToGroupAsync(Context.ConnectionId, Context.UserIdentifier);
+				
 
 			await base.OnConnectedAsync();
 		}
 
-		public async Task SendNotification(string message) {
-			await Clients.User(Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value).SendAsync("ReceiveMessage",
+		/*public async Task SendNotification(string message) {
+			await Clients.User(Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value.ToString()).SendAsync("ReceiveMessage",
 											   $"{DateTime.UtcNow.ToString("s")} UTC: {message}");
 
-		}
+		}*/
 	}
 
 }

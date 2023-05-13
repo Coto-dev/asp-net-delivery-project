@@ -28,7 +28,7 @@ builder.Services.AddBackendBlServiceDependencies();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option => {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth", Version = "v2" });
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "DishDelivivery.API", Version = "v2" });
     option.SchemaFilter<EnumSchemaFilter>();
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         In = ParameterLocation.Header,

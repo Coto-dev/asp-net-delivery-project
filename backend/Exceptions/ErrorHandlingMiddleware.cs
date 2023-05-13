@@ -44,6 +44,10 @@ namespace Common.Exceptions {
 				message = exception.Message;
 				status = HttpStatusCode.NotFound;
 			}
+			else if (exceptionType == typeof(InvalidOperationException)) {
+				message = exception.Message;
+				status = HttpStatusCode.BadRequest;
+			}
 			else if (exceptionType == typeof(NotAllowedException)) {
 				message = exception.Message;
 				status = HttpStatusCode.Forbidden;
