@@ -55,12 +55,12 @@ namespace Auth.Controllers {
         /// <response code = "400" > Bad Request , null address</response>
         /// <response code = "409" >If user already have customer role </response>
         /// <response code = "500" > Internal Server Error</response>
-        [Authorize(AuthenticationSchemes = "Bearer")]
+        /*[Authorize(AuthenticationSchemes = "Bearer")]
         [Route("AddAddress")]
         [HttpPut]
         public async Task<ActionResult<Response>> EditUserToCustomer(string address) {
                 return Ok(await _accountService.EditUserToCustomer(address, User.Identity.Name));
-        }
+        }*/
         /// <summary>
         /// get user profile
         /// </summary>

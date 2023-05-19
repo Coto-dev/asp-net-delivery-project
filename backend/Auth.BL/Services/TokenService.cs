@@ -7,12 +7,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AuthInterfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.BL.Services
 {
     public class TokenService : ITokenService {
-        public string GenerateAccessToken(IEnumerable<Claim> claims) {
+
+		public string GenerateAccessToken(IEnumerable<Claim> claims) {
             var secretKey = JwtConfiguration.GetSymmetricSecurityKey();
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
@@ -20,7 +22,7 @@ namespace Auth.BL.Services
                 issuer: JwtConfiguration.Issuer,
                 audience: JwtConfiguration.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(120),
+                expires: DateTime.Now.AddMinutes(Convert.ToInt32(JwtConfiguration.LifeTime)),
                 signingCredentials: signinCredentials
             );
 

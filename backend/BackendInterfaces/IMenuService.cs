@@ -14,8 +14,7 @@ namespace Common.BackendInterfaces {
 		public Task<Response> EditMenu(Guid menuId, MenuShortModelDTO model);
 		public Task<Response> DeleteMenu(Guid menuId);
 		public Task<Response> RecoverMenu(Guid menuId);
-		public Task<List<MenuDTO>> GetDeletedMenus(Guid restarauntId);
+		public Task<List<MenuShortDTO>> GetDeletedMenus(Guid restarauntId);
 		public Task<List<MenuShortDTO>> GetMenus(Guid restarauntId);
-		public Task<MenuDishesPagedListDTO> GetMenuDetails(Guid menuId, int Page =1);
 	}
 }

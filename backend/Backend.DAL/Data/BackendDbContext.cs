@@ -22,25 +22,6 @@ namespace Backend.DAL.Data {
         public virtual DbSet<Rating> Ratings { get; set; }
         public virtual DbSet<Restaraunt> Restaraunts { get; set; }
         public virtual DbSet<DishInCart> CartDishes { get; set; }
-
-        public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<BackendDbContext> {
-            public BackendDbContext CreateDbContext(string[] args) {
-                IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Backend.API/appsettings.json").Build();
-                var builder = new DbContextOptionsBuilder<BackendDbContext>();
-                var connectionString = configuration.GetConnectionString("DatabaseConnection");
-                builder.UseSqlServer(connectionString);
-                return new BackendDbContext(builder.Options);
-            }
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            
-            
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BackendDb;Trusted_Connection=True");
-            optionsBuilder.EnableSensitiveDataLogging();
-        }
     }
 
 

@@ -7,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation(); // Включение опции перекомпиляции представления после изменения и сохранения cshtml файла
-builder.Services.AddAuthContext();
-builder.Services.AddBackendContext();
+builder.Services.AddAuthContext(builder.Configuration);
+builder.Services.AddBackendContext(builder.Configuration);
 
 builder.Services.AddIdentityManagers();
 builder.Services.AddAccountServiceDependency();

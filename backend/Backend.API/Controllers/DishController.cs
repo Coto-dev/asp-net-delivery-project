@@ -33,15 +33,15 @@ namespace Backend.API.Controllers {
 		[Route("restaraunt/{restarauntId}/menu/{menuId}")]
 		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid menuId , Guid restarauntId) {
 			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			return Ok(await _dishService.CreateDishWithMenu(model, menuId));
+			return Ok(await _dishService.CreateDishWithMenu(model, menuId,restarauntId));
 		}
-		/// <summary>
+		/*/// <summary>
 		/// create new dish in hidden menu for manager
 		/// </summary>
 		/// <response code = "400" > Bad Request</response>
 		/// <response code = "404" >Not Found</response>
 		/// <response code = "500" >InternalServerError</response>
-		/*[HttpPost]
+		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
 		[Route("restaraunt/{restarauntId}/create")]
 		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid restarauntId) {
@@ -94,13 +94,13 @@ namespace Backend.API.Controllers {
 		[HttpPost]
 		[Route("{dishId}/rating")]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
-		public async Task<ActionResult<RatingDTO>> AddRatingToDish(Guid dishId, double value) {
-			return Ok(await _dishService.AddRatingToDish(dishId, value, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+		public async Task<ActionResult<Response>> AddRatingToDish([FromBody] DishRatingDTO model) {
+			return Ok(await _dishService.AddRatingToDish(model,  new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		[HttpGet]
 		[Route("{dishId}/rating/check")]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
-		public async Task<ActionResult<RatingDTO>> CheckRating(Guid dishId) {
+		public async Task<ActionResult<bool>> CheckRating(Guid dishId) {
 			return Ok(await _dishService.CheckRating(dishId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 

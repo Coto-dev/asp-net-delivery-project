@@ -18,13 +18,13 @@ builder.Services.AddControllers().AddJsonOptions(opts => {
     var enumConverter = new JsonStringEnumConverter();
     opts.JsonSerializerOptions.Converters.Add(enumConverter);
 });
+builder.Services.AddBackendDbServiceDependency(builder.Configuration);
 
 
 builder.Services.AddServices();
 
 builder.Services.AddNotifactionsServices();
 
-builder.Services.AddBackendBlServiceDependencies();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option => {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Backend.DAL.Data;
 using Backend.DAL.Data.Entities;
+using Backend.DAL.Migrations;
 using Common.BackendInterfaces;
 using Common.DTO;
 using Common.Exceptions;
@@ -110,7 +111,12 @@ namespace Backend.BL.Services {
 				.Include(x => x.DishInCart)
 				.ThenInclude(d => d.Dish)
 				.FirstOrDefaultAsync(x => x.Id == customerId);
-			if (customer == null) throw new KeyNotFoundException("пользователь не найден");
+			if (customer == null) {
+				customer = new Customer() { Id = customerId };
+				await _context.Customers.AddAsync(customer);
+				await _context.SaveChangesAsync();
+			}
+				//if (customer == null) throw new KeyNotFoundException("пользователь не найден");
 			var dishes = customer.DishInCart.Select(x=> _mapper.Map<DishShortModelDTO>(x)).ToList();
 			return new BasketDTO {
 				Dishes = customer.DishInCart.Select(x => _mapper.Map<DishShortModelDTO>(x)).ToList(),

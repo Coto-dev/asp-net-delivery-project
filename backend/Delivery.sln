@@ -77,9 +77,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Exceptions", "Except
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications.API", "Notifications.API\Notifications.API.csproj", "{4BFC9E06-FC96-482E-8462-9EB9A8D4836D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Consumer", "Consumer\Consumer.csproj", "{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.BL", "Notifications.BL\Notifications.BL.csproj", "{6244F61D-CB47-4814-969A-AA42ED532687}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications.BL", "Notifications.BL\Notifications.BL.csproj", "{6244F61D-CB47-4814-969A-AA42ED532687}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -159,10 +157,6 @@ Global
 		{4BFC9E06-FC96-482E-8462-9EB9A8D4836D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BFC9E06-FC96-482E-8462-9EB9A8D4836D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BFC9E06-FC96-482E-8462-9EB9A8D4836D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8D34484-D8E9-45AF-847D-1C8630EDBC1D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6244F61D-CB47-4814-969A-AA42ED532687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6244F61D-CB47-4814-969A-AA42ED532687}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6244F61D-CB47-4814-969A-AA42ED532687}.Release|Any CPU.ActiveCfg = Release|Any CPU

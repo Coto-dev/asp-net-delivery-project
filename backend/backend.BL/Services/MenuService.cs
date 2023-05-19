@@ -45,8 +45,8 @@ namespace Backend.BL.Services {
 			if (model.Name == null) throw new ArgumentNullException(nameof(model.Name));
 			var rest = await _context.Restaraunts.Include(r=>r.Menus).FirstOrDefaultAsync(x => x.Id == restarauntId);
 			if (rest == null) throw new KeyNotFoundException("Ресторан с таким id не найден");
-			if (model.Name == "<<hidden>>") throw new NotAllowedException("Использовано служебное название меню");
-			
+/*			if (model.Name == "<<hidden>>") throw new NotAllowedException("Использовано служебное название меню");
+*/			
 			await _context.AddAsync(new Menu
 			{ Name = model.Name,
 			 Restaraunt = rest 
@@ -75,8 +75,8 @@ namespace Backend.BL.Services {
 		public async Task<Response> DeleteMenu(Guid menuId) {
 			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
-			if (menu.Name == "<<hidden>>") throw new NotAllowedException("Невозможно удалить служебное меню");
-			menu.DeletedTime= DateTime.Now;
+/*			if (menu.Name == "<<hidden>>") throw new NotAllowedException("Невозможно удалить служебное меню");
+*/			menu.DeletedTime= DateTime.Now;
 			await _context.SaveChangesAsync();
 
 			return new Response {
@@ -88,8 +88,8 @@ namespace Backend.BL.Services {
 		public async Task<Response> EditMenu(Guid menuId, MenuShortModelDTO model) {
 			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
-			if (model.Name == "<<hidden>>") throw new NotAllowedException("Невозможно изменить меню,т.к использовано служебное название");
-			menu.Name = model.Name;
+/*			if (model.Name == "<<hidden>>") throw new NotAllowedException("Невозможно изменить меню,т.к использовано служебное название");
+*/			menu.Name = model.Name;
 			await _context.SaveChangesAsync();
 
 			return new Response {
@@ -98,36 +98,13 @@ namespace Backend.BL.Services {
 			};
 		}
 
-		public async Task<List<MenuDTO>> GetDeletedMenus(Guid restarauntId) {
+		public async Task<List<MenuShortDTO>> GetDeletedMenus(Guid restarauntId) {
 			var rest = await _context.Restaraunts.Include(r => r.Menus).FirstOrDefaultAsync(x=>x.Id == restarauntId);
 			if (rest == null) throw new KeyNotFoundException("Ресторан с таким id не найден");
-			return rest.Menus.Where(m=>m.DeletedTime.HasValue).Select(m=> _mapper.Map<MenuDTO>(m)).ToList();
+			return rest.Menus.Where(m => m.DeletedTime.HasValue).Select(m => _mapper.Map<MenuShortDTO>(m)).ToList();
 		}
 
-		public async Task<MenuDishesPagedListDTO> GetMenuDetails(Guid menuId, int Page =1) {
-			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
-			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
-
-			if (Page <= 0 || Page == null) throw new BadRequestException("Неверно указана страница");
-
-			var totalItems = await _context.Restaraunts.CountAsync();
-			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.PageSize);
-
-			if (totalPages < Page) throw new BadRequestException("Неверно указана текущая страница");
-			menu.Dishes = menu.Dishes
-				   .Skip((Page - 1) * AppConstants.PageSize)
-				   .Take(AppConstants.PageSize)
-				   .ToList();
-			var response = new MenuDishesPagedListDTO {
-				Menu = _mapper.Map<MenuDTO>(menu),
-				PageInfo = new PageInfoDTO {
-					Count = totalPages,
-					Current = Page,
-					Size = AppConstants.PageSize
-				}
-			};
-			return response;
-		}
+		
 
 		public async Task<List<MenuShortDTO>> GetMenus(Guid restarauntId) {
 			var rest = await _context.Restaraunts.Include(x=>x.Menus).FirstOrDefaultAsync(x => x.Id == restarauntId);

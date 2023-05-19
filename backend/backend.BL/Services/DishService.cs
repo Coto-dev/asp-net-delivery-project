@@ -25,23 +25,23 @@ namespace Backend.BL.Services {
 			_mapper = mapper;
         }
 
-        public async Task<Response> AddRatingToDish(Guid dishId, double value, Guid userId) {
+        public async Task<Response> AddRatingToDish(DishRatingDTO model, Guid userId) {
 			var dish = await _context.Dishes
 				.Include(x => x.Ratings)
 				.ThenInclude(r=>r.Customer)
-				.FirstOrDefaultAsync(x => x.Id == dishId);
+				.FirstOrDefaultAsync(x => x.Id == model.DishId);
 			if (dish == null) throw new KeyNotFoundException("Блюдо с с таким id не найдено");
 			if (dish.DeletedTime.HasValue) throw new NotAllowedException("Блюдо удалено");
-			if (! await CheckRating(dishId, userId)) throw new NotAllowedException("Пользователь с таким id не может поставить рейтинг");
+			if (! await CheckRating(model.DishId, userId)) throw new NotAllowedException("Пользователь с таким id не может поставить рейтинг");
 			var userRating = await _context.Ratings.FirstOrDefaultAsync(x=>x.CustomerId == userId);
 			if (userRating != null) {
-				userRating.Value = value;
+				userRating.Value = model.value;
 				_context.Update(userRating);
 			}
 			else {
 				var newRating = new Rating {
 					Dish = dish,
-					Value = value,
+					Value = model.value,
 					CustomerId = userId
 				};
 				await _context.AddRangeAsync(newRating);
@@ -68,10 +68,13 @@ namespace Backend.BL.Services {
 
 		}
 
-		public async Task<Response> CreateDishWithMenu(DishModelDTO model, Guid menuId) {
+		public async Task<Response> CreateDishWithMenu(DishModelDTO model, Guid menuId, Guid restarauntId) {
 			var menu = await _context.Menus.Include(m=>m.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с таким id не найдено");
-	
+			var rest = await _context.Restaraunts
+				.Include(x => x.Menus)
+				.FirstOrDefaultAsync(x => x.Id == restarauntId);
+			if (!rest.Menus.Contains(menu)) throw new NotAllowedException("Это меню не принадлежит этому ресторану");
 
 			var dish =  _mapper.Map<Dish>(model);
 			await _context.Dishes.AddAsync(dish);
@@ -83,17 +86,23 @@ namespace Backend.BL.Services {
 			};
 		}
 
-		public async Task<Response> CreateDishWithHiddenMenu(DishModelDTO model, Guid restarauntId) {
+		/*public async Task<Response> CreateDishWithHiddenMenu(DishModelDTO model, Guid restarauntId) {
 			var menu = await _context.Menus.Include(m => m.Dishes).FirstOrDefaultAsync(x => x.Name == "<<hidden>>");
 			if (menu == null) throw new KeyNotFoundException("Не найдено скрытое меню");
+			var rest = await _context.Restaraunts
+				.Include(x => x.Menus)
+				.FirstOrDefaultAsync(x => x.Id == restarauntId);
+			if (!rest.Menus.Contains(menu)) throw new NotAllowedException("Это меню не принадлежит этому ресторану");
 
-			menu.Dishes.Add(_mapper.Map<Dish>(model));
+			var dish = _mapper.Map<Dish>(model);
+			await _context.Dishes.AddAsync(dish);
+			menu.Dishes.Add(dish);
 			await _context.SaveChangesAsync();
 			return new Response {
 				Message = "Succesfully created",
 				Status = "200"
 			};
-		}
+		}*/
 
 		public async Task<Response> DeleteDish(Guid dishId) {
 			var dish = await _context.Dishes.FirstOrDefaultAsync(x => x.Id == dishId);
@@ -154,7 +163,7 @@ namespace Backend.BL.Services {
 			var totalItems = rest.Menus.Select(x => x.Dishes.Count).Sum();
 			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.DishPageSize);
 
-			if (totalPages < model.Page) throw new BadRequestException("Неверно указана текущая страница");
+			if (totalPages < model.Page && totalItems != 0) throw new BadRequestException("Неверно указана текущая страница");
 			if (deleted) {
 				if (model.Vegetarian == true) {
 					dishes = rest.Menus.SelectMany(m => m.Dishes
@@ -196,22 +205,22 @@ namespace Backend.BL.Services {
 			var dishDetails = dishes.Select(x => _mapper.Map<DishDetailsDTO>(x)).ToList();
 			switch (model.Sorting) {
 				case DishSorting.NameAsc:
-					dishDetails.OrderBy(x => x.Name);
+					dishDetails = dishDetails.OrderBy(x => x.Name).ToList();
 					break;
 				case DishSorting.NameDesc:
-					dishDetails.OrderByDescending(x => x.Name);
+					dishDetails = dishDetails.OrderByDescending(x => x.Name).ToList();
 					break;
 				case DishSorting.RatingAsc:
-					dishDetails.OrderBy(x => x.Rating);
+					dishDetails = dishDetails.OrderBy(x => x.Rating).ToList();
 					break;
 				case DishSorting.RatingDesc:
-					dishDetails.OrderByDescending(x => x.Rating);
+					dishDetails = dishDetails.OrderByDescending(x => x.Rating).ToList();
 					break;
 				case DishSorting.PriceAsc:
-					dishDetails.OrderBy(x => x.Price);
+					dishDetails = dishDetails.OrderBy(x => x.Price).ToList();
 					break;
 				case DishSorting.PriceDesc:
-					dishDetails.OrderByDescending(x => x.Price);
+					dishDetails = dishDetails.OrderByDescending(x => x.Price).ToList();
 					break;
 			}
 
@@ -238,13 +247,6 @@ namespace Backend.BL.Services {
 				Status = "200"
 			};
 		}
-		public async Task CheckPermissionForManager(Guid restarauntId, Guid managerId) {
-			var restaraunt = await _context.Restaraunts.Include(x=>x.Managers).FirstOrDefaultAsync(x => x.Id == restarauntId);
-			if (restaraunt == null) throw new KeyNotFoundException("ресторана с таким id не найдено");
-			if (restaraunt.Managers == null) throw new KeyNotFoundException("у этого ресторана нет менеджеров");
-			if (!restaraunt.Managers.Any(x=>x.Id == managerId)) throw new NotFoundException("Этот менеджер не имеет отношения к этому ресторану");
-	
-
-		}
+		
 	}
 }

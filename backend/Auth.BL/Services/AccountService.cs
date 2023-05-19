@@ -58,15 +58,15 @@ namespace Auth.BL.Services {
             var result = await _userManager.CreateAsync(user, RegisterModel.Password);
 			if (result.Succeeded) 
             {
-				/*var resultRole = await _userManager.AddToRoleAsync(user, ApplicationRoleNames.Customer);
-				if (resultRole.Succeeded) {
-					user.Customer = new Customer() {
-						Id = user.Id,
-						Address = "",
-					};
-					await _userManager.UpdateAsync(user);
-				}*/
-				return await Login(new LoginCredentials {
+                var resultRole = await _userManager.AddToRoleAsync(user, ApplicationRoleNames.Customer);
+                if (resultRole.Succeeded) {
+                    user.Customer = new Customer() {
+                        Id = user.Id,
+                        Address = "",
+                    };
+                    await _userManager.UpdateAsync(user);
+                }
+                return await Login(new LoginCredentials {
                     Email = RegisterModel.Email, Password = RegisterModel.Password 
                 });
             }
@@ -130,8 +130,9 @@ namespace Auth.BL.Services {
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
            await _userManager.UpdateAsync(user);
+			_logger.LogInformation("User logged in successfuly");
 
-            return (new AuthenticatedResponse {
+			return (new AuthenticatedResponse {
                 Email = loginCredentials.Email,
                 Token = accessToken,
                 RefreshToken = refreshToken,
@@ -143,7 +144,9 @@ namespace Auth.BL.Services {
         
 
         public async Task<ProfileDTO> GetProfile(string userName) {
-            var user = await _userManager.Users.Include(u=>u.Customer).FirstOrDefaultAsync(x=>x.UserName == userName);
+            var user = await _userManager.Users
+                .Include(u=>u.Customer)
+                .FirstOrDefaultAsync(x=>x.UserName == userName);
             if (user == null) throw new KeyNotFoundException("User not found");
             if (user.Customer != null) {
                 user = _userManager.Users.Where(u => u.Email == userName).
@@ -167,10 +170,14 @@ namespace Auth.BL.Services {
             user.BirthDate = model.BitrhDate;
             user.Gender = model.Gender;
             user.PhoneNumber= model.PhoneNumber;
-            if (user.Customer != null && model.Address != null) { user.Customer.Address = model.Address; }
+            if (user.Customer != null && model.Address != null) { 
+                user.Customer.Address = model.Address; 
+            }
            var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded) {
-                return new Response {
+				_logger.LogInformation("User's profile edited successfuly");
+
+				return new Response {
                     Status = "Ok",
                     Message = "User successfully modified"
                 };

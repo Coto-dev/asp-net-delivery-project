@@ -62,18 +62,5 @@ namespace Auth.DAL.Data {
             });
         }
 
-        public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AuthDbContext> {
-            public AuthDbContext CreateDbContext(string[] args) {
-                IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Auth/appsettings.json").Build();
-                var builder = new DbContextOptionsBuilder<AuthDbContext>();
-                var connectionString = configuration.GetConnectionString("DatabaseConnection");
-                builder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=AuthDb;Trusted_Connection=True");
-                return new AuthDbContext(builder.Options);
-            }
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=AuthDb;Trusted_Connection=True");
-            optionsBuilder.EnableSensitiveDataLogging();
-        }
     }
 }

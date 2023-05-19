@@ -25,6 +25,9 @@ namespace Backend.API.Controllers {
 		/// <summary>
 		/// return customer address if not null for customer 
 		/// </summary>
+		/// <remarks>
+		/// Frontend can use this address to create order
+		/// </remarks>
 		[HttpGet]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		[Route("customer/address")]
@@ -62,11 +65,8 @@ namespace Backend.API.Controllers {
 		}
 
 		/// <summary>
-		/// cancel order if only status created or delivery(courier)
+		/// create order for customer 
 		/// </summary>
-		/// <remarks>
-		/// if address will be null then address wil be taken from user profile
-		/// </remarks>
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		[Route("create")]
@@ -75,8 +75,11 @@ namespace Backend.API.Controllers {
 		}
 
 		/// <summary>
-		/// get info about all ready to delivery orders for courier
+		/// Repeat previous order
 		/// </summary>
+		/// <remarks>
+		/// order can be repeated with any status 
+		/// </remarks>
 		[HttpPost]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
 		[Route("customer/repeat/{orderId}")]
@@ -198,7 +201,7 @@ namespace Backend.API.Controllers {
 			return Ok(await _orderService.GetOrdersCurrentCook(filter, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		/// <summary>
-		/// get info about all orders where manager's working
+		/// get info about all orders in restaraunt of manager
 		/// </summary>
 		[HttpGet]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]

@@ -1,5 +1,4 @@
-﻿using Auth.DAL.Data.Entities;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace Notifications.API {

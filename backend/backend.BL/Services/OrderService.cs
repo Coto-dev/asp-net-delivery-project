@@ -148,10 +148,11 @@ namespace Backend.BL.Services {
 				Dishes = customer.DishInCart
 				.Select(x => new DishInOrder {
 					Dish = x.Dish,
-					Count = x.Count
+					Count = x.Count,
+					
 				}).ToList(),
 				OrderTime = DateTime.Now,
-				Price = customer.DishInCart.Sum(x => x.Dish.Price),
+				Price = customer.DishInCart.Sum(x => x.Dish.Price * x.Count),
 				Status = Statuses.Created,
 			};
 			await _context.Orders.AddAsync(order);
@@ -207,21 +208,21 @@ namespace Backend.BL.Services {
 					Name = x.Dish.Name,
 					PhotoUrl = x.Dish.PhotoUrl,
 					Price = x.Dish.Price,
-					TotalPrice = x.Dish.Price
+					TotalPrice = x.Dish.Price * x.Count
 				}).ToList()
 			}).ToList();
 			switch (filter.SortingDate) {
 				case DateSorting.DeliveryDateAsc:
-					orders.OrderBy(x => x.DeliveryTime);
+					orders = orders.OrderBy(x => x.DeliveryTime).ToList();
 					break;
 				case DateSorting.DeliveryDateDesc:
-					orders.OrderByDescending(x => x.DeliveryTime);
+					orders = orders.OrderByDescending(x => x.DeliveryTime).ToList();
 					break;
 				case DateSorting.OrderDateAsc:
-					orders.OrderBy(x => x.OrderTime);
+					orders = orders.OrderBy(x => x.OrderTime).ToList();
 					break;
 				case DateSorting.OrderDateDesc:
-					orders.OrderByDescending(x => x.OrderTime);
+					orders = orders.OrderByDescending(x => x.OrderTime).ToList();
 					break;
 			}
 			return new OrderPagedList {

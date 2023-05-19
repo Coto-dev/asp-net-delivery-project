@@ -1,10 +1,8 @@
-using Auth.BL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Notifications.API;
 using Notifications.API.Hubs;
-using Notifications.BL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,11 +43,9 @@ builder.Services.AddAuthentication(options => {
 			OnMessageReceived = context => {
 				var accessToken = context.Request.Query["access_token"];
 
-				// If the request is for our hub...
 				var path = context.HttpContext.Request.Path;
 				if (!string.IsNullOrEmpty(accessToken) &&
 					(path.StartsWithSegments("/notifications"))) {
-					// Read the token out of the query string
 					context.Token = accessToken;
 				}
 

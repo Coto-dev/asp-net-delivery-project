@@ -22,7 +22,7 @@ builder.Services.AddControllers().AddJsonOptions(opts => {
 });
 builder.Services.AddControllers();
 
-builder.Services.AddAuthBlDependency();
+builder.Services.AddAuthBlDependency(builder.Configuration);
 builder.Services.AddAuthBlIdentityDependency();
 builder.Services.AddAccountService();
 builder.Services.AddAutoMapperExt();
