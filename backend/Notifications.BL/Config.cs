@@ -1,8 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Notifications.API {
-	public class JwtConfiguration {
+namespace Notifications.BL {
+	public class Config {
 		private static IConfigurationRoot configuration = new ConfigurationBuilder()
 		   .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
 		   .AddJsonFile("appsettings.json")
@@ -13,6 +14,9 @@ namespace Notifications.API {
 		public static string Audience = configuration.GetSection("JwtSettings")["Audience"];
 		public static string LifeTime = configuration.GetSection("JwtSettings")["Lifetime"];
 		private static string Key = configuration.GetSection("JwtSettings")["Key"];
+		public static string QueueName = configuration.GetSection("QueueSettings")["QueueName"];
+		public static string HostName = configuration.GetSection("QueueSettings")["HostName"];
+
 		public static SymmetricSecurityKey GetSymmetricSecurityKey() {
 			return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Key));
 		}

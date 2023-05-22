@@ -17,12 +17,6 @@ namespace Notifications.API.Hubs {
 
 			await base.OnConnectedAsync();
 		}
-
-		/*public async Task SendNotification(string message) {
-			await Clients.User(Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value.ToString()).SendAsync("ReceiveMessage",
-											   $"{DateTime.UtcNow.ToString("s")} UTC: {message}");
-
-		}*/
 	}
 
 }

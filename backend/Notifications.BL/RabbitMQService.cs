@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 using Common.BackendInterfaces;
 using Microsoft.AspNetCore.Connections;
 using Newtonsoft.Json;
+using Notifications.BL;
 using RabbitMQ.Client;
 
 namespace Notifcations.BL {
 	public class RabbitMQService : IRabbitMQService {
 		public void SendMessage<T>(T message) {
 
-			var factory = new ConnectionFactory() { HostName = "localhost" };
+			var factory = new ConnectionFactory() { HostName = Config.HostName };
 			using (var connection = factory.CreateConnection())
 			using (var channel = connection.CreateModel()) {
-				channel.QueueDeclare(queue: "MyQueue",
+				channel.QueueDeclare(queue: Config.QueueName,
 							   durable: false,
 							   exclusive: false,
 							   autoDelete: false,
@@ -25,30 +26,11 @@ namespace Notifcations.BL {
 				var body = Encoding.UTF8.GetBytes(json);
 
 				channel.BasicPublish(exchange: "",
-							   routingKey: "MyQueue",
+							   routingKey: Config.QueueName,
 							   basicProperties: null,
 							   body: body);
 			}
 		}
-		/*public void SendMessage<T>(T message) {
-			var factory = new ConnectionFactory() { HostName = "localhost" };
-			using (var connection = factory.CreateConnection())
-			using (var channel = connection.CreateModel()) {
-				channel.ExchangeDeclare(exchange: "notifier", type: ExchangeType.Fanout);
-				var queueName = channel.QueueDeclare();
-				channel.QueueBind(queue: "MyQueue",
-								  exchange: "notifier",
-								  routingKey: string.Empty);
-
-				var json = JsonConvert.SerializeObject(message);
-				var body = Encoding.UTF8.GetBytes(json);
-				channel.BasicPublish(exchange: "notifier",
-									routingKey: "",
-									basicProperties: null,
-									body: body);
-
-			}
-			
-		}*/
+		
 	}
 }

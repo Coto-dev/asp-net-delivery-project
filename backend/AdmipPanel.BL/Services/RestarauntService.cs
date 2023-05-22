@@ -24,13 +24,13 @@ using System.Runtime.CompilerServices;
 
 namespace AdmipPanel.BL.Services {
     
-    public class CrudService : ICrudService {
-        private readonly ILogger<CrudService> _logger;
+    public class RestarauntService : IRestarauntService {
+        private readonly ILogger<RestarauntService> _logger;
         private readonly BackendDbContext _contextBackend;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public CrudService(ILogger<CrudService> logger, BackendDbContext context,
+        public RestarauntService(ILogger<RestarauntService> logger, BackendDbContext context,
             UserManager<User> userManager, IMapper mapper) {
             _logger = logger;
             _contextBackend = context;

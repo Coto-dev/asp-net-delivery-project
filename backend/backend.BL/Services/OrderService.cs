@@ -132,9 +132,6 @@ namespace Backend.BL.Services {
 			else return address;
 		}
 
-		/// <summary>
-		/// TODO 
-		/// </summary>
 		public async Task<Response> CreateOrder(string address, DateTime deliveryTime, Guid customerId) {
 			var customer = await _context.Customers.Include(x=>x.DishInCart).ThenInclude(d=>d.Dish).FirstOrDefaultAsync(x => x.Id == customerId);
 			if (customer == null) throw new KeyNotFoundException("Такой пользователь не найден");
@@ -301,14 +298,14 @@ namespace Backend.BL.Services {
 
 		public async Task<Response> RepeatOrder(string address, DateTime deliveryTime, Guid customerId, Guid orderId) {
 			var customer = await _context.Customers.FirstOrDefaultAsync(x => x.Id == customerId);
-			if (customer == null) throw new KeyNotFoundException("такой пользователь не найден");
+			if (customer == null) throw new KeyNotFoundException("Такой пользователь не найден");
 			var order = await _context.Orders
 				.Include(x=>x.Customer)
 				.Include(x => x.Dishes)
 				.ThenInclude(d => d.Dish)
 				.FirstOrDefaultAsync(x => x.Id == orderId);
-			if (order == null) throw new KeyNotFoundException("такой заказ не найден");
-			if (order.Customer.Id != customerId) throw new NotAllowedException("этот заказ не принадлежит этому пользователю");
+			if (order == null) throw new KeyNotFoundException("Такой заказ не найден");
+			if (order.Customer.Id != customerId) throw new NotAllowedException("Этот заказ не принадлежит этому пользователю");
 			var NewOrder = new Order {
 				Address = address,
 				DeliveryTime = deliveryTime,

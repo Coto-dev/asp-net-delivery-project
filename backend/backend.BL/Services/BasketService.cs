@@ -27,8 +27,8 @@ namespace Backend.BL.Services {
 		public async Task<Response> AddDishToBasket(Guid dishId, Guid customerId) {
 
 			var dish = await _context.Dishes.Include(d => d.Menus).ThenInclude(m => m.Restaraunt).FirstOrDefaultAsync(x => x.Id == dishId);
-			if (dish == null) throw new KeyNotFoundException("блюда с таким id не найдено");
-			if (dish.DeletedTime.HasValue) throw new NotAllowedException("блюдо удалено");
+			if (dish == null) throw new KeyNotFoundException("Блюда с таким id не найдено");
+			if (dish.DeletedTime.HasValue) throw new NotAllowedException("Блюдо удалено");
 
 			var customer = await _context.Customers
 				.Include(x=>x.DishInCart)
@@ -80,7 +80,7 @@ namespace Backend.BL.Services {
 				.ThenInclude(d => d.Menus)
 				.ThenInclude(m => m.Restaraunt)
 				.FirstOrDefaultAsync(x => x.Id == customerId);
-			if (customer == null)	throw new KeyNotFoundException("пользователь не найден");
+			if (customer == null)	throw new KeyNotFoundException("Пользователь не найден");
 
 			var restaurantName = customer
 				.DishInCart
@@ -96,7 +96,7 @@ namespace Backend.BL.Services {
 				.Include(x => x.DishInCart)
 				.ThenInclude(d => d.Dish)
 				.FirstOrDefaultAsync(x => x.Id == customerId);
-			if (customer == null) throw new KeyNotFoundException("пользователь не найден");
+			if (customer == null) throw new KeyNotFoundException("Пользователь не найден");
 			customer.DishInCart.Clear();
 			await _context.SaveChangesAsync();
 
@@ -130,9 +130,9 @@ namespace Backend.BL.Services {
 				.Include(x => x.DishInCart)
 				.ThenInclude(d => d.Dish)
 				.FirstOrDefaultAsync(x => x.Id == customerId);
-			if (customer == null) throw new KeyNotFoundException("пользователь не найден");
+			if (customer == null) throw new KeyNotFoundException("Пользователь не найден");
 			var dishCart = customer.DishInCart.FirstOrDefault(x => x.Id == dishId);
-			if (dishCart == null) throw new KeyNotFoundException("такого блюда нет в корзине пользователя");
+			if (dishCart == null) throw new KeyNotFoundException("Такого блюда нет в корзине пользователя");
 			if (CompletelyDelete | dishCart.Count == 1) {
 				customer.DishInCart.Remove(dishCart);
 			}

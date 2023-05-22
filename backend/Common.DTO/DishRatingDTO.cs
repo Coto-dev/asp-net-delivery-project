@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common.DTO {
 	public class DishRatingDTO {
-		[Required]
-		
-		public Guid DishId { get; set; }
+
 		[Required]
 		[Range(0, 5)]
 		public double value { get; set;}

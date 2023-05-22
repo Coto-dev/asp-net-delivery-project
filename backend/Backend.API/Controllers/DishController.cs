@@ -94,8 +94,8 @@ namespace Backend.API.Controllers {
 		[HttpPost]
 		[Route("{dishId}/rating")]
 		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Customer)]
-		public async Task<ActionResult<Response>> AddRatingToDish([FromBody] DishRatingDTO model) {
-			return Ok(await _dishService.AddRatingToDish(model,  new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
+		public async Task<ActionResult<Response>> AddRatingToDish([FromBody] DishRatingDTO model, Guid dishId) {
+			return Ok(await _dishService.AddRatingToDish(model,dishId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value)));
 		}
 		[HttpGet]
 		[Route("{dishId}/rating/check")]

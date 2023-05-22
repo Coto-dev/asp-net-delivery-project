@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace AdminPanelMVC.Controllers {
 	public class RestarauntController : Controller {
 		private readonly ILogger<RestarauntController> _logger;
-		private readonly ICrudService _crudService;
+		private readonly IRestarauntService _crudService;
 
-		public RestarauntController(ILogger<RestarauntController> logger, ICrudService crudservice) {
+		public RestarauntController(ILogger<RestarauntController> logger, IRestarauntService crudservice) {
 			_logger = logger;
 			_crudService = crudservice;
 		}

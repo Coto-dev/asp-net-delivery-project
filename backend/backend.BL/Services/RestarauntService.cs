@@ -25,32 +25,23 @@ namespace Backend.BL.Services {
 			_mapper = mapper;
 		}
 		public async Task<RestarauntPagedList> GetAllRestaraunts(string? NameFilter, int Page = 1) {
-			if (Page <= 0 || Page == null) throw new BadRequestException("Неверно указана страница");
+			if (Page <= 0) throw new BadRequestException("Неверно указана страница");
+			var restaraunts = await _context.Restaraunts
+				   .Where(x => 
+				   (string.IsNullOrEmpty(NameFilter) || x.Name.Contains(NameFilter)))
+				   .ToListAsync();
 
-			var totalItems = await _context.Restaraunts.CountAsync();
+			var totalItems =  restaraunts.Count();
 			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.PageSize);
-
-			if (totalPages < Page) throw new BadRequestException("Неверно указана текущая страница или список ресторанов пуст");
-
-			var restaraunts = new List<Restaraunt>();
-			if (string.IsNullOrEmpty(NameFilter)) {
-				restaraunts = await _context.Restaraunts
+			if (totalPages < Page && totalItems != 0) throw new BadRequestException("Неверно указана текущая страница или список ресторанов пуст");
+			restaraunts = restaraunts
 				   .Skip((Page - 1) * AppConstants.PageSize)
 				   .Take(AppConstants.PageSize)
-				   .ToListAsync();
-			}
-			else {
-				restaraunts = await _context.Restaraunts
-				   .Where(x=>x.Name.Contains(NameFilter))
-				   .Skip((Page - 1) * AppConstants.PageSize)
-				   .Take(AppConstants.PageSize)
-				   .ToListAsync();
-			}
-			
+				   .ToList();
 
-			
 			var response = new RestarauntPagedList {
-				Restaraunts = restaraunts.Select(x=> _mapper.Map<RestarauntDTO>(x)).ToList(),
+				Restaraunts = restaraunts
+				.Select(x=> _mapper.Map<RestarauntDTO>(x)).ToList(),
 				PageInfo = new PageInfoDTO {
 					Count = totalPages,
 					Current = Page,

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Notifications.API;
 using Notifications.API.Hubs;
+using Notifications.BL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,6 @@ builder.Services.AddCors(options => {
 
 // Add services to the container.
 builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
-//builder.Services.AddBackGroundService();
 builder.Services.AddHostedService<RabbitMqBackGroundListener>();
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
@@ -32,11 +32,11 @@ builder.Services.AddAuthentication(options => {
 	.AddJwtBearer(options => {
 		options.TokenValidationParameters = new TokenValidationParameters {
 			ValidateIssuer = true,
-			ValidIssuer = JwtConfiguration.Issuer,
+			ValidIssuer = Config.Issuer,
 			ValidateAudience = true,
-			ValidAudience = JwtConfiguration.Audience,
+			ValidAudience = Config.Audience,
 			ValidateLifetime = true,
-			IssuerSigningKey = JwtConfiguration.GetSymmetricSecurityKey(),
+			IssuerSigningKey = Config.GetSymmetricSecurityKey(),
 			ValidateIssuerSigningKey = true,
 		};
 		options.Events = new JwtBearerEvents {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace Common.DTO {
         public List<Guid>? MenusId { get; set; }
         public DishSorting Sorting { get; set; } = DishSorting.NameAsc;
         public bool Vegetarian { get; set; } = false;
+        [Range(1, int.MaxValue, ErrorMessage = "Неверно указана страница")]
         public int Page { get; set; } = 1;
 
 

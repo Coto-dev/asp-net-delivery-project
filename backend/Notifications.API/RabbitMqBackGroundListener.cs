@@ -14,6 +14,7 @@ namespace Notifications.API {
 	using Notifications.API.Hubs;
 	using Newtonsoft.Json;
 	using Newtonsoft.Json.Linq;
+	using Notifications.BL;
 
 	public class RabbitMqBackGroundListener : BackgroundService {
 		private IConnection _connection;
@@ -21,11 +22,11 @@ namespace Notifications.API {
 		private IServiceScopeFactory _scope { get; }
 
 		public RabbitMqBackGroundListener(IServiceScopeFactory scopeFactory) {
-			var factory = new ConnectionFactory { HostName = "localhost" };
+			var factory = new ConnectionFactory { HostName = Config.HostName };
 			_connection = factory.CreateConnection();
 			_channel = _connection.CreateModel();
 			_scope = scopeFactory;
-			_channel.QueueDeclare(queue: "MyQueue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+			_channel.QueueDeclare(queue: Config.QueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
 		}
 
 		protected override Task ExecuteAsync(CancellationToken stoppingToken) {
@@ -52,7 +53,7 @@ namespace Notifications.API {
 				_channel.BasicAck(ea.DeliveryTag, false);
 			};
 
-			_channel.BasicConsume("MyQueue", false, consumer);
+			_channel.BasicConsume(Config.QueueName, false, consumer);
 
 			return Task.CompletedTask;
 		}

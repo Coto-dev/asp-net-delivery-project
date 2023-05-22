@@ -25,15 +25,15 @@ namespace Backend.BL.Services {
 			_mapper = mapper;
         }
 
-        public async Task<Response> AddRatingToDish(DishRatingDTO model, Guid userId) {
+        public async Task<Response> AddRatingToDish(DishRatingDTO model,Guid dishId, Guid userId) {
 			var dish = await _context.Dishes
 				.Include(x => x.Ratings)
 				.ThenInclude(r=>r.Customer)
-				.FirstOrDefaultAsync(x => x.Id == model.DishId);
+				.FirstOrDefaultAsync(x => x.Id == dishId);
 			if (dish == null) throw new KeyNotFoundException("Блюдо с с таким id не найдено");
 			if (dish.DeletedTime.HasValue) throw new NotAllowedException("Блюдо удалено");
-			if (! await CheckRating(model.DishId, userId)) throw new NotAllowedException("Пользователь с таким id не может поставить рейтинг");
-			var userRating = await _context.Ratings.FirstOrDefaultAsync(x=>x.CustomerId == userId);
+			if (! await CheckRating(dishId, userId)) throw new NotAllowedException("Пользователь с таким id не может поставить рейтинг");
+			var userRating = await _context.Ratings.FirstOrDefaultAsync(x=>x.CustomerId == userId && x.Dish.Id == dishId);
 			if (userRating != null) {
 				userRating.Value = model.value;
 				_context.Update(userRating);
@@ -86,23 +86,6 @@ namespace Backend.BL.Services {
 			};
 		}
 
-		/*public async Task<Response> CreateDishWithHiddenMenu(DishModelDTO model, Guid restarauntId) {
-			var menu = await _context.Menus.Include(m => m.Dishes).FirstOrDefaultAsync(x => x.Name == "<<hidden>>");
-			if (menu == null) throw new KeyNotFoundException("Не найдено скрытое меню");
-			var rest = await _context.Restaraunts
-				.Include(x => x.Menus)
-				.FirstOrDefaultAsync(x => x.Id == restarauntId);
-			if (!rest.Menus.Contains(menu)) throw new NotAllowedException("Это меню не принадлежит этому ресторану");
-
-			var dish = _mapper.Map<Dish>(model);
-			await _context.Dishes.AddAsync(dish);
-			menu.Dishes.Add(dish);
-			await _context.SaveChangesAsync();
-			return new Response {
-				Message = "Succesfully created",
-				Status = "200"
-			};
-		}*/
 
 		public async Task<Response> DeleteDish(Guid dishId) {
 			var dish = await _context.Dishes.FirstOrDefaultAsync(x => x.Id == dishId);
@@ -157,51 +140,24 @@ namespace Backend.BL.Services {
 			}
 			if (rest == null) throw new KeyNotFoundException("Меню с таким id не найдено");
 			var dishes = new List<Dish>();
+/*			if (model.Page <= 0) throw new BadRequestException("Неверно указана страница");
+*/
 
-			if (model.Page <= 0 || model.Page == null) throw new BadRequestException("Неверно указана страница");
 
-			var totalItems = rest.Menus.Select(x => x.Dishes.Count).Sum();
+			dishes = rest.Menus.SelectMany(m => m.Dishes
+				   .Where(d => model.Categories
+				   .Contains(d.Category) 
+				   && (model.Vegetarian ? d.IsVagetarian : true)
+				   && (deleted? d.DeletedTime.HasValue : !d.DeletedTime.HasValue)))
+				   .Skip((model.Page - 1) * AppConstants.DishPageSize)
+				   .Take(AppConstants.DishPageSize)
+				   .ToList();
+
+			var totalItems = dishes.Count();
 			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.DishPageSize);
 
 			if (totalPages < model.Page && totalItems != 0) throw new BadRequestException("Неверно указана текущая страница");
-			if (deleted) {
-				if (model.Vegetarian == true) {
-					dishes = rest.Menus.SelectMany(m => m.Dishes
-				   .Where(d => model.Categories
-				   .Contains(d.Category) && d.IsVagetarian && d.DeletedTime.HasValue))
-				   .Skip((model.Page - 1) * AppConstants.DishPageSize)
-				   .Take(AppConstants.DishPageSize)
-				   .ToList();
 
-				}
-				else {
-					dishes = rest.Menus.SelectMany(m => m.Dishes
-				   .Where(d => model.Categories
-				   .Contains(d.Category) && d.DeletedTime.HasValue))
-				   .Skip((model.Page - 1) * AppConstants.DishPageSize)
-				   .Take(AppConstants.DishPageSize)
-				   .ToList();
-				}
-			}
-			else {
-				if (model.Vegetarian == true) {
-					dishes = rest.Menus.SelectMany(m => m.Dishes
-				   .Where(d => model.Categories
-				   .Contains(d.Category) && d.IsVagetarian && !d.DeletedTime.HasValue))
-				   .Skip((model.Page - 1) * AppConstants.DishPageSize)
-				   .Take(AppConstants.DishPageSize)
-				   .ToList();
-
-				}
-				else {
-					dishes = rest.Menus.SelectMany(m => m.Dishes
-				   .Where(d => model.Categories
-				   .Contains(d.Category) && !d.DeletedTime.HasValue))
-				   .Skip((model.Page - 1) * AppConstants.DishPageSize)
-				   .Take(AppConstants.DishPageSize)
-				   .ToList();
-				}
-			}
 			var dishDetails = dishes.Select(x => _mapper.Map<DishDetailsDTO>(x)).ToList();
 			switch (model.Sorting) {
 				case DishSorting.NameAsc:
@@ -223,6 +179,10 @@ namespace Backend.BL.Services {
 					dishDetails = dishDetails.OrderByDescending(x => x.Price).ToList();
 					break;
 			}
+			dishDetails
+				.Skip((model.Page - 1) * AppConstants.DishPageSize)
+				.Take(AppConstants.DishPageSize)
+				.ToList();
 
 			return new DishesPagedListDTO {
 				Dishes = dishDetails,

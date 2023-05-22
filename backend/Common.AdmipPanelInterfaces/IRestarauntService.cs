@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Common.DTO;
 
 namespace Common.AdminPanelInterfaces {
-    public interface ICrudService {
+    public interface IRestarauntService {
         public List<RestarauntDTO> GetRestarauntList();
         public Task CreateRestaraunt(RestarauntViewModel model);
         public Task<RestarauntViewModel> GetDetails(Guid id);
