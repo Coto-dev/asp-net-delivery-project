@@ -163,19 +163,6 @@ namespace Backend.BL.Services {
 		public async Task<OrderPagedList> GetOrders(OrderFilter filter, Guid? courierId, Guid? customerId, List<Statuses> statuses, Guid? restarauntId, Guid? cookId) {
 			if (filter.Page <= 0) throw new BadRequestException("Неверно указана страница");
 
-			var totalItems = await _context.Orders
-				.Where(x =>
-				(filter.OrderNumber == null || x.OrderNumber == filter.OrderNumber)
-				&& (courierId == null || x.CourId == courierId)
-				&& (customerId == null || x.Customer.Id == customerId)
-				&& (cookId == null || x.CookerId == cookId)
-				&& (statuses.Count == 0 || statuses.Contains(x.Status))
-				&& (restarauntId == null || x.Dishes.Any(d=>d.Dish.Menus.Any(m=>m.Restaraunt.Id == restarauntId))))
-				.CountAsync();
-			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.OrderPage);
-
-			if (totalPages < filter.Page && totalItems != 0) throw new BadRequestException("Неверно указана текущая страница");
-
 			var orders = await _context.Orders
 					.Include(x => x.Dishes)
 					.ThenInclude(x => x.Dish)
@@ -187,9 +174,11 @@ namespace Backend.BL.Services {
 					&& (statuses.Count == 0 || statuses.Contains(x.Status))
 					&& (restarauntId == null || x.Dishes.Any(d => d.Dish.Menus.Any(m => m.Restaraunt.Id == restarauntId))))
 				   .Select(x => x)
-				   .Skip((filter.Page - 1) * AppConstants.OrderPage)
-				   .Take(AppConstants.OrderPage)
 				   .ToListAsync();
+			var totalItems = orders.Count();
+			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.OrderPage);
+
+			if (totalPages < filter.Page && filter.Page != 1) throw new BadRequestException("Неверно указана текущая страница");
 
 			var ordersDTO = orders.Select(x => new OrderDTO {
 				Address = x.Address,
@@ -210,18 +199,21 @@ namespace Backend.BL.Services {
 			}).ToList();
 			switch (filter.SortingDate) {
 				case DateSorting.DeliveryDateAsc:
-					orders = orders.OrderBy(x => x.DeliveryTime).ToList();
+					ordersDTO = ordersDTO.OrderBy(x => x.DeliveryTime).ToList();
 					break;
 				case DateSorting.DeliveryDateDesc:
-					orders = orders.OrderByDescending(x => x.DeliveryTime).ToList();
+					ordersDTO = ordersDTO.OrderByDescending(x => x.DeliveryTime).ToList();
 					break;
 				case DateSorting.OrderDateAsc:
-					orders = orders.OrderBy(x => x.OrderTime).ToList();
+					ordersDTO = ordersDTO.OrderBy(x => x.OrderTime).ToList();
 					break;
 				case DateSorting.OrderDateDesc:
-					orders = orders.OrderByDescending(x => x.OrderTime).ToList();
+					ordersDTO = ordersDTO.OrderByDescending(x => x.OrderTime).ToList();
 					break;
 			}
+			ordersDTO = ordersDTO.Skip((filter.Page - 1) * AppConstants.OrderPage)
+				   .Take(AppConstants.OrderPage)
+				   .ToList();
 			return new OrderPagedList {
 				Orders = ordersDTO,
 				PageInfo = new PageInfoDTO {

@@ -13,16 +13,19 @@ using Common.Enums;
 using Common.Exceptions;
 using CoomonThings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.BL.Services {
 
 	public class DishService : IDishService {
+		private readonly ILogger<DishService> _logger;
         private readonly BackendDbContext _context;
 		private readonly IMapper _mapper;
-		public DishService(BackendDbContext context, IMapper mapper) {
+		public DishService(BackendDbContext context, IMapper mapper, ILogger<DishService> logger) {
             _context = context;
 			_mapper = mapper;
+			_logger = logger;
         }
 
         public async Task<Response> AddRatingToDish(DishRatingDTO model,Guid dishId, Guid userId) {
@@ -140,23 +143,20 @@ namespace Backend.BL.Services {
 			}
 			if (rest == null) throw new KeyNotFoundException("Меню с таким id не найдено");
 			var dishes = new List<Dish>();
-/*			if (model.Page <= 0) throw new BadRequestException("Неверно указана страница");
-*/
 
-
-			dishes = rest.Menus.SelectMany(m => m.Dishes
+			dishes = rest.Menus
+				   .Where(m=> !m.DeletedTime.HasValue)
+				   .SelectMany(m => m.Dishes
 				   .Where(d => model.Categories
 				   .Contains(d.Category) 
 				   && (model.Vegetarian ? d.IsVagetarian : true)
 				   && (deleted? d.DeletedTime.HasValue : !d.DeletedTime.HasValue)))
-				   .Skip((model.Page - 1) * AppConstants.DishPageSize)
-				   .Take(AppConstants.DishPageSize)
 				   .ToList();
 
 			var totalItems = dishes.Count();
 			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.DishPageSize);
 
-			if (totalPages < model.Page && totalItems != 0) throw new BadRequestException("Неверно указана текущая страница");
+			if (totalPages < model.Page && model.Page != 1) throw new BadRequestException("Неверно указана текущая страница");
 
 			var dishDetails = dishes.Select(x => _mapper.Map<DishDetailsDTO>(x)).ToList();
 			switch (model.Sorting) {
@@ -174,16 +174,18 @@ namespace Backend.BL.Services {
 					break;
 				case DishSorting.PriceAsc:
 					dishDetails = dishDetails.OrderBy(x => x.Price).ToList();
+					dishDetails = dishDetails.OrderBy(x => x.Price).ToList();
 					break;
 				case DishSorting.PriceDesc:
 					dishDetails = dishDetails.OrderByDescending(x => x.Price).ToList();
 					break;
 			}
-			dishDetails
+			dishDetails = dishDetails
 				.Skip((model.Page - 1) * AppConstants.DishPageSize)
 				.Take(AppConstants.DishPageSize)
 				.ToList();
 
+			_logger.LogInformation("Dishes returned from DishServce");
 			return new DishesPagedListDTO {
 				Dishes = dishDetails,
 				PageInfo = new PageInfoDTO {

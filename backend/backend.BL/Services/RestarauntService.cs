@@ -33,7 +33,7 @@ namespace Backend.BL.Services {
 
 			var totalItems =  restaraunts.Count();
 			var totalPages = (int)Math.Ceiling((double)totalItems / AppConstants.PageSize);
-			if (totalPages < Page && totalItems != 0) throw new BadRequestException("Неверно указана текущая страница или список ресторанов пуст");
+			if (totalPages < Page && Page != 1) throw new BadRequestException("Неверно указана текущая страница или список ресторанов пуст");
 			restaraunts = restaraunts
 				   .Skip((Page - 1) * AppConstants.PageSize)
 				   .Take(AppConstants.PageSize)

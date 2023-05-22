@@ -99,14 +99,7 @@ namespace Backend.API.Controllers {
 		public async Task<ActionResult<List<MenuShortDTO>>> GetMenus(Guid restarauntId) {
 			return Ok(await _menuService.GetMenus(restarauntId));
 		}
-		/// <summary>
-		/// get menu details with list of dishes
-		/// </summary>
-		/*[HttpGet]
-		[Route("{menuId}/getDetails")]
-		public async Task<ActionResult<MenuDTO>> GetMenuDetails(Guid menuId, [FromQuery] int page = 1) {
-			return Ok(await _menuService.GetMenuDetails(menuId, page));
-		}*/
+
 
 	}
 }

@@ -60,10 +60,13 @@ namespace Backend.BL.Services {
 		public async Task<Response> DeleteDishFromMenu(Guid menuId, Guid dishId) {
 			var menu = await _context.Menus.Include(x => x.Dishes).FirstOrDefaultAsync(x => x.Id == menuId);
 			if (menu == null) throw new KeyNotFoundException("Меню с с таким id не найдено");
-			var dish = _context.Dishes.FirstOrDefault(d => d.Id == dishId);
+			var dish = _context.Dishes
+				.Include(d=>d.Menus)
+				.FirstOrDefault(d => d.Id == dishId);
 			if (dish == null) throw new KeyNotFoundException("Блюдо с таким id не существует");
 			if (!menu.Dishes.Contains(dish)) throw new BadRequestException("Это блюдо не относиться к этому меню");
-			menu.Dishes.Remove(dish);
+			if (dish.Menus.Count <= 1) dish.DeletedTime = DateTime.Now;
+			else menu.Dishes.Remove(dish);
 			await _context.SaveChangesAsync();
 			return new Response {
 				Status = "200",

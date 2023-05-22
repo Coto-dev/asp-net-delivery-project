@@ -35,19 +35,6 @@ namespace Backend.API.Controllers {
 			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
 			return Ok(await _dishService.CreateDishWithMenu(model, menuId,restarauntId));
 		}
-		/*/// <summary>
-		/// create new dish in hidden menu for manager
-		/// </summary>
-		/// <response code = "400" > Bad Request</response>
-		/// <response code = "404" >Not Found</response>
-		/// <response code = "500" >InternalServerError</response>
-		[HttpPost]
-		[Authorize(AuthenticationSchemes = "Bearer", Roles = ApplicationRoleNames.Manager)]
-		[Route("restaraunt/{restarauntId}/create")]
-		public async Task<ActionResult<Response>> CreateDish([FromBody] DishModelDTO model, Guid restarauntId) {
-			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			return Ok(await _dishService.CreateDishWithHiddenMenu(model, restarauntId));
-		}*/
 		/// <summary>
 		/// Get all dishes from menu
 		/// </summary>
@@ -133,7 +120,7 @@ namespace Backend.API.Controllers {
 		[Route("{dishId}/restaraunt/{restarauntId}/recover")]
 		public async Task<ActionResult<Response>> RecoverDish(Guid dishId, Guid restarauntId) {
 			await _permissionService.CheckPermissionForManagerByRestaraunt(restarauntId, new Guid(User.FindFirst(ClaimTypes.NameIdentifier).Value));
-			throw new NotImplementedException();
+			return Ok(await _dishService.RecoverDish(dishId));
 		}
 	}
 }

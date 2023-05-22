@@ -29,7 +29,7 @@ namespace Backend.BL.Services {
 			var dish = await _context.Dishes.Include(d => d.Menus).ThenInclude(m => m.Restaraunt).FirstOrDefaultAsync(x => x.Id == dishId);
 			if (dish == null) throw new KeyNotFoundException("Блюда с таким id не найдено");
 			if (dish.DeletedTime.HasValue) throw new NotAllowedException("Блюдо удалено");
-
+			if (dish.Menus == null) throw new BadRequestException("Блюдо не принадлежит ни одному меню");
 			var customer = await _context.Customers
 				.Include(x=>x.DishInCart)
 				.ThenInclude(d=>d.Dish)
@@ -116,7 +116,6 @@ namespace Backend.BL.Services {
 				await _context.Customers.AddAsync(customer);
 				await _context.SaveChangesAsync();
 			}
-				//if (customer == null) throw new KeyNotFoundException("пользователь не найден");
 			var dishes = customer.DishInCart.Select(x=> _mapper.Map<DishShortModelDTO>(x)).ToList();
 			return new BasketDTO {
 				Dishes = customer.DishInCart.Select(x => _mapper.Map<DishShortModelDTO>(x)).ToList(),
