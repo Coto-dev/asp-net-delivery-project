@@ -2,7 +2,17 @@
  https://docs.google.com/document/d/1zzG605ATbEeBQG4iJzCY8D-JS_mtqAzFhRDnc9j6AcE/edit?usp=sharing
 - База данных для Auth и Backend - mssql
 - В качестве брокера сообщений используется RabbitMQ(RabbitMQ 3.11.15, Erlang 25.3.2)
-- Для запуска RabbitMQ требуется указать креды в Backend.API/appsetting.json и Notification.API/appsetting.json(По умолчанию они уже указаны)
+- Для подключения к RabbitMQ требуется указать креды в Backend.API/appsetting.json и Notification.API/appsetting.json(По умолчанию они уже указаны)
 - Unit и нагрузочные тесты отсутствуют
- Репозиторий для выполнения задания по дисциплине Advanced Backend  
 
+Пояснения к Backend :
+- Чтобы создать блюдо в меню ресторана, треубется сначала создать меню.
+- Если блюдо удаляется из меню, при этом это единственное меню, в котором оно содержится, то блюду ставится метка Deleted, но из меню оно не удаляется.
+- CRUD ресторанов выполняется в AdminPanel.
+- Статус Packaging заменен на статус ReadyToDelivery(в этом статусе заказ становится виден всем курьерам)
+
+Пояснения к Notifications:
+- База данных не используется.
+
+Пояснения к Auth:
+- Авторизация выполнена на основе Refresh токенов

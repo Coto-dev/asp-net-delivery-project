@@ -27,11 +27,7 @@ namespace Auth.BL {
             CreateMap<ProfileDTO, User>();
             CreateMap<User, EditProfileDTO>();
             CreateMap<User, EditProfileDTO>().ReverseMap();
-            /*CreateMap<Customer, RegisterModelDTO>();
-            CreateMap<Customer, RegisterModelDTO>().ReverseMap().ForMember(dest => dest.UserName,
-                source => source.MapFrom(source => source.Email))
-                .ForMember(dest => dest.Email,
-                source => source.MapFrom(source => source.Email));*/
+           
 
         }
     }

@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auth.BL", "Auth.BL\Auth.BL.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminPanel.DAL", "AdminPanel.DAL\AdminPanel.DAL.csproj", "{119A9F9F-092F-4CEA-AA3D-AC106F568798}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdmipPanel.BL", "AdmipPanel.BL\AdmipPanel.BL.csproj", "{42D84D71-C5BE-464D-B125-E977F3C83661}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminPanel.BL", "AdmipPanel.BL\AdminPanel.BL.csproj", "{42D84D71-C5BE-464D-B125-E977F3C83661}"
 	ProjectSection(ProjectDependencies) = postProject
 		{119A9F9F-092F-4CEA-AA3D-AC106F568798} = {119A9F9F-092F-4CEA-AA3D-AC106F568798}
 	EndProjectSection
@@ -63,7 +63,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enum", "Enum", "{5554223E-A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Enums", "Enums\Common.Enums.csproj", "{48C79871-37EE-40F9-86B7-C73576129156}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthInterfaces", "AuthInterfaces\AuthInterfaces.csproj", "{810B52EC-8037-41B3-B34F-BBA2D265D896}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.AuthInterfaces", "AuthInterfaces\Common.AuthInterfaces.csproj", "{810B52EC-8037-41B3-B34F-BBA2D265D896}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common things", "Common things", "{55DC8315-C91C-4A90-A48B-AA47BF1CBE3D}"
 EndProject
